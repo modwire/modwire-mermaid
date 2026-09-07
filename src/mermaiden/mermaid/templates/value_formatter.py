@@ -28,6 +28,12 @@ class MermaidValueFormatter:
         escaped = "".join(self._entity_character(character) for character in str(value))
         return f'"{escaped}"'
 
+    def class_text(self, value: object) -> str:
+        return "".join(
+            character if character.isalnum() or character in " _-.," else f"#{ord(character)};"
+            for character in str(value)
+        )
+
     def number(self, value: float | int) -> str:
         return str(int(value)) if isinstance(value, float) and value.is_integer() else str(value)
 

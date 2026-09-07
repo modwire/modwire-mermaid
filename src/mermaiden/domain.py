@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Literal, Protocol, cast, overload
 
 from pydantic.json_schema import GenerateJsonSchema
-from pydantic_core import CoreSchema, SchemaSerializer, SchemaValidator
+from pydantic_core import CoreSchema, SchemaSerializer, SchemaValidator, core_schema
 
 
 class ApplicationError(RuntimeError):
@@ -57,10 +57,29 @@ class CommandPayload(Protocol):
 
 class CommandPayloadSchema:
     def __init__(self, schema: CoreSchema, invocation_defaults: Sequence[str]) -> None:
-        self._schema = schema
+        definitions: dict[str, CoreSchema] = {}
+        normalized = cast(CoreSchema, self._definitions(schema, definitions))
+        self._schema = core_schema.definitions_schema(normalized, list(definitions.values()))
         self._invocation_defaults = frozenset(invocation_defaults)
-        self._validator = SchemaValidator(schema)
-        self._serializer = SchemaSerializer(schema)
+        self._validator = SchemaValidator(self._schema)
+        self._serializer = SchemaSerializer(self._schema)
+
+    def _definitions(self, value: object, definitions: dict[str, CoreSchema]) -> object:
+        if isinstance(value, dict):
+            node = cast(dict[str, object], value)
+            if node.get("type") == "definitions":
+                for definition in cast(list[CoreSchema], node["definitions"]):
+                    reference = definition.get("ref")
+                    if not isinstance(reference, str):
+                        raise TypeError("A shared schema definition must have a reference.")
+                    if reference not in definitions:
+                        definitions[reference] = definition
+                        definitions[reference] = cast(CoreSchema, self._definitions(definition, definitions))
+                return self._definitions(node["schema"], definitions)
+            return {key: self._definitions(item, definitions) for key, item in node.items()}
+        if isinstance(value, list):
+            return [self._definitions(item, definitions) for item in cast(list[object], value)]
+        return value
 
     def model_validate(self, value: object) -> ValidatedCommandPayload:
         fields_set: frozenset[str] = frozenset()

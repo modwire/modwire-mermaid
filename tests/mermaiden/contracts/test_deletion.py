@@ -100,3 +100,18 @@ class TestDeletion:
         ):
             application.apply(diagram, command)
         return application, diagram
+
+    @pytest.mark.parametrize("cascade", ("true", "false", 0, 1, 0.5, None))
+    @pytest.mark.parametrize("operation,identifier", (("remove_element", "group"), ("remove_relation", "message")))
+    def test_non_boolean_cascade_is_rejected_before_deleting_anything(
+        self, cascade: object, operation: str, identifier: str
+    ) -> None:
+        application, diagram = self._sequence_diagram_with_dependants()
+        before = application.snapshot(diagram).to_dict()
+        source = application.render(diagram)
+
+        with pytest.raises(RuntimeError, match="cascade"):
+            application.execute(diagram, operation, {"id": identifier, "cascade": cascade})
+
+        assert application.snapshot(diagram).to_dict() == before
+        assert application.render(diagram) == source

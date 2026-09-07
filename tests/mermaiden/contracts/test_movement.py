@@ -433,3 +433,24 @@ class TestElementMovement:
     def _mapping(self, value: object) -> Mapping[str, object]:
         assert isinstance(value, Mapping)
         return cast(Mapping[str, object], value)
+
+    @pytest.mark.parametrize("position", ("0", False, True, 0.5, -1, None))
+    def test_invalid_positions_preserve_order_and_allow_a_subsequent_valid_move(self, position: object) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("block")
+        application.execute(diagram, "add_block", {"id": "first", "label": "First"})
+        application.execute(diagram, "add_block", {"id": "second", "label": "Second"})
+        before = application.snapshot(diagram).to_dict()
+        source = application.render(diagram)
+
+        with pytest.raises(RuntimeError, match="position"):
+            application.execute(
+                diagram, "move_element", {"id": "second", "kind": "block_node", "parent_id": "", "position": position}
+            )
+
+        assert application.snapshot(diagram).to_dict() == before
+        assert application.render(diagram) == source
+        application.execute(
+            diagram, "move_element", {"id": "second", "kind": "block_node", "parent_id": "", "position": 0}
+        )
+        assert [element.id for element in diagram.root_elements] == ["second", "first"]

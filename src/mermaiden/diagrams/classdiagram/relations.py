@@ -1,6 +1,7 @@
 from enum import StrEnum
 
 from ...core.domain import Relation
+from .values.text import ClassIdentifier, OptionalClassText
 
 
 class ClassRelationKind(StrEnum):
@@ -13,6 +14,8 @@ class ClassRelationKind(StrEnum):
 
 
 class ClassRelation(Relation):
+    id: ClassIdentifier
+    label: OptionalClassText = ""
     relation_kind: ClassRelationKind = ClassRelationKind.ASSOCIATION
-    source_label: str = ""
-    target_label: str = ""
+    source_label: OptionalClassText = ""
+    target_label: OptionalClassText = ""

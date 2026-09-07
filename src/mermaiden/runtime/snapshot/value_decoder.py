@@ -33,7 +33,12 @@ class SnapshotValueDecoder:
             item_type = self.types.resolve(self.values.string(typed_value["$type"], "$type"), expected)
             values: dict[str, Any] = dict(self.values.mapping(typed_value.get("fields"), "fields"))
             hints: dict[str, Any] = get_type_hints(item_type, include_extras=True)
-            parameters = {name: self.decode(item, hints.get(name, object)) for name, item in values.items()}
+            parameters: dict[str, Any] = {}
+            for name, item in values.items():
+                try:
+                    parameters[name] = self.decode(item, hints.get(name, object))
+                except ValueError as error:
+                    raise ValueError(f"Invalid snapshot field '{name}': {error}") from error
             return item_type(**parameters)
         if origin in (tuple, list):
             if not isinstance(value, list):

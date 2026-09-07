@@ -52,7 +52,7 @@ class DiagramCommandCatalog:
         try:
             return self.payload(diagram.kind, command_name).model_validate(payload)
         except ValidationError as error:
-            raise ValueError(f"Command '{command_name}' has an invalid payload.") from error
+            raise ValueError(f"Command '{command_name}' has an invalid payload: {error}") from error
 
     def _methods(self, info: DiagramInfo) -> dict[str, Callable[..., ChangeReport | None]]:
         commands = {

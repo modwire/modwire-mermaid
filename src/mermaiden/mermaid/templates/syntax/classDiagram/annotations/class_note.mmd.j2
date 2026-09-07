@@ -1,1 +1,1 @@
-note for {{ annotation.targets[0].id }} "{{ annotation.text }}"{{ "\n" -}}
+note for {{ annotation.targets[0].id | mermaid_id("c") }} "{{ annotation.text | class_text }}"{{ "\n" -}}

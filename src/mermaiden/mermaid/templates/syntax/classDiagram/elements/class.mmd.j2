@@ -1,12 +1,13 @@
+{% import "templates/syntax/classDiagram/macros/members.mmd.j2" as members %}
 {% if element.comment %}%% {{ element.comment }}{{ "\n" -}}{% endif %}
-class {{ element.id }}[{{ element.label | mermaid_quote }}] { {{ "\n" -}}
+class {{ element.id | mermaid_id("c") }}["{{ element.label | class_text }}"] { {{ "\n" -}}
 {% for annotation in element.annotations %}
   <<{{ annotation }}>>{{ "\n" -}}
 {% endfor %}
 {% for attribute in element.attributes %}
-  {{ attribute }}{{ "\n" -}}
+  {{ members.attribute(attribute) }}{{ "\n" -}}
 {% endfor %}
 {% for method in element.methods %}
-  {{ method }}{{ "\n" -}}
+  {{ members.method(method) }}{{ "\n" -}}
 {% endfor %}
 {{ "}" }}{{ "\n" -}}

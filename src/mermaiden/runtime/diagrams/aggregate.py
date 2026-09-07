@@ -2,6 +2,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Never, Protocol
 
+from pydantic import StrictBool
 from wireup import injectable
 
 from ...core.domain import (
@@ -95,8 +96,10 @@ class DiagramAggregate(Diagram):
             self._reject(operation, str(error))
         return self._add_annotation(operation, annotation)
 
-    def remove_element(self, id: str, *, cascade: bool = False) -> ChangeReport:
+    def remove_element(self, id: str, *, cascade: StrictBool = False) -> ChangeReport:
         operation = f"remove element '{id}'"
+        if type(cascade) is not bool:
+            self._reject(operation, "cascade must be a boolean.")
         try:
             candidate, removed_ids = self.elements.remove(id)
             dependent_relations = tuple(
@@ -128,8 +131,10 @@ class DiagramAggregate(Diagram):
         )
         return self._apply(operation, candidate, removed)
 
-    def remove_relation(self, id: str, *, cascade: bool = False) -> ChangeReport:
+    def remove_relation(self, id: str, *, cascade: StrictBool = False) -> ChangeReport:
         operation = f"remove relation '{id}'"
+        if type(cascade) is not bool:
+            self._reject(operation, "cascade must be a boolean.")
         try:
             dependent_annotations = tuple(
                 annotation.id

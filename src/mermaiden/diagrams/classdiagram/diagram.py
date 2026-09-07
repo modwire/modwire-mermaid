@@ -9,8 +9,10 @@ from ..domain import DiagramDefinition, DiagramModel
 from .annotations import ClassNotes
 from .configuration import ClassDiagramConfiguration
 from .constraints import ClassDiagramConstraint
-from .elements import Class, ClassAttribute, ClassMethod, ClassNamespace
+from .elements import Class, ClassNamespace
 from .relations import ClassRelation, ClassRelationKind
+from .values.members import ClassAttribute, ClassMethod
+from .values.text import ClassIdentifier, ClassText, MemberName, OptionalClassText
 
 
 @injectable(as_type=DiagramModel, qualifier="classdiagram", lifetime="scoped")
@@ -32,13 +34,13 @@ class ClassDiagram(DiagramModel):
 
     def add_class(
         self,
-        id: str,
-        label: str,
+        id: ClassIdentifier,
+        label: ClassText,
         *,
-        attributes: Sequence[str | ClassAttribute] = (),
-        methods: Sequence[str | ClassMethod] = (),
-        annotations: Sequence[str] = (),
-        comment: str = "",
+        attributes: Sequence[ClassAttribute] = (),
+        methods: Sequence[ClassMethod] = (),
+        annotations: Sequence[MemberName] = (),
+        comment: OptionalClassText = "",
         parent_id: str = "",
     ) -> ChangeReport:
         return self._add_element(
@@ -54,20 +56,22 @@ class ClassDiagram(DiagramModel):
             parent_id,
         )
 
-    def add_namespace(self, id: str, label: str = "", *, comment: str = "") -> ChangeReport:
+    def add_namespace(
+        self, id: ClassIdentifier, label: OptionalClassText = "", *, comment: OptionalClassText = ""
+    ) -> ChangeReport:
         return self._add_element(
             f"add namespace '{id}'", ClassNamespace(id=id, label=label or id, elements=(), comment=comment)
         )
 
     def add_relation(
         self,
-        id: str,
-        source_id: str,
-        target_id: str,
+        id: ClassIdentifier,
+        source_id: ClassIdentifier,
+        target_id: ClassIdentifier,
         relation_kind: ClassRelationKind = ClassRelationKind.ASSOCIATION,
-        label: str = "",
-        source_label: str = "",
-        target_label: str = "",
+        label: OptionalClassText = "",
+        source_label: OptionalClassText = "",
+        target_label: OptionalClassText = "",
     ) -> ChangeReport:
         return self._add_relation(
             f"add class relation '{id}'",
@@ -81,5 +85,5 @@ class ClassDiagram(DiagramModel):
             ),
         )
 
-    def add_note(self, id: str, class_id: str, text: str) -> ChangeReport:
+    def add_note(self, id: ClassIdentifier, class_id: ClassIdentifier, text: ClassText) -> ChangeReport:
         return self._annotate(f"add class note '{id}'", ClassNotes(), id, {"text": text}, (class_id,))
