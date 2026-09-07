@@ -12,6 +12,10 @@ class ClassDiagramConstraint(DiagramConstraint):
 
 @injectable(as_type=ClassDiagramConstraint, qualifier="classdiagram_relations")
 class ClassRelationsAreBinary(ClassDiagramConstraint):
+    @property
+    def code(self) -> str:
+        return "structure.class_relations_are_binary"
+
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         classes = {item.id for item in diagram.walk_elements("") if isinstance(item, Class)}
         return tuple(

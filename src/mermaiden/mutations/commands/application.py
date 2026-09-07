@@ -22,7 +22,7 @@ class DiagramCommandApplication:
         try:
             payload = self.catalog.validate_command(diagram, command.operation, command.arguments)
         except (KeyError, ValueError) as error:
-            raise UnknownCommand(f"Command '{command.operation}' has invalid arguments.") from error
+            raise UnknownCommand(f"Command '{command.operation}' has invalid arguments: {error}") from error
         if isinstance(payload, MermaidDiagramConfiguration):
             diagram.configure(payload)
             return None

@@ -80,7 +80,7 @@ class TestApplication:
 
         assert fields["id"] == "example_class"
         assert fields["label"] == "Example Class"
-        assert 'class example_class["Example Class"] {' in application.render(diagram)
+        assert 'class c_v_example_class["Example Class"] {' in application.render(diagram)
 
     def test_replaces_the_complete_configuration_using_concrete_defaults(self) -> None:
         application = Application.create()
@@ -142,7 +142,7 @@ class TestApplication:
         payload = application.snapshot(diagram).to_dict()
         restored = application.restore(json.loads(json.dumps(payload)))
 
-        assert payload["version"] == 3
+        assert payload["version"] == 4
         assert "configuration" not in cast(Mapping[str, object], payload["properties"])
         assert not self._contains_none(payload["configuration"])
         assert application.snapshot(restored).to_dict() == payload

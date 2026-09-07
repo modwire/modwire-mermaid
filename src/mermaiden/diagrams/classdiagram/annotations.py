@@ -1,10 +1,26 @@
 from collections.abc import Mapping, Sequence
+from typing import Annotated
+
+from pydantic import Field, field_validator
 
 from ...core.domain import Annotation, OperationError, TargetKind, TargetRef
+from .values.text import ClassIdentifier, ClassText
 
 
 class ClassNote(Annotation):
-    text: str
+    id: ClassIdentifier
+    targets: Annotated[
+        tuple[Annotated[TargetRef, Field(json_schema_extra={"properties": {"kind": {"const": "element"}}})], ...],
+        Field(min_length=1, max_length=1),
+    ]
+    text: ClassText
+
+    @field_validator("targets")
+    @classmethod
+    def class_targets(cls, targets: tuple[TargetRef, ...]) -> tuple[TargetRef, ...]:
+        if any(target.kind is not TargetKind.ELEMENT for target in targets):
+            raise ValueError("Class notes require an element target.")
+        return targets
 
 
 class ClassNotes:

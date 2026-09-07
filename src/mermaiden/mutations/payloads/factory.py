@@ -115,7 +115,7 @@ class PydanticMutationPayloadFactory(MutationPayloadFactory):
             "kind": core_schema.typed_dict_field(core_schema.literal_schema([kind]), required=True),
             "parent_id": core_schema.typed_dict_field(core_schema.str_schema(), required=True),
             "position": core_schema.typed_dict_field(
-                core_schema.with_default_schema(core_schema.int_schema(ge=0), default=None),
+                core_schema.with_default_schema(core_schema.int_schema(ge=0, strict=True), default=None),
                 required=False,
             ),
         }

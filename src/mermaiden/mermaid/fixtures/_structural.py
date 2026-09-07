@@ -4,8 +4,8 @@ from ...diagrams.architecture.diagram import Architecture
 from ...diagrams.architecture.relations import AlignmentAxis, Port
 from ...diagrams.block.diagram import BlockDiagram
 from ...diagrams.classdiagram.diagram import ClassDiagram
-from ...diagrams.classdiagram.elements import ClassAttribute, ClassMethod
 from ...diagrams.classdiagram.relations import ClassRelationKind
+from ...diagrams.classdiagram.values.members import ClassAttribute, ClassMethod, ClassType
 from ...diagrams.domain import DiagramModel
 from ...diagrams.flowchart.diagram import Flowchart
 from ...diagrams.treeview.diagram import TreeView
@@ -60,8 +60,8 @@ def build_structural_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     classes.add_class(
         "Animal",
         "Animal species",
-        attributes=(ClassAttribute(name="name", type="String"),),
-        methods=(ClassMethod(name="sound", return_type="void"),),
+        attributes=(ClassAttribute(name="name", type=ClassType(name="String")),),
+        methods=(ClassMethod(name="sound", return_type=ClassType(name="void")),),
         annotations=("abstract",),
         parent_id="domain",
     )

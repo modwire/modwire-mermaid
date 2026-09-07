@@ -1,0 +1,15 @@
+{% macro type(value) -%}
+{{ value.name }}{% if value.arguments %}~{{ type(value.arguments[0]) }}~{% endif %}
+{%- endmacro %}
+{% macro visibility(value) -%}
+{{ {"public": "+", "private": "-", "protected": "#", "package": "~"}[value.value] }}
+{%- endmacro %}
+{% macro attribute(value) -%}
+{{ visibility(value.visibility) }}{{ type(value.type) }} {{ value.name }}{% if value.static %}${% endif %}
+{%- endmacro %}
+{% macro parameter(value) -%}
+{{ type(value.type) }} {{ value.name }}
+{%- endmacro %}
+{% macro method(value) -%}
+{{ visibility(value.visibility) }}{{ value.name }}({% for item in value.parameters %}{{ parameter(item) }}{% if not loop.last %}, {% endif %}{% endfor %}) {{ type(value.return_type) }}{{ {"instance": "", "static": "$", "abstract": "*"}[value.modifier.value] }}
+{%- endmacro %}

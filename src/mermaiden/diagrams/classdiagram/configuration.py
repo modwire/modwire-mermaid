@@ -1,5 +1,7 @@
+from pydantic import StrictBool
+
 from ..domain import MermaidDiagramConfiguration
 
 
 class ClassDiagramConfiguration(MermaidDiagramConfiguration):
-    pass
+    wrap: StrictBool = True

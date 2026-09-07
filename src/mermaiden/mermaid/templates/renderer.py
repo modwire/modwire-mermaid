@@ -30,6 +30,7 @@ class MermaidTemplateRenderer:
                 "mermaid_entity_quote": self.values.entity_quote,
                 "mermaid_number": self.values.number,
                 "mermaid_quote": self.values.quote,
+                "class_text": self.values.class_text,
                 "tree_label": self.values.tree_label,
             }
         )

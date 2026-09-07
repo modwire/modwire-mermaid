@@ -1,41 +1,35 @@
-from enum import StrEnum
+from pydantic import field_validator
 
-from ...core.domain import Container, Entity, ValueModel
-
-
-class Visibility(StrEnum):
-    PUBLIC = "+"
-    PRIVATE = "-"
-    PROTECTED = "#"
-    PACKAGE = "~"
-
-
-class ClassAttribute(ValueModel):
-    name: str
-    type: str = ""
-    visibility: Visibility = Visibility.PUBLIC
-
-    def __str__(self) -> str:
-        return f"{self.visibility}{self.type} {self.name}".strip()
-
-
-class ClassMethod(ValueModel):
-    name: str
-    parameters: tuple[str, ...] = ()
-    return_type: str = ""
-    visibility: Visibility = Visibility.PUBLIC
-
-    def __str__(self) -> str:
-        result = f"{self.visibility}{self.name}({', '.join(self.parameters)})"
-        return f"{result} {self.return_type}" if self.return_type else result
+from ...core.domain import Container, Entity
+from .values.members import ClassAttribute, ClassMethod
+from .values.text import ClassIdentifier, ClassText, MemberName, OptionalClassText
 
 
 class Class(Entity):
-    attributes: tuple[str | ClassAttribute, ...] = ()
-    methods: tuple[str | ClassMethod, ...] = ()
-    annotations: tuple[str, ...] = ()
-    comment: str = ""
+    id: ClassIdentifier
+    label: ClassText
+    attributes: tuple[ClassAttribute, ...] = ()
+    methods: tuple[ClassMethod, ...] = ()
+    annotations: tuple[MemberName, ...] = ()
+    comment: OptionalClassText = ""
+
+    @field_validator("attributes")
+    @classmethod
+    def unique_attributes(cls, values: tuple[ClassAttribute, ...]) -> tuple[ClassAttribute, ...]:
+        if len({item.name for item in values}) != len(values):
+            raise ValueError("Attribute names must be unique within a class.")
+        return values
+
+    @field_validator("methods")
+    @classmethod
+    def unique_methods(cls, values: tuple[ClassMethod, ...]) -> tuple[ClassMethod, ...]:
+        signatures = {(item.name, tuple(parameter.type for parameter in item.parameters)) for item in values}
+        if len(signatures) != len(values):
+            raise ValueError("Method overloads must have distinct names or ordered parameter types.")
+        return values
 
 
 class ClassNamespace(Container):
-    comment: str = ""
+    id: ClassIdentifier
+    label: ClassText
+    comment: OptionalClassText = ""
