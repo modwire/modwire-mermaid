@@ -1,3 +1,5 @@
+from collections.abc import Mapping
+from typing import cast
 from xml.etree import ElementTree
 
 import pytest
@@ -6,6 +8,25 @@ from mermaiden import Application
 
 
 class TestRenderValidation:
+    def test_class_text_preserves_slashes_in_mermaid_source_and_svg(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("classDiagram")
+        application.execute(diagram, "add_class", {"id": "diagrams/api", "label": "diagrams/api"})
+
+        snapshot = application.snapshot(diagram).to_dict()
+        source = application.render(diagram)
+        report = application.validate_render(diagram)
+        element = cast(Mapping[str, object], cast(list[object], snapshot["elements"])[0])
+        fields = cast(Mapping[str, object], element["fields"])
+
+        assert fields["id"] == "diagrams/api"
+        assert '["diagrams/api"]' in source
+        assert "#47;" not in source
+        assert report.success, report.diagnostics
+        svg = ElementTree.fromstring(report.svg)
+        assert any("diagrams/api" in "".join(element.itertext()) for element in svg.iter())
+        assert "&#47;" not in report.svg
+
     def test_class_text_is_rendered_literally_in_labels_relations_and_notes(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("classDiagram")
