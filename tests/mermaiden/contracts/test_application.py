@@ -54,6 +54,23 @@ class TestApplication:
         assert "participant first" in application.render(first)
         assert not second.root_elements
 
+    def test_reuses_catalog_metadata_across_applications(self) -> None:
+        with Application.create() as first, Application.create() as second:
+            assert first.diagram_description("sequenceDiagram") is second.diagram_description("sequenceDiagram")
+            assert first.command_payload("sequenceDiagram", "add_message") is second.command_payload(
+                "sequenceDiagram", "add_message"
+            )
+
+    def test_keeps_diagram_state_isolated_between_applications(self) -> None:
+        with Application.create() as first, Application.create() as second:
+            first_diagram = first.create_diagram("sequenceDiagram")
+            second_diagram = second.create_diagram("sequenceDiagram")
+
+            first.apply(first_diagram, DiagramCommand("add_participant", {"id": "first", "label": "First"}))
+
+            assert first_diagram is not second_diagram
+            assert not second_diagram.root_elements
+
     def test_rejects_calls_after_close(self) -> None:
         application = Application.create()
 

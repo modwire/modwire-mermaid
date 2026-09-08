@@ -10,9 +10,9 @@ The model has five concepts:
 
 Dependency direction is `flowchart/treeview -> runtime -> core`. Core is independent of
 Wireup and Mermaid. Runtime is a service-oriented building environment: frozen
-dataclass services receive dependencies through typed fields, while scoped
-`DiagramState` owns committed and staged state. No service has a handwritten
-constructor.
+dataclass services receive dependencies through typed fields, while transient
+diagram aggregates own isolated state. The process-owned composition root reuses
+immutable singleton services. No service has a handwritten constructor.
 
 Every mutation is executed by a Unit of Work. An Observer evaluates constraints
 before and after staging the candidate. Blocking violations roll the candidate

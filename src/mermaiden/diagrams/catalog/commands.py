@@ -1,5 +1,6 @@
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
+from functools import cached_property
 from inspect import Parameter, signature
 from typing import Annotated, cast, get_args, get_origin, get_type_hints
 
@@ -16,22 +17,41 @@ from .objects import DiagramObjectCatalog
 
 
 @injectable(lifetime="scoped")
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class DiagramCommandCatalog:
     registry: DiagramsApplication
     objects: DiagramObjectCatalog
     mutation_payloads: MutationPayloadFactory
 
     def names(self, info: DiagramInfo) -> tuple[str, ...]:
-        return tuple(sorted(self._methods(info)))
+        return tuple(sorted(self._commands[info.id]))
 
     def payload(self, diagram_id: str, command_name: str) -> CommandPayload:
-        info = self.registry.get(diagram_id)
-        method = self._methods(info).get(command_name)
-        if method is None:
-            raise KeyError(f"Unknown command '{command_name}' for diagram '{diagram_id}'.")
+        self.registry.get(diagram_id)
+        try:
+            return self._payloads[(diagram_id, command_name)]
+        except KeyError:
+            raise KeyError(f"Unknown command '{command_name}' for diagram '{diagram_id}'.") from None
+
+    @cached_property
+    def _commands(self) -> dict[str, dict[str, Callable[..., ChangeReport | None]]]:
+        return {info.id: self._methods(info) for info in self.registry}
+
+    @cached_property
+    def _payloads(self) -> dict[tuple[str, str], CommandPayload]:
+        return {
+            (info.id, name): self._payload(info, method)
+            for info in self.registry
+            for name, method in self._commands[info.id].items()
+        }
+
+    def _payload(
+        self,
+        info: DiagramInfo,
+        method: Callable[..., ChangeReport | None],
+    ) -> CommandPayload:
         if method is DiagramModel.configure:
-            configuration = self.registry.get_diagram(diagram_id).configuration
+            configuration = self.registry.get_diagram(info.id).configuration
             return cast(CommandPayload, configuration.__class__)
         if method is DiagramModel.update_element:
             return self.mutation_payloads.element(info.diagram_type.__name__, self.objects.elements(info))

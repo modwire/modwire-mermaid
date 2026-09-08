@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from functools import cached_property
 
 from wireup import injectable
 
@@ -8,13 +9,17 @@ from .renderer import MermaidTemplateRenderer
 
 
 @injectable(lifetime="scoped")
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class MermaidTemplateOwnership:
     templates: MermaidTemplateRenderer
     registry: DiagramsApplication
     catalog: DiagramCatalog
 
     def validate(self) -> None:
+        _ = self._validation
+
+    @cached_property
+    def _validation(self) -> None:
         for info in self.registry.available():
             diagram = self.catalog.describe(info.id)
             prefix = f"templates/syntax/{diagram.id}"

@@ -1,5 +1,6 @@
 from collections.abc import Mapping
 from dataclasses import dataclass
+from functools import cached_property
 
 from wireup import injectable
 
@@ -12,15 +13,22 @@ from .objects import DiagramObjectCatalog
 
 
 @injectable(lifetime="scoped")
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class DiagramCatalog:
     registry: DiagramsApplication
     objects: DiagramObjectCatalog
     commands: DiagramCommandCatalog
 
     def describe(self, diagram_id: str) -> DiagramDescription:
-        info = self.registry.get(diagram_id)
-        diagram = self.registry.get_diagram(diagram_id)
+        self.registry.get(diagram_id)
+        return self._descriptions[diagram_id]
+
+    @cached_property
+    def _descriptions(self) -> dict[str, DiagramDescription]:
+        return {info.id: self._describe(info) for info in self.registry}
+
+    def _describe(self, info: DiagramInfo) -> DiagramDescription:
+        diagram = self.registry.get_diagram(info.id)
         elements = self.objects.elements(info)
         return DiagramDescription(
             id=info.id,
@@ -35,8 +43,8 @@ class DiagramCatalog:
         )
 
     def validate(self) -> None:
-        for info in self.registry:
-            self.describe(info.id)
+        if len(self._descriptions) != len(self.registry.available()):
+            raise RuntimeError("Diagram catalog is incomplete.")
 
     def command_names(self, info: DiagramInfo) -> tuple[str, ...]:
         return self.commands.names(info)
