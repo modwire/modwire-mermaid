@@ -196,7 +196,10 @@ class TestMutationConformance:
                 with pytest.raises(RuntimeError, match="invalid arguments"):
                     application.apply(diagram, DiagramCommand(operation, {}))
 
-    def test_readme_mutation_example_executes_without_drift(self) -> None:
+    def test_readme_mutation_example_executes_without_drift(
+        self,
+        successful_mermaid_render: None,
+    ) -> None:
         readme = README_PATH.read_text(encoding="utf-8")
         before, separator, remainder = readme.partition(EXAMPLE_START)
         example, end_separator, after = remainder.partition(EXAMPLE_END)

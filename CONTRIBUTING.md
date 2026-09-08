@@ -10,5 +10,7 @@ those sources and run `make docs`; never hand-edit generated regions.
 
 ```bash
 uv sync --all-groups --frozen
-make verify
+make fast-check
+make integration
+make ci
 ```

@@ -14,6 +14,7 @@ from .domain import MERMAID_VERSION, MermaidCliResult
 @dataclass(frozen=True, slots=True)
 class MermaidCliRenderer:
     version: str = field(default=MERMAID_VERSION, init=False)
+    timeout_seconds: int = field(default=60, init=False)
 
     def render(self, sources: Mapping[str, str]) -> MermaidCliResult:
         with tempfile.TemporaryDirectory(prefix="mermaiden-") as temporary:
@@ -24,9 +25,6 @@ class MermaidCliRenderer:
             try:
                 process = subprocess.run(
                     (
-                        "npx",
-                        "--yes",
-                        f"--package=@mermaid-js/mermaid-cli@{self.version}",
                         "mmdc",
                         "-i",
                         str(input_path),
@@ -36,6 +34,14 @@ class MermaidCliRenderer:
                     capture_output=True,
                     check=False,
                     text=True,
+                    timeout=self.timeout_seconds,
+                )
+            except subprocess.TimeoutExpired:
+                return MermaidCliResult(
+                    None,
+                    {},
+                    f"Mermaid CLI exceeded the {self.timeout_seconds}-second timeout.",
+                    timed_out=True,
                 )
             except OSError as error:
                 return MermaidCliResult(None, {}, str(error))

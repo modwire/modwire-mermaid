@@ -325,7 +325,10 @@ class TestObjectUpdates:
         assert application.snapshot(restored).to_dict() == snapshot
         assert application.render(restored) == application.render(diagram)
 
-    def test_layout_sensitive_relation_updates_complete_full_render_validation(self) -> None:
+    def test_layout_sensitive_relation_updates_complete_full_render_validation(
+        self,
+        successful_mermaid_render: None,
+    ) -> None:
         application = Application.create()
         diagram = application.create_diagram("architecture-beta")
         for id in ("first_example", "second_example", "third_example"):

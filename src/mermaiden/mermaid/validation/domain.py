@@ -9,6 +9,7 @@ class MermaidRenderDiagnosticCode(StrEnum):
     DIAGRAM_INVALID = "diagram_invalid"
     SOURCE_GENERATION_FAILED = "source_generation_failed"
     RENDERER_UNAVAILABLE = "renderer_unavailable"
+    RENDER_TIMEOUT = "render_timeout"
     RENDER_FAILED = "render_failed"
     SVG_MISSING = "svg_missing"
     SVG_EMPTY = "svg_empty"
@@ -39,3 +40,4 @@ class MermaidCliResult:
     return_code: int | None
     svgs: Mapping[str, str]
     output: str = ""
+    timed_out: bool = False

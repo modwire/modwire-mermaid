@@ -13,9 +13,9 @@ pip install mermaiden
 ```
 
 The wheel declares and installs its Python dependencies. The `compat` CLI command needs no additional tools.
-Full SVG validation through `Application.validate_render()` shells
-out to Mermaid CLI and requires Node.js with npm/npx plus a compatible browser; set `PUPPETEER_EXECUTABLE_PATH` when
-using a system browser.
+Full SVG validation through `Application.validate_render()` shells out to the `mmdc` executable and requires a
+compatible browser. Development installs the exact Mermaid CLI version from `package-lock.json`; set
+`PUPPETEER_EXECUTABLE_PATH` when using a system browser.
 
 ## Quick start
 
@@ -140,13 +140,24 @@ with Application.create() as application:
 
 ## Development
 
-The repository uses a single host-mode CI target:
+The fast tier performs no npm, browser, network, or external Mermaid work:
+
+```sh
+make fast-check
+```
+
+Full SVG compatibility is an explicit integration tier. It installs the lock-pinned Mermaid CLI once and requires a
+compatible browser:
+
+```sh
+make integration
+```
+
+The complete host-mode CI target runs both tiers and package verification:
 
 ```sh
 make ci
 ```
-
-It installs the development dependencies, runs linting, type checks, tests, compatibility validation, Mermaid CLI rendering, and wheel validation.
 
 ## Release
 
