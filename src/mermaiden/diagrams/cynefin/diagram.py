@@ -12,7 +12,7 @@ from .elements import Domain, DomainKind
 from .relations import Transition
 
 
-@injectable(as_type=DiagramModel, qualifier="cynefin", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="cynefin", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class CynefinDiagram(DiagramModel):
     constraints: Sequence[CynefinDiagramConstraint]

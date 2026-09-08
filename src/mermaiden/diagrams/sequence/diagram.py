@@ -22,7 +22,7 @@ from .relations import (
 )
 
 
-@injectable(as_type=DiagramModel, qualifier="sequence", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="sequence", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class SequenceDiagram(DiagramModel):
     constraints: Sequence[SequenceConstraint]

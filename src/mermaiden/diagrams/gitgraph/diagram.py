@@ -11,7 +11,7 @@ from .constraints import GitGraphDiagramConstraint
 from .elements import Branch, Checkout, Commit, CommitType
 
 
-@injectable(as_type=DiagramModel, qualifier="gitgraph", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="gitgraph", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class GitGraphDiagram(DiagramModel):
     constraints: Sequence[GitGraphDiagramConstraint]

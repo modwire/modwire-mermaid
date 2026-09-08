@@ -12,7 +12,7 @@ from .elements import Entity, EntityAttribute, EntityAttributeDataType
 from .relations import Cardinality, EntityRelationship
 
 
-@injectable(as_type=DiagramModel, qualifier="er", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="er", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class EntityRelationshipDiagram(DiagramModel):
     constraints: Sequence[EntityRelationshipDiagramConstraint]

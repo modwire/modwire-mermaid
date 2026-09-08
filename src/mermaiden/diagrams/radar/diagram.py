@@ -11,7 +11,7 @@ from .constraints import RadarConstraint
 from .elements import RadarAxis, RadarCurve
 
 
-@injectable(as_type=DiagramModel, qualifier="radar", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="radar", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class Radar(DiagramModel):
     constraints: Sequence[RadarConstraint]

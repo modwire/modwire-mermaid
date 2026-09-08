@@ -11,7 +11,7 @@ from .constraints import GanttConstraint
 from .elements import GanttFinish, GanttStart, Marker, Milestone, Section, Task, TaskStatus
 
 
-@injectable(as_type=DiagramModel, qualifier="gantt", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="gantt", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class Gantt(DiagramModel):
     constraints: Sequence[GanttConstraint]

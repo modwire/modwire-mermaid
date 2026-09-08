@@ -11,7 +11,7 @@ from .constraints import BlockDiagramConstraint
 from .elements import BlockGroup, BlockNode, BlockSpace
 
 
-@injectable(as_type=DiagramModel, qualifier="block", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="block", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class BlockDiagram(DiagramModel):
     constraints: Sequence[BlockDiagramConstraint]

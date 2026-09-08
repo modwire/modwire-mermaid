@@ -54,6 +54,16 @@ class TestApplication:
         assert "participant first" in application.render(first)
         assert not second.root_elements
 
+    def test_rejects_calls_after_close(self) -> None:
+        application = Application.create()
+
+        with application:
+            assert application.available_diagrams()
+
+        application.close()
+        with pytest.raises(RuntimeError, match="Application is closed"):
+            application.available_diagrams()
+
     def test_coerces_json_enum_command_arguments(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("sequenceDiagram")

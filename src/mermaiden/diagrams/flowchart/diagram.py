@@ -26,7 +26,7 @@ from .elements import (
 from .relations import ConditionalFlow, Flow
 
 
-@injectable(as_type=DiagramModel, qualifier="flowchart", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="flowchart", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class Flowchart(DiagramModel):
     constraints: Sequence[FlowchartConstraint]

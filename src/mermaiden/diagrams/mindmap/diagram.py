@@ -11,7 +11,7 @@ from .constraints import MindmapConstraint
 from .elements import Bang, Circle, Cloud, Hexagon, MindmapNode, RoundedSquare, Square
 
 
-@injectable(as_type=DiagramModel, qualifier="mindmap", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="mindmap", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class Mindmap(DiagramModel):
     constraints: Sequence[MindmapConstraint]

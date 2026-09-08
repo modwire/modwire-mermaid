@@ -12,7 +12,7 @@ from .elements import SankeyNode
 from .relations import SankeyLink
 
 
-@injectable(as_type=DiagramModel, qualifier="sankey", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="sankey", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class Sankey(DiagramModel):
     constraints: Sequence[SankeyConstraint]

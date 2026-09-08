@@ -11,7 +11,7 @@ from .constraints import PieConstraint
 from .elements import PieSlice
 
 
-@injectable(as_type=DiagramModel, qualifier="pie", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="pie", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class PieDiagram(DiagramModel):
     constraints: Sequence[PieConstraint]
