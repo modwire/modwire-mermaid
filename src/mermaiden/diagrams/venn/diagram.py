@@ -5,7 +5,13 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    CommandDefault,
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from .configuration import VennConfiguration
 from .constraints import VennConstraint
 from .elements import VennSet, VennText, VennUnion
@@ -21,6 +27,21 @@ class Venn(DiagramModel):
         "Venn diagram",
         "venn",
         "VennDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=VennConfiguration,
+        elements=(VennSet, VennUnion, VennText),
+        relations=(),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature("add_set", {"id": str, "label": str, "size": CommandDefault(float | None, None)}),
+            DiagramCommandFeature(
+                "add_union",
+                {"id": str, "label": str, "set_ids": tuple[str, ...], "size": CommandDefault(float | None, None)},
+            ),
+            DiagramCommandFeature("add_text", {"id": str, "label": str, "parent_id": str}),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

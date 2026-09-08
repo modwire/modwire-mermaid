@@ -5,7 +5,13 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    CommandDefault,
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from .configuration import C4ContextDiagramConfiguration
 from .constraints import C4ContextDiagramConstraint
 from .elements import C4Element, Person, System, SystemDb, SystemQueue
@@ -22,6 +28,54 @@ class C4ContextDiagram(DiagramModel):
         "C4 Context diagram",
         "c4",
         "C4DiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=C4ContextDiagramConfiguration,
+        elements=(C4Element, Person, System, SystemDb, SystemQueue),
+        relations=(Relationship,),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature("add_person", {"id": str, "label": str, "description": CommandDefault(str, "")}),
+            DiagramCommandFeature(
+                "add_system",
+                {
+                    "id": str,
+                    "label": str,
+                    "description": CommandDefault(str, ""),
+                    "technology": CommandDefault(str, ""),
+                },
+            ),
+            DiagramCommandFeature(
+                "add_database",
+                {
+                    "id": str,
+                    "label": str,
+                    "description": CommandDefault(str, ""),
+                    "technology": CommandDefault(str, ""),
+                },
+            ),
+            DiagramCommandFeature(
+                "add_queue",
+                {
+                    "id": str,
+                    "label": str,
+                    "description": CommandDefault(str, ""),
+                    "technology": CommandDefault(str, ""),
+                },
+            ),
+            DiagramCommandFeature(
+                "add_relationship",
+                {
+                    "id": str,
+                    "source_id": str,
+                    "target_id": str,
+                    "label": str,
+                    "direction": CommandDefault(RelationshipDirection, RelationshipDirection.DEFAULT),
+                },
+            ),
+            DiagramCommandFeature("set_relationship_label_offset", {"id": str, "offset_x": int, "offset_y": int}),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

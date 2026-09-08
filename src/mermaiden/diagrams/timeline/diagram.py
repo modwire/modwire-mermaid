@@ -5,7 +5,13 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    CommandDefault,
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from .configuration import TimelineDiagramConfiguration
 from .constraints import TimelineConstraint
 from .elements import TimelineEvent, TimelinePeriod, TimelineSection
@@ -22,6 +28,19 @@ class Timeline(DiagramModel):
         "Timeline",
         "timeline",
         "TimelineDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=TimelineDiagramConfiguration,
+        elements=(TimelineSection, TimelinePeriod, TimelineEvent),
+        relations=(),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature("set_title", {"title": str}),
+            DiagramCommandFeature("add_section", {"id": str, "label": str}),
+            DiagramCommandFeature("add_period", {"id": str, "label": str, "section_id": CommandDefault(str, "")}),
+            DiagramCommandFeature("add_event", {"id": str, "label": str, "period_id": str}),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

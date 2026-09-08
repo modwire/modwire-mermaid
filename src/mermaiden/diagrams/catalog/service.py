@@ -6,7 +6,7 @@ from wireup import injectable
 
 from ...domain import CommandPayload, ValidatedCommandPayload
 from ..application import DiagramsApplication
-from ..domain import DiagramInfo, DiagramModel
+from ..domain import DiagramCommandFeature, DiagramInfo, DiagramModel
 from .commands import DiagramCommandCatalog
 from .models import DiagramDescription
 from .objects import DiagramObjectCatalog
@@ -51,6 +51,9 @@ class DiagramCatalog:
 
     def command_payload(self, diagram_id: str, command_name: str) -> CommandPayload:
         return self.commands.payload(diagram_id, command_name)
+
+    def command_feature(self, diagram_id: str, command_name: str) -> DiagramCommandFeature:
+        return self.commands.feature(diagram_id, command_name)
 
     def validate_command(
         self,

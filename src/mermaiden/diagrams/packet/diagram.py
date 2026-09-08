@@ -5,7 +5,13 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    CommandDefault,
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from .configuration import PacketConfiguration
 from .constraints import PacketConstraint
 from .elements import PacketField
@@ -22,6 +28,20 @@ class Packet(DiagramModel):
         "Packet diagram",
         "packet",
         "PacketDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=PacketConfiguration,
+        elements=(PacketField,),
+        relations=(),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature("set_title", {"title": str}),
+            DiagramCommandFeature(
+                "add_field", {"id": str, "label": str, "start": int, "end": CommandDefault(int | None, None)}
+            ),
+            DiagramCommandFeature("add_bits", {"id": str, "label": str, "bits": int}),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

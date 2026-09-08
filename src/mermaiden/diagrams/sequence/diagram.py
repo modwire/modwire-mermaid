@@ -6,8 +6,15 @@ from pydantic import Field
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
-from .annotations import NotePosition, SequenceNotes
+from ..domain import (
+    CommandDefault,
+    CommandVariadic,
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
+from .annotations import NotePosition, SequenceNote, SequenceNotes
 from .configuration import SequenceDiagramConfiguration
 from .constraints import SequenceConstraint
 from .elements import Participant, ParticipantBox, ParticipantKind
@@ -32,6 +39,53 @@ class SequenceDiagram(DiagramModel):
         "Sequence diagram",
         "sequence",
         "SequenceDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=SequenceDiagramConfiguration,
+        elements=(Participant, ParticipantBox),
+        relations=(Message, ParticipantEvent, Control, Directive),
+        annotations=(SequenceNote,),
+        commands=(
+            DiagramCommandFeature("add_box", {"id": str, "label": str, "color": CommandDefault(str, "")}),
+            DiagramCommandFeature(
+                "add_participant",
+                {
+                    "id": str,
+                    "label": str,
+                    "kind": CommandDefault(ParticipantKind, ParticipantKind.PARTICIPANT),
+                    "box_id": CommandDefault(str, ""),
+                    "created": CommandDefault(bool, False),
+                },
+            ),
+            DiagramCommandFeature(
+                "add_message",
+                {
+                    "id": str,
+                    "source_id": str,
+                    "target_id": str,
+                    "label": str,
+                    "kind": CommandDefault(MessageKind, MessageKind.SOLID),
+                    "activate": CommandDefault(bool, False),
+                    "deactivate": CommandDefault(bool, False),
+                },
+            ),
+            DiagramCommandFeature("activate", {"id": str, "participant_id": str}),
+            DiagramCommandFeature("deactivate", {"id": str, "participant_id": str}),
+            DiagramCommandFeature("create", {"id": str, "participant_id": str}),
+            DiagramCommandFeature("destroy", {"id": str, "participant_id": str}),
+            DiagramCommandFeature("control", {"id": str, "kind": ControlKind, "label": CommandDefault(str, "")}),
+            DiagramCommandFeature("autonumber", {"id": str}),
+            DiagramCommandFeature(
+                "add_note",
+                {
+                    "id": str,
+                    "text": str,
+                    "participant_ids": CommandVariadic(Annotated[tuple[str, ...], Field(min_length=1, max_length=2)]),
+                    "position": CommandDefault(NotePosition, NotePosition.OVER),
+                },
+            ),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

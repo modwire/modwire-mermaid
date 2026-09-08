@@ -5,7 +5,12 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from .configuration import EventModelingDiagramConfiguration
 from .constraints import EventModelingDiagramConstraint
 from .elements import Actor, Command, Event, Swimlane, View
@@ -25,6 +30,21 @@ class EventModelingDiagram(DiagramModel):
         "Event Modeling diagram",
         "eventmodeling",
         "EventModelingDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=EventModelingDiagramConfiguration,
+        elements=(Event, Command, View, Actor, Swimlane),
+        relations=(Flow,),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature("add_swimlane", {"id": str, "label": str}),
+            DiagramCommandFeature("add_actor", {"id": str, "label": str, "swimlane_id": str}),
+            DiagramCommandFeature("add_command", {"id": str, "label": str, "swimlane_id": str}),
+            DiagramCommandFeature("add_view", {"id": str, "label": str, "swimlane_id": str}),
+            DiagramCommandFeature("add_event", {"id": str, "label": str, "swimlane_id": str}),
+            DiagramCommandFeature("add_flow", {"id": str, "source_id": str, "target_id": str}),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

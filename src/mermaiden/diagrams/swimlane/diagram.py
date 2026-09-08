@@ -5,7 +5,13 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    CommandDefault,
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from ..flowchart.elements import Direction
 from .configuration import SwimlaneConfiguration
 from .constraints.domain import SwimlaneConstraint
@@ -24,6 +30,28 @@ class SwimlaneDiagram(DiagramModel):
         "Swimlane diagram",
         "swimlane",
         "SwimlaneDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=SwimlaneConfiguration,
+        elements=(Swimlane, SwimlaneNode, Activity, Start, End, Decision, Connector),
+        relations=(Flow, ConditionalFlow),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature("add_lane", {"id": str, "label": str}),
+            DiagramCommandFeature("add_activity", {"id": str, "label": str, "lane_id": str}),
+            DiagramCommandFeature("add_start", {"id": str, "label": str, "lane_id": str}),
+            DiagramCommandFeature("add_end", {"id": str, "label": str, "lane_id": str}),
+            DiagramCommandFeature("add_decision", {"id": str, "label": str, "lane_id": str}),
+            DiagramCommandFeature("add_connector", {"id": str, "label": str, "lane_id": str}),
+            DiagramCommandFeature(
+                "add_flow", {"id": str, "source_id": str, "target_id": str, "label": CommandDefault(str, "")}
+            ),
+            DiagramCommandFeature(
+                "add_conditional_flow", {"id": str, "source_id": str, "target_id": str, "condition": str}
+            ),
+            DiagramCommandFeature("remove_flow", {"id": str}),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

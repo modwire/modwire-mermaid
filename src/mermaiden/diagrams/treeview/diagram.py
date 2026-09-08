@@ -5,8 +5,14 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
-from .annotations import TreeAnnotations
+from ..domain import (
+    CommandDefault,
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
+from .annotations import TreeAnnotation, TreeAnnotations
 from .configuration import TreeViewDiagramConfiguration
 from .constraints.domain import TreeViewConstraint
 from .elements import TreeItem, TreeItemType
@@ -23,6 +29,30 @@ class TreeView(DiagramModel):
         "Tree view",
         "treeView",
         "TreeViewDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=TreeViewDiagramConfiguration,
+        elements=(TreeItem,),
+        relations=(TreeBranch,),
+        annotations=(TreeAnnotation,),
+        commands=(
+            DiagramCommandFeature("add_item", {"id": str, "label": str}),
+            DiagramCommandFeature("add_directory", {"id": str, "label": str}),
+            DiagramCommandFeature("add_file", {"id": str, "label": str}),
+            DiagramCommandFeature("classify_item", {"id": str, "item_type": TreeItemType}),
+            DiagramCommandFeature("add_branch", {"id": str, "parent_id": str, "child_id": str}),
+            DiagramCommandFeature(
+                "add_annotation",
+                {
+                    "id": str,
+                    "element_id": str,
+                    "highlight": CommandDefault(bool, False),
+                    "icon": CommandDefault(str, ""),
+                    "description": CommandDefault(str, ""),
+                },
+            ),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

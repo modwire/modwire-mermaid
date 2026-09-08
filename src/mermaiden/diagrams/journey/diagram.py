@@ -5,7 +5,12 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from .configuration import JourneyDiagramConfiguration
 from .constraints import JourneyConstraint
 from .elements import JourneySection, JourneyTask
@@ -22,6 +27,20 @@ class Journey(DiagramModel):
         "User journey",
         "journey",
         "JourneyDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=JourneyDiagramConfiguration,
+        elements=(JourneySection, JourneyTask),
+        relations=(),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature("set_title", {"title": str}),
+            DiagramCommandFeature("add_section", {"id": str, "label": str}),
+            DiagramCommandFeature(
+                "add_task", {"id": str, "label": str, "score": int, "actors": tuple[str, ...], "section_id": str}
+            ),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

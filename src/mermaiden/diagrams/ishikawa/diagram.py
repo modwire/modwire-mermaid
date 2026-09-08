@@ -5,10 +5,17 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    CommandDefault,
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from .configuration import IshikawaDiagramConfiguration
 from .constraints import IshikawaDiagramConstraint
 from .elements import Category, Cause, Effect
+from .relations import CauseRelation
 
 
 @injectable(as_type=DiagramModel, qualifier="ishikawa", lifetime="transient")
@@ -21,6 +28,18 @@ class IshikawaDiagram(DiagramModel):
         "Ishikawa diagram",
         "ishikawa",
         "IshikawaDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=IshikawaDiagramConfiguration,
+        elements=(Effect, Cause, Category),
+        relations=(CauseRelation,),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature("add_effect", {"id": str, "label": str}),
+            DiagramCommandFeature("add_category", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
+            DiagramCommandFeature("add_cause", {"id": str, "label": str, "parent_id": str}),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

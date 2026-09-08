@@ -5,7 +5,13 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    CommandDefault,
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from .configuration import BlockDiagramConfiguration
 from .constraints import BlockDiagramConstraint
 from .elements import BlockGroup, BlockNode, BlockSpace
@@ -22,6 +28,37 @@ class BlockDiagram(DiagramModel):
         "Block diagram",
         "block",
         "BlockDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=BlockDiagramConfiguration,
+        elements=(BlockGroup, BlockNode, BlockSpace),
+        relations=(),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature("set_columns", {"columns": int}),
+            DiagramCommandFeature(
+                "add_group",
+                {
+                    "id": str,
+                    "label": str,
+                    "columns": CommandDefault(int | None, None),
+                    "span": CommandDefault(int | None, None),
+                },
+            ),
+            DiagramCommandFeature(
+                "add_block",
+                {
+                    "id": str,
+                    "label": str,
+                    "span": CommandDefault(int | None, None),
+                    "parent_id": CommandDefault(str, ""),
+                },
+            ),
+            DiagramCommandFeature(
+                "add_space", {"id": str, "span": CommandDefault(int | None, None), "parent_id": CommandDefault(str, "")}
+            ),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

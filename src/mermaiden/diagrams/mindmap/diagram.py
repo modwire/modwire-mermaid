@@ -5,7 +5,12 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from .configuration import MindmapDiagramConfiguration
 from .constraints import MindmapConstraint
 from .elements import Bang, Circle, Cloud, Hexagon, MindmapNode, RoundedSquare, Square
@@ -21,6 +26,23 @@ class Mindmap(DiagramModel):
         "Mindmap",
         "mindmap",
         "MindmapDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=MindmapDiagramConfiguration,
+        elements=(MindmapNode, Square, RoundedSquare, Circle, Bang, Cloud, Hexagon),
+        relations=(),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature("add_root", {"id": str, "label": str}),
+            DiagramCommandFeature("add_node", {"id": str, "label": str, "parent_id": str}),
+            DiagramCommandFeature("add_square", {"id": str, "label": str, "parent_id": str}),
+            DiagramCommandFeature("add_rounded_square", {"id": str, "label": str, "parent_id": str}),
+            DiagramCommandFeature("add_circle", {"id": str, "label": str, "parent_id": str}),
+            DiagramCommandFeature("add_bang", {"id": str, "label": str, "parent_id": str}),
+            DiagramCommandFeature("add_cloud", {"id": str, "label": str, "parent_id": str}),
+            DiagramCommandFeature("add_hexagon", {"id": str, "label": str, "parent_id": str}),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
