@@ -1,19 +1,20 @@
-from ...diagrams.application import DiagramsApplication
-from ...diagrams.domain import DiagramModel
-from ...diagrams.eventmodeling.diagram import EventModelingDiagram
-from ...diagrams.journey.diagram import Journey
-from ...diagrams.sequence.annotations import NotePosition
-from ...diagrams.sequence.diagram import SequenceDiagram
-from ...diagrams.sequence.elements import ParticipantKind
-from ...diagrams.sequence.relations import ControlKind, MessageKind
-from ...diagrams.state.annotations import NotePosition as StateNotePosition
-from ...diagrams.state.diagram import StateDiagram
-from ...diagrams.swimlane.diagram import SwimlaneDiagram
-from ...diagrams.timeline.diagram import Timeline
+import mermaiden.diagrams.state.annotations
+from mermaiden import Application
+from mermaiden.diagrams.eventmodeling.diagram import EventModelingDiagram
+from mermaiden.diagrams.journey.diagram import Journey
+from mermaiden.diagrams.sequence.annotations import NotePosition
+from mermaiden.diagrams.sequence.diagram import SequenceDiagram
+from mermaiden.diagrams.sequence.elements import ParticipantKind
+from mermaiden.diagrams.sequence.relations import ControlKind, MessageKind
+from mermaiden.diagrams.state.diagram import StateDiagram
+from mermaiden.diagrams.swimlane.diagram import SwimlaneDiagram
+from mermaiden.diagrams.timeline.diagram import Timeline
+
+from .models import DiagramFixture
 
 
-def build_behavioral_fixtures(registry: DiagramsApplication) -> dict[str, DiagramModel]:
-    sequence = registry.get_diagram("sequenceDiagram")
+def build_behavioral_fixtures(application: Application) -> tuple[DiagramFixture, ...]:
+    sequence = application.create_diagram("sequenceDiagram")
     assert isinstance(sequence, SequenceDiagram)
     sequence.add_box("clients", "Clients", "#E3F2FD")
     sequence.add_participant("user", "User", ParticipantKind.ACTOR, "clients")
@@ -41,7 +42,7 @@ def build_behavioral_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     sequence.add_note("web_note", "Gateway", "web", position=NotePosition.RIGHT)
     sequence.add_note("sequence_note", "Asynchronous", "api", "events", position=NotePosition.OVER)
 
-    swimlane = registry.get_diagram("swimlane-beta")
+    swimlane = application.create_diagram("swimlane-beta")
     assert isinstance(swimlane, SwimlaneDiagram)
     swimlane.add_lane("customer", "Customer")
     swimlane.add_lane("support", "Support")
@@ -61,7 +62,7 @@ def build_behavioral_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     swimlane.add_flow("handoff_answer", "handoff", "answer")
     swimlane.add_flow("answer_receive", "answer", "receive")
 
-    state = registry.get_diagram("stateDiagram-v2")
+    state = application.create_diagram("stateDiagram-v2")
     assert isinstance(state, StateDiagram)
     state.add_state("still", "Still")
     state.add_state("moving", "Moving")
@@ -93,9 +94,14 @@ def build_behavioral_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     state.add_transition("end_num_lock", "num_lock_on", "active_final", composite_id="active")
     state.add_transition("start_caps_lock", "active_initial", "caps_lock_off", composite_id="active")
     state.add_transition("end_caps_lock", "caps_lock_off", "active_final", composite_id="active")
-    state.add_note("moving_note", "moving", "A moving system", StateNotePosition.RIGHT)
+    state.add_note(
+        "moving_note",
+        "moving",
+        "A moving system",
+        mermaiden.diagrams.state.annotations.NotePosition.RIGHT,
+    )
 
-    timeline = registry.get_diagram("timeline")
+    timeline = application.create_diagram("timeline")
     assert isinstance(timeline, Timeline)
     timeline.set_title("Mermaiden history")
     timeline.add_section("foundation", "Foundation")
@@ -103,14 +109,14 @@ def build_behavioral_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     timeline.add_event("prototype", "Prototype", "2024")
     timeline.add_event("release", "First release", "2024")
 
-    journey = registry.get_diagram("journey")
+    journey = application.create_diagram("journey")
     assert isinstance(journey, Journey)
     journey.set_title("Working day")
     journey.add_section("work", "Go to work")
     journey.add_task("tea", "Make tea", 5, ("Me",), "work")
     journey.add_task("work_task", "Do work", 1, ("Me", "Cat"), "work")
 
-    eventmodeling = registry.get_diagram("eventmodeling")
+    eventmodeling = application.create_diagram("eventmodeling")
     assert isinstance(eventmodeling, EventModelingDiagram)
     eventmodeling.add_swimlane("checkout", "Checkout")
     eventmodeling.add_actor("cart_ui", "Cart UI", "checkout")
@@ -121,11 +127,7 @@ def build_behavioral_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     eventmodeling.add_flow("record", "add_item", "item_added")
     eventmodeling.add_flow("project", "item_added", "cart_items")
 
-    return {
-        "sequence": sequence,
-        "swimlane": swimlane,
-        "state": state,
-        "timeline": timeline,
-        "journey": journey,
-        "eventmodeling": eventmodeling,
-    }
+    builder = build_behavioral_fixtures.__name__
+    return tuple(
+        DiagramFixture(diagram, builder) for diagram in (sequence, swimlane, state, timeline, journey, eventmodeling)
+    )

@@ -124,18 +124,8 @@ class InstalledWheelSmoke:
 
     def verify_cli(self, temporary: Path) -> None:
         help_result = self.run_cli(temporary, "--help")
-        if not all(command in help_result.stdout for command in ("fixtures", "preview", "compat")):
-            raise RuntimeError("The installed CLI help does not expose every public command.")
-
-        fixtures = temporary / "fixtures"
-        self.run_cli(temporary, "fixtures", "--output", str(fixtures))
-        if not any(fixtures.glob("*.mmd")):
-            raise RuntimeError("The installed CLI did not write Mermaid fixtures.")
-
-        preview = temporary / "preview" / "index.html"
-        self.run_cli(temporary, "preview", "--output", str(preview))
-        if not preview.exists() or not preview.read_text(encoding="utf-8"):
-            raise RuntimeError("The installed CLI did not write its preview.")
+        if "compat" not in help_result.stdout:
+            raise RuntimeError("The installed CLI help does not expose compatibility validation.")
 
         self.run_cli(temporary, "compat")
 

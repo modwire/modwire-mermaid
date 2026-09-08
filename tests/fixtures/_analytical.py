@@ -1,20 +1,21 @@
-from ...diagrams.application import DiagramsApplication
-from ...diagrams.domain import DiagramModel
-from ...diagrams.er.diagram import EntityRelationshipDiagram
-from ...diagrams.er.relations import Cardinality
-from ...diagrams.mindmap.diagram import Mindmap
-from ...diagrams.packet.diagram import Packet
-from ...diagrams.pie.diagram import PieDiagram
-from ...diagrams.radar.diagram import Radar
-from ...diagrams.requirement.diagram import RequirementDiagram
-from ...diagrams.requirement.elements import RequirementType, Risk, VerificationMethod
-from ...diagrams.requirement.relations import RequirementRelationKind
-from ...diagrams.sankey.diagram import Sankey
-from ...diagrams.venn.diagram import Venn
+from mermaiden import Application
+from mermaiden.diagrams.er.diagram import EntityRelationshipDiagram
+from mermaiden.diagrams.er.relations import Cardinality
+from mermaiden.diagrams.mindmap.diagram import Mindmap
+from mermaiden.diagrams.packet.diagram import Packet
+from mermaiden.diagrams.pie.diagram import PieDiagram
+from mermaiden.diagrams.radar.diagram import Radar
+from mermaiden.diagrams.requirement.diagram import RequirementDiagram
+from mermaiden.diagrams.requirement.elements import RequirementType, Risk, VerificationMethod
+from mermaiden.diagrams.requirement.relations import RequirementRelationKind
+from mermaiden.diagrams.sankey.diagram import Sankey
+from mermaiden.diagrams.venn.diagram import Venn
+
+from .models import DiagramFixture
 
 
-def build_analytical_fixtures(registry: DiagramsApplication) -> dict[str, DiagramModel]:
-    requirements = registry.get_diagram("requirementDiagram")
+def build_analytical_fixtures(application: Application) -> tuple[DiagramFixture, ...]:
+    requirements = application.create_diagram("requirementDiagram")
     assert isinstance(requirements, RequirementDiagram)
     requirements.add_requirement(
         "system",
@@ -74,7 +75,7 @@ def build_analytical_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     requirements.add_relation("policy_refines_system", "policy", "system", RequirementRelationKind.REFINES)
     requirements.add_relation("device_traces_policy", "device", "policy", RequirementRelationKind.TRACES)
 
-    mindmap = registry.get_diagram("mindmap")
+    mindmap = application.create_diagram("mindmap")
     assert isinstance(mindmap, Mindmap)
     mindmap.add_root("root", "Mermaiden")
     mindmap.add_node("domain", "Domain model", "root")
@@ -85,7 +86,7 @@ def build_analytical_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     mindmap.add_cloud("cloud", "Cloud", "runtime")
     mindmap.add_hexagon("quality", "Quality", "root")
 
-    pie = registry.get_diagram("pie")
+    pie = application.create_diagram("pie")
     assert isinstance(pie, PieDiagram)
     pie.set_title("Adopted pets")
     pie.show_values()
@@ -93,7 +94,7 @@ def build_analytical_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     pie.add_slice("cats", "Cats", 85)
     pie.add_slice("rats", "Rats", 15)
 
-    sankey = registry.get_diagram("sankey")
+    sankey = application.create_diagram("sankey")
     assert isinstance(sankey, Sankey)
     sankey.add_node("grid", "Electricity grid")
     sankey.add_node("industry", "Industry")
@@ -101,7 +102,7 @@ def build_analytical_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     sankey.add_flow("grid_industry", "grid", "industry", 342.165)
     sankey.add_flow("grid_homes", "grid", "homes", 113.726)
 
-    venn = registry.get_diagram("venn-beta")
+    venn = application.create_diagram("venn-beta")
     assert isinstance(venn, Venn)
     venn.add_set("frontend", "Frontend", 20)
     venn.add_text("react", "React", "frontend")
@@ -110,7 +111,7 @@ def build_analytical_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     venn.add_union("shared", "Shared", ("frontend", "backend"), 3)
     venn.add_text("openapi", "OpenAPI", "shared")
 
-    radar = registry.get_diagram("radar-beta")
+    radar = application.create_diagram("radar-beta")
     assert isinstance(radar, Radar)
     radar.set_title("Restaurant comparison")
     radar.add_axis("food", "Food quality")
@@ -122,7 +123,7 @@ def build_analytical_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     radar.set_graticule("polygon")
     radar.set_ticks(5)
 
-    packet = registry.get_diagram("packet")
+    packet = application.create_diagram("packet")
     assert isinstance(packet, Packet)
     packet.set_title("UDP packet")
     packet.add_bits("source", "Source port", 16)
@@ -130,7 +131,7 @@ def build_analytical_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     packet.add_field("length", "Length", 32, 47)
     packet.add_field("checksum", "Checksum", 48, 63)
 
-    er = registry.get_diagram("erDiagram")
+    er = application.create_diagram("erDiagram")
     assert isinstance(er, EntityRelationshipDiagram)
     er.add_entity("CUSTOMER", "Customer")
     er.add_attribute("customer_id", "id", "int", "CUSTOMER", ("PK",))
@@ -144,13 +145,7 @@ def build_analytical_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
         target_cardinality=Cardinality.ZERO_OR_MORE,
     )
 
-    return {
-        "requirement": requirements,
-        "mindmap": mindmap,
-        "pie": pie,
-        "sankey": sankey,
-        "venn": venn,
-        "radar": radar,
-        "packet": packet,
-        "er": er,
-    }
+    builder = build_analytical_fixtures.__name__
+    return tuple(
+        DiagramFixture(diagram, builder) for diagram in (requirements, mindmap, pie, sankey, venn, radar, packet, er)
+    )

@@ -1,4 +1,4 @@
-.PHONY: ci compat diagrams-test diagrams-validate format mutation-contract package-check
+.PHONY: ci compat diagrams-validate format mutation-contract package-check
 
 VENV := .venv
 PYTHON := $(VENV)/bin/python
@@ -10,16 +10,7 @@ compat: $(PYTHON)
 	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli compat
 
 diagrams-validate: $(PYTHON)
-	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli fixtures --output .dev/preview
-	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli preview --output .dev/preview/index.html
-	@mkdir -p .dev/preview/.validation
-	@: > .dev/preview/.validation/diagrams.md; for file in .dev/preview/*.mmd; do printf '## %s\n\n```mermaid\n' "$$(basename "$$file" .mmd)" >> .dev/preview/.validation/diagrams.md; awk '1' "$$file" >> .dev/preview/.validation/diagrams.md; printf '```\n\n' >> .dev/preview/.validation/diagrams.md; done
-	@npx --yes --package=@mermaid-js/mermaid-cli mmdc -i .dev/preview/.validation/diagrams.md -o .dev/preview/.validation/diagrams.rendered.md
-	@index=1; for file in .dev/preview/*.mmd; do mv ".dev/preview/.validation/diagrams.rendered-$$index.svg" ".dev/preview/.validation/$$(basename "$$file" .mmd).svg"; index=$$((index + 1)); done
-	@! rg -q 'Syntax error in text|Parse error|UnknownDiagramError|TypeError' .dev/preview/.validation --glob '*.svg'
-
-diagrams-test: diagrams-validate
-	open .dev/preview/index.html
+	@$(PYTHON) -m pytest tests/fixtures tests/mermaiden/cli/test_compatibility.py
 
 format: $(PYTHON)
 	@$(PYTHON) -m ruff format .

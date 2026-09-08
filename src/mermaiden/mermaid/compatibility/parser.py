@@ -23,7 +23,7 @@ class MermaidSyntaxValidator:
 
     def validate(self, sources: Mapping[str, str]) -> tuple[MermaidSyntaxViolation, ...]:
         violations = tuple(
-            MermaidSyntaxViolation(diagram_id, "compatibility fixture has no diagram content")
+            MermaidSyntaxViolation(diagram_id, "source has no diagram content")
             for diagram_id, source in sources.items()
             if not self.has_content(source)
         )
