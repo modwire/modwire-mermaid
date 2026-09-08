@@ -11,7 +11,7 @@ from .constraints import IshikawaDiagramConstraint
 from .elements import Category, Cause, Effect
 
 
-@injectable(as_type=DiagramModel, qualifier="ishikawa", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="ishikawa", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class IshikawaDiagram(DiagramModel):
     constraints: Sequence[IshikawaDiagramConstraint]

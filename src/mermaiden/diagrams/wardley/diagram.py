@@ -13,7 +13,7 @@ from .elements import Component, ComponentDecorator, Evolution, Pipeline
 from .relations import Dependency
 
 
-@injectable(as_type=DiagramModel, qualifier="wardley", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="wardley", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class WardleyDiagram(DiagramModel):
     constraints: Sequence[WardleyDiagramConstraint]

@@ -22,28 +22,30 @@ using a system browser.
 ```python
 from mermaiden import Application
 
-application = Application.create()
-diagrams = application.available_diagrams()
-print(diagrams)
+with Application.create() as application:
+    diagrams = application.available_diagrams()
+    print(diagrams)
 ```
 
 `Application.available_diagrams()` returns the supported diagram catalog. `Application.diagram_info(diagram_id)` returns the typed diagram API for an individual syntax. CLI workflows are available through `python -m mermaiden.cli`.
 
 ## Application API
 
-`Application` is the boundary for API and persistence adapters. Create a diagram by Mermaid syntax id, apply a named domain command, and persist the JSON-safe snapshot returned by the application.
+`Application` is the boundary for API and persistence adapters. It owns its dependency-injection container and scope,
+so use it as a context manager or call `close()` explicitly. Create a diagram by Mermaid syntax id, apply a named
+domain command, and persist the JSON-safe snapshot returned by the application.
 
 ```python
 from mermaiden import Application
 from mermaiden.application import DiagramCommand
 
-application = Application.create()
-diagram = application.create_diagram("sequenceDiagram")
-application.apply(diagram, DiagramCommand("add_participant", {"id": "api", "label": "API"}))
+with Application.create() as application:
+    diagram = application.create_diagram("sequenceDiagram")
+    application.apply(diagram, DiagramCommand("add_participant", {"id": "api", "label": "API"}))
 
-payload = application.snapshot(diagram).to_dict()
-restored = application.restore(payload)
-source = application.render(restored)
+    payload = application.snapshot(diagram).to_dict()
+    restored = application.restore(payload)
+    source = application.render(restored)
 ```
 
 Before committing a revision, callers can require Mermaid's complete rendering and layout phase to produce an SVG. The report is non-mutating and identifies the compatible Mermaid version together with structured diagnostics on failure.
@@ -73,66 +75,66 @@ Mutation arguments are JSON-shaped and validated before the diagram changes. Upd
 ```python
 from mermaiden import Application
 
-application = Application.create()
-diagram = application.create_diagram("block")
-application.execute(diagram, "add_group", {"id": "source_example", "label": "Source Example"})
-application.execute(diagram, "add_group", {"id": "target_example", "label": "Target Example"})
-for id, label in (
-    ("first_example", "First Example"),
-    ("second_example", "Second Example"),
-    ("third_example", "Third Example"),
-):
+with Application.create() as application:
+    diagram = application.create_diagram("block")
+    application.execute(diagram, "add_group", {"id": "source_example", "label": "Source Example"})
+    application.execute(diagram, "add_group", {"id": "target_example", "label": "Target Example"})
+    for id, label in (
+        ("first_example", "First Example"),
+        ("second_example", "Second Example"),
+        ("third_example", "Third Example"),
+    ):
+        application.execute(
+            diagram,
+            "add_block",
+            {"id": id, "label": label, "parent_id": "source_example"},
+        )
+
     application.execute(
         diagram,
-        "add_block",
-        {"id": id, "label": label, "parent_id": "source_example"},
+        "update_element",
+        {"id": "first_example", "kind": "block_node", "changes": {"label": "Updated First Example"}},
+    )
+    application.execute(
+        diagram,
+        "move_element",
+        {"id": "first_example", "kind": "block_node", "parent_id": "target_example", "position": 0},
+    )
+    application.execute(
+        diagram,
+        "reorder_elements",
+        {"parent_id": "source_example", "element_ids": ["third_example", "second_example"]},
     )
 
-application.execute(
-    diagram,
-    "update_element",
-    {"id": "first_example", "kind": "block_node", "changes": {"label": "Updated First Example"}},
-)
-application.execute(
-    diagram,
-    "move_element",
-    {"id": "first_example", "kind": "block_node", "parent_id": "target_example", "position": 0},
-)
-application.execute(
-    diagram,
-    "reorder_elements",
-    {"parent_id": "source_example", "element_ids": ["third_example", "second_example"]},
-)
+    for operation, arguments in (
+        (
+            "update_element",
+            {"id": "first_example", "kind": "block_node", "changes": {"id": "renamed_example"}},
+        ),
+        (
+            "move_element",
+            {"id": "second_example", "kind": "block_node", "parent_id": "third_example"},
+        ),
+        (
+            "reorder_elements",
+            {"parent_id": "source_example", "element_ids": ["second_example"]},
+        ),
+    ):
+        before = application.snapshot(diagram).to_dict()
+        try:
+            application.execute(diagram, operation, arguments)
+        except RuntimeError:
+            pass
+        else:
+            raise AssertionError(f"{operation} unexpectedly succeeded")
+        assert application.snapshot(diagram).to_dict() == before
 
-for operation, arguments in (
-    (
-        "update_element",
-        {"id": "first_example", "kind": "block_node", "changes": {"id": "renamed_example"}},
-    ),
-    (
-        "move_element",
-        {"id": "second_example", "kind": "block_node", "parent_id": "third_example"},
-    ),
-    (
-        "reorder_elements",
-        {"parent_id": "source_example", "element_ids": ["second_example"]},
-    ),
-):
-    before = application.snapshot(diagram).to_dict()
-    try:
-        application.execute(diagram, operation, arguments)
-    except RuntimeError:
-        pass
-    else:
-        raise AssertionError(f"{operation} unexpectedly succeeded")
-    assert application.snapshot(diagram).to_dict() == before
-
-snapshot = application.snapshot(diagram).to_dict()
-restored = application.restore(snapshot)
-assert application.snapshot(restored).to_dict() == snapshot
-assert application.render(restored) == application.render(diagram)
-report = application.validate_render(restored)
-assert report.success and report.svg
+    snapshot = application.snapshot(diagram).to_dict()
+    restored = application.restore(snapshot)
+    assert application.snapshot(restored).to_dict() == snapshot
+    assert application.render(restored) == application.render(diagram)
+    report = application.validate_render(restored)
+    assert report.success and report.svg
 ```
 <!-- mutation-conformance-example:end -->
 

@@ -21,7 +21,7 @@ from .elements import (
 )
 
 
-@injectable(as_type=DiagramModel, qualifier="railroad", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="railroad", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class RailroadDiagram(DiagramModel):
     constraints: Sequence[RailroadDiagramConstraint]

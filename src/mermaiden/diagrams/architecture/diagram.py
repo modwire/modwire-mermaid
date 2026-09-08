@@ -14,7 +14,7 @@ from .elements import ArchitectureGroup, Junction, Service
 from .relations import Alignment, AlignmentAxis, Edge, Port
 
 
-@injectable(as_type=DiagramModel, qualifier="architecture", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="architecture", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class Architecture(DiagramModel):
     constraints: Sequence[ArchitectureConstraint]

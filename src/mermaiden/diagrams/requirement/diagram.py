@@ -18,7 +18,7 @@ from .elements import (
 from .relations import RequirementRelation, RequirementRelationKind
 
 
-@injectable(as_type=DiagramModel, qualifier="requirement", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="requirement", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class RequirementDiagram(DiagramModel):
     constraints: Sequence[RequirementDiagramConstraint]

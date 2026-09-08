@@ -11,7 +11,7 @@ from .constraints import JourneyConstraint
 from .elements import JourneySection, JourneyTask
 
 
-@injectable(as_type=DiagramModel, qualifier="journey", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="journey", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class Journey(DiagramModel):
     constraints: Sequence[JourneyConstraint]

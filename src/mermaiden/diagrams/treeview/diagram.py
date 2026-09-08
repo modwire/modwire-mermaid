@@ -13,7 +13,7 @@ from .elements import TreeItem, TreeItemType
 from .relations import TreeBranch
 
 
-@injectable(as_type=DiagramModel, qualifier="treeview", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="treeview", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class TreeView(DiagramModel):
     constraints: Sequence[TreeViewConstraint]

@@ -11,7 +11,7 @@ from .constraints import KanbanDiagramConstraint
 from .elements import Column, KanbanPriority, Task
 
 
-@injectable(as_type=DiagramModel, qualifier="kanban", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="kanban", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class KanbanDiagram(DiagramModel):
     constraints: Sequence[KanbanDiagramConstraint]

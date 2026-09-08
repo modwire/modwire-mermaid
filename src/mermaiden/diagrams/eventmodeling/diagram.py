@@ -12,7 +12,7 @@ from .elements import Actor, Command, Event, Swimlane, View
 from .relations import Flow
 
 
-@injectable(as_type=DiagramModel, qualifier="eventmodeling", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="eventmodeling", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class EventModelingDiagram(DiagramModel):
     constraints: Sequence[EventModelingDiagramConstraint]

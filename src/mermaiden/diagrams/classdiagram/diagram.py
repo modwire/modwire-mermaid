@@ -15,7 +15,7 @@ from .values.members import ClassAttribute, ClassMethod
 from .values.text import ClassIdentifier, ClassText, MemberName, OptionalClassText
 
 
-@injectable(as_type=DiagramModel, qualifier="classdiagram", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="classdiagram", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class ClassDiagram(DiagramModel):
     constraints: Sequence[ClassDiagramConstraint]

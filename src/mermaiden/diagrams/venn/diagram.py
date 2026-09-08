@@ -11,7 +11,7 @@ from .constraints import VennConstraint
 from .elements import VennSet, VennText, VennUnion
 
 
-@injectable(as_type=DiagramModel, qualifier="venn", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="venn", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class Venn(DiagramModel):
     constraints: Sequence[VennConstraint]

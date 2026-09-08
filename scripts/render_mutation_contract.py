@@ -24,29 +24,29 @@ def load_contract(path: Path = CONTRACT_PATH) -> JsonObject:
 
 
 def discover_diagrams() -> JsonObject:
-    application = Application.create()
     diagrams: JsonObject = {}
-    for info in application.available_diagrams():
-        description = application.diagram_description(info.id)
-        diagrams[info.id] = {
-            "root_collection": {
-                "reorder_command": "reorder_elements",
-                "membership": "Exact permutation of current root element IDs.",
-            },
-            "elements": {
-                kind: _element_contract(
-                    schema,
-                    description.placements[kind].allowed_parents,
-                )
-                for kind, schema in description.elements.items()
-            },
-            "relations": {
-                kind: _object_contract(schema, "relations") for kind, schema in description.relations.items()
-            },
-            "annotations": {
-                kind: _object_contract(schema, "annotations") for kind, schema in description.annotations.items()
-            },
-        }
+    with Application.create() as application:
+        for info in application.available_diagrams():
+            description = application.diagram_description(info.id)
+            diagrams[info.id] = {
+                "root_collection": {
+                    "reorder_command": "reorder_elements",
+                    "membership": "Exact permutation of current root element IDs.",
+                },
+                "elements": {
+                    kind: _element_contract(
+                        schema,
+                        description.placements[kind].allowed_parents,
+                    )
+                    for kind, schema in description.elements.items()
+                },
+                "relations": {
+                    kind: _object_contract(schema, "relations") for kind, schema in description.relations.items()
+                },
+                "annotations": {
+                    kind: _object_contract(schema, "annotations") for kind, schema in description.annotations.items()
+                },
+            }
     return diagrams
 
 

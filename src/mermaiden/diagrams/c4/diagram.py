@@ -12,7 +12,7 @@ from .elements import C4Element, Person, System, SystemDb, SystemQueue
 from .relations import Relationship, RelationshipDirection
 
 
-@injectable(as_type=DiagramModel, qualifier="c4", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="c4", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class C4ContextDiagram(DiagramModel):
     constraints: Sequence[C4ContextDiagramConstraint]

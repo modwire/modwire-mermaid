@@ -13,7 +13,7 @@ from .elements import Activity, Connector, Decision, End, Start, Swimlane, Swiml
 from .relations import ConditionalFlow, Flow
 
 
-@injectable(as_type=DiagramModel, qualifier="swimlane", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="swimlane", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class SwimlaneDiagram(DiagramModel):
     constraints: Sequence[SwimlaneConstraint]

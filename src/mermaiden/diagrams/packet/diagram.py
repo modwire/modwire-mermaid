@@ -11,7 +11,7 @@ from .constraints import PacketConstraint
 from .elements import PacketField
 
 
-@injectable(as_type=DiagramModel, qualifier="packet", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="packet", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class Packet(DiagramModel):
     constraints: Sequence[PacketConstraint]

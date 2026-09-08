@@ -11,7 +11,7 @@ from .constraints import TimelineConstraint
 from .elements import TimelineEvent, TimelinePeriod, TimelineSection
 
 
-@injectable(as_type=DiagramModel, qualifier="timeline", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="timeline", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class Timeline(DiagramModel):
     constraints: Sequence[TimelineConstraint]

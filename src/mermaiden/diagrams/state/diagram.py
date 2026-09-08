@@ -14,7 +14,7 @@ from .elements import Choice, CompositeState, Final, Fork, Initial, Join, State,
 from .relations import StateTransition
 
 
-@injectable(as_type=DiagramModel, qualifier="state", lifetime="scoped")
+@injectable(as_type=DiagramModel, qualifier="state", lifetime="transient")
 @dataclass(frozen=True, slots=True)
 class StateDiagram(DiagramModel):
     constraints: Sequence[StateDiagramConstraint]
