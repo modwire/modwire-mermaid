@@ -2,27 +2,26 @@ import argparse
 from collections.abc import Mapping
 from types import TracebackType
 
-from wireup import SyncContainer
+from wireup import ScopedSyncContainer
 
-from .bootstrap import create_container
+from .bootstrap import process_scope
 from .mermaid.compatibility import CompatibilityReport, MermaidCompatibilityService
 from .mermaid.compatibility.schema import MermaidDiagramConfig, MermaidSchemaStore
 
 
 class MermaidenCli:
-    def __init__(self, container: SyncContainer) -> None:
-        self._container = container
+    def __init__(self, scope: ScopedSyncContainer) -> None:
+        self._scope = scope
         self._closed = False
 
     @classmethod
     def create(cls) -> "MermaidenCli":
-        return cls(create_container())
+        return cls(process_scope())
 
     def close(self) -> None:
         if self._closed:
             return
         self._closed = True
-        self._container.close()
 
     def __enter__(self) -> "MermaidenCli":
         self._ensure_open()
@@ -38,18 +37,15 @@ class MermaidenCli:
 
     def mermaid_diagram_configs(self) -> tuple[MermaidDiagramConfig, ...]:
         self._ensure_open()
-        with self._container.enter_scope() as scope:
-            return scope.get(MermaidSchemaStore).diagram_configs()
+        return self._scope.get(MermaidSchemaStore).diagram_configs()
 
     def compatibility_report(self) -> CompatibilityReport:
         self._ensure_open()
-        with self._container.enter_scope() as scope:
-            return scope.get(MermaidCompatibilityService).inspect()
+        return self._scope.get(MermaidCompatibilityService).inspect()
 
     def verify_compatibility(self, sources: Mapping[str, str]) -> CompatibilityReport:
         self._ensure_open()
-        with self._container.enter_scope() as scope:
-            return scope.get(MermaidCompatibilityService).verify(sources)
+        return self._scope.get(MermaidCompatibilityService).verify(sources)
 
     def _ensure_open(self) -> None:
         if self._closed:

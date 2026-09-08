@@ -4,7 +4,9 @@ from dataclasses import dataclass
 from wireup import injectable
 
 from ...diagrams.application import DiagramsApplication
+from ...diagrams.catalog.service import DiagramCatalog
 from ..application import MermaidApplication
+from ..templates import MermaidTemplateOwnership
 from .configuration import ConfigurationViolation, DiagramConfigurationContract, MermaidConfiguration
 from .parser import MermaidSyntaxValidator, MermaidSyntaxViolation
 from .schema import MermaidSchemaLock, MermaidSchemaStore
@@ -60,6 +62,8 @@ class MermaidCompatibilityService:
     registry: DiagramsApplication
     renderer: MermaidApplication
     schemas: MermaidSchemaStore
+    catalog: DiagramCatalog
+    templates: MermaidTemplateOwnership
 
     def inspect(self) -> CompatibilityReport:
         return self._inspect({})
@@ -68,6 +72,8 @@ class MermaidCompatibilityService:
         return self._inspect(sources)
 
     def _inspect(self, sources: Mapping[str, str]) -> CompatibilityReport:
+        self.catalog.validate()
+        self.templates.validate()
         lock = self.schemas.lock()
         configuration = MermaidConfiguration(self.schemas.load())
         diagrams: list[DiagramCompatibility] = []

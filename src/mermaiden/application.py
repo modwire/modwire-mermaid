@@ -1,9 +1,9 @@
 from collections.abc import Mapping
 from types import TracebackType
 
-from wireup import ScopedSyncContainer, SyncContainer
+from wireup import ScopedSyncContainer
 
-from .bootstrap import create_container
+from .bootstrap import process_scope
 from .core.domain import ChangeRejected, ChangeReport, Diagram
 from .diagrams.application import DiagramsApplication
 from .diagrams.catalog.models import DiagramDescription
@@ -21,8 +21,7 @@ __all__ = ["Application", "ChangeRejected", "DiagramCommand", "UnknownCommand"]
 
 
 class Application:
-    def __init__(self, container: SyncContainer, scope: ScopedSyncContainer) -> None:
-        self._container = container
+    def __init__(self, scope: ScopedSyncContainer) -> None:
         self._scope = scope
         self._closed = False
 
@@ -82,10 +81,6 @@ class Application:
         if self._closed:
             return
         self._closed = True
-        try:
-            self._scope.__exit__(None, None, None)
-        finally:
-            self._container.close()
 
     def __enter__(self) -> "Application":
         self._ensure_open()
@@ -105,11 +100,4 @@ class Application:
 
     @classmethod
     def create(cls) -> "Application":
-        container = create_container()
-        scope = container.enter_scope()
-        try:
-            scope.__enter__()
-        except BaseException:
-            container.close()
-            raise
-        return cls(container, scope)
+        return cls(process_scope())
