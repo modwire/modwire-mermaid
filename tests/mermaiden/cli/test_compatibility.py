@@ -1,3 +1,5 @@
+import pytest
+
 from mermaiden import Application
 from mermaiden.cli import MermaidenCli
 from tests.fixtures.catalog import FixtureCatalog
@@ -114,6 +116,7 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
     )
 
 
+@pytest.mark.integration
 def test_application_validates_populated_compatibility_fixtures_with_one_parser_run() -> None:
     with Application.create() as application, MermaidenCli.create() as cli:
         report = cli.verify_compatibility(FixtureCatalog(application).render())

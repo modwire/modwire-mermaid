@@ -8,6 +8,7 @@ from mermaiden import Application
 
 
 class TestRenderValidation:
+    @pytest.mark.integration
     def test_class_text_preserves_slashes_in_mermaid_source_and_svg(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("classDiagram")
@@ -27,6 +28,7 @@ class TestRenderValidation:
         assert any("diagrams/api" in "".join(element.itertext()) for element in svg.iter())
         assert "&#47;" not in report.svg
 
+    @pytest.mark.integration
     def test_class_text_is_rendered_literally_in_labels_relations_and_notes(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("classDiagram")
@@ -87,6 +89,7 @@ class TestRenderValidation:
         assert "Old name" not in text
         assert application.snapshot(diagram).to_dict() == before
 
+    @pytest.mark.integration
     def test_class_members_render_with_their_types_visibility_and_parameter_order(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("classDiagram")
@@ -175,7 +178,10 @@ class TestRenderValidation:
         with pytest.raises(RuntimeError, match="Cannot restore invalid diagram 'sequenceDiagram'"):
             application.restore(payload)
 
-    def test_full_render_validation_is_a_non_mutating_application_operation(self) -> None:
+    def test_full_render_validation_is_a_non_mutating_application_operation(
+        self,
+        successful_mermaid_render: None,
+    ) -> None:
         application = Application.create()
         diagram = application.create_diagram("sequenceDiagram")
         application.execute(

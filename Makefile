@@ -1,4 +1,4 @@
-.PHONY: ci compat diagrams-validate format mutation-contract package-check
+.PHONY: ci compat fast-check format integration mutation-contract package-check
 
 VENV := .venv
 PYTHON := $(VENV)/bin/python
@@ -8,9 +8,6 @@ $(PYTHON):
 
 compat: $(PYTHON)
 	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli compat
-
-diagrams-validate: $(PYTHON)
-	@$(PYTHON) -m pytest tests/fixtures tests/mermaiden/cli/test_compatibility.py
 
 format: $(PYTHON)
 	@$(PYTHON) -m ruff format .
@@ -34,13 +31,20 @@ package-check: $(PYTHON)
 	cd "$$temporary"; \
 	"$$environment/bin/python" -I "$(CURDIR)/scripts/smoke_installed_wheel.py"
 
-ci: $(PYTHON)
-	@$(PYTHON) -m ensurepip --upgrade
-	@$(PYTHON) -m pip install -e ".[dev]"
+fast-check: $(PYTHON)
 	@$(PYTHON) -m ruff format --check .
 	@$(PYTHON) -m ruff check .
 	@$(PYTHON) -m pyright
 	@$(PYTHON) -m pytest
 	@$(MAKE) compat
-	@$(MAKE) diagrams-validate
+
+integration: $(PYTHON)
+	@PUPPETEER_SKIP_DOWNLOAD=true npm ci
+	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" $(PYTHON) -m pytest -m integration
+
+ci: $(PYTHON)
+	@$(PYTHON) -m ensurepip --upgrade
+	@$(PYTHON) -m pip install -e ".[dev]"
+	@$(MAKE) fast-check
+	@$(MAKE) integration
 	@$(MAKE) package-check

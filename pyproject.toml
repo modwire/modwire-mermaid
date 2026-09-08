@@ -53,9 +53,10 @@ include = ["compatibility", "docs", "examples", "scripts", "src", "tests", ".nod
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = ["-ra", "--strict-config", "--strict-markers"]
+addopts = ["-ra", "--strict-config", "--strict-markers", "-m", "not integration"]
 cache_dir = ".dev/.pytest_cache"
 filterwarnings = ["error"]
+markers = ["integration: requires the lock-installed Mermaid CLI and a compatible browser"]
 
 [tool.ruff]
 cache-dir = ".dev/.ruff_cache"

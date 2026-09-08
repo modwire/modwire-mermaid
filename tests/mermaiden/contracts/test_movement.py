@@ -207,7 +207,10 @@ class TestElementMovement:
 
         assert application.snapshot(diagram).to_dict() == before
 
-    def test_move_preserves_the_complete_subtree_references_and_snapshot_round_trip(self) -> None:
+    def test_move_preserves_the_complete_subtree_references_and_snapshot_round_trip(
+        self,
+        successful_mermaid_render: None,
+    ) -> None:
         application = Application.create()
         diagram = application.create_diagram("flowchart")
         application.apply(
@@ -277,7 +280,10 @@ class TestElementMovement:
         assert report.svg.startswith("<svg")
         assert not report.diagnostics
 
-    def test_reorders_root_and_direct_child_collections_deterministically(self) -> None:
+    def test_reorders_root_and_direct_child_collections_deterministically(
+        self,
+        successful_mermaid_render: None,
+    ) -> None:
         application = Application.create()
         diagram = application.create_diagram("block")
         application.apply(

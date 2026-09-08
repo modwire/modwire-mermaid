@@ -5,6 +5,7 @@ __pycache__/
 *.py[cod]
 src/mermaiden/_version.py
 dist/
+node_modules/
 .compatibility-artifacts/
 compatibility/toolchains/*/node_modules/
 .dev/

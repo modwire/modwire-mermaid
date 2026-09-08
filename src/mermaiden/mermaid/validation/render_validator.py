@@ -62,6 +62,13 @@ class MermaidRenderValidator:
         return tuple(self.report(diagram_id, result) for diagram_id in sources)
 
     def report(self, diagram_id: str, result: MermaidCliResult) -> MermaidRenderReport:
+        if result.timed_out:
+            return self.failure(
+                diagram_id,
+                MermaidRenderDiagnosticCode.RENDER_TIMEOUT,
+                "Mermaid CLI timed out.",
+                result.output,
+            )
         if result.return_code is None:
             return self.failure(
                 diagram_id,

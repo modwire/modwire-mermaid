@@ -19,6 +19,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
+          cache: npm
       - run: make ci
         env:
           PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome
