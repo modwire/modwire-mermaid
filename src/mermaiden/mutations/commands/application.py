@@ -1,12 +1,10 @@
-from collections.abc import Callable
 from dataclasses import dataclass
-from inspect import signature
 
 from wireup import injectable
 
 from ...core.domain import ChangeReport
 from ...diagrams.catalog.service import DiagramCatalog
-from ...diagrams.domain import DiagramModel, MermaidDiagramConfiguration
+from ...diagrams.domain import DiagramCommandFeature, DiagramModel, MermaidDiagramConfiguration
 from ...domain import DiagramCommand, UnknownCommand, ValidatedCommandPayload
 
 
@@ -26,29 +24,25 @@ class DiagramCommandApplication:
         if isinstance(payload, MermaidDiagramConfiguration):
             diagram.configure(payload)
             return None
-        return self._invoke(operation, payload)
+        return self._invoke(operation, payload, self.catalog.command_feature(diagram.kind, command.operation))
 
     def _invoke(
         self,
-        operation: Callable[..., object],
+        operation: object,
         payload: ValidatedCommandPayload,
+        command: DiagramCommandFeature,
     ) -> ChangeReport | None:
-        parameters = tuple(signature(operation).parameters.values())
         values = payload.model_dump(exclude_unset=True)
-        variadic = next((item for item in parameters if item.kind is item.VAR_POSITIONAL), None)
         positional = ()
-        if variadic is not None:
-            variadic_values = values.pop(variadic.name)
+        if command.variadic is not None:
+            names = tuple(command.parameters)
+            variadic_index = names.index(command.variadic)
+            variadic_values = values.pop(command.variadic)
             if not isinstance(variadic_values, tuple):
                 raise UnknownCommand("Variadic command arguments must be a tuple.")
-            positional = (
-                tuple(
-                    values.pop(item.name)
-                    for item in parameters
-                    if item.kind in {item.POSITIONAL_ONLY, item.POSITIONAL_OR_KEYWORD}
-                )
-                + variadic_values
-            )
+            positional = tuple(values.pop(name) for name in names[:variadic_index]) + variadic_values
+        if not callable(operation):
+            raise UnknownCommand("Command operation is not callable.")
         result = operation(*positional, **values)
         if result is not None and not isinstance(result, ChangeReport):
             raise UnknownCommand("Command is not a mutation.")

@@ -5,7 +5,13 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    CommandDefault,
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from .configuration import CynefinDiagramConfiguration
 from .constraints import CynefinDiagramConstraint
 from .elements import Domain, DomainKind
@@ -22,6 +28,19 @@ class CynefinDiagram(DiagramModel):
         "Cynefin diagram",
         "cynefin",
         "CynefinDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=CynefinDiagramConfiguration,
+        elements=(Domain,),
+        relations=(Transition,),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature("add_item", {"id": str, "label": str, "domain": DomainKind}),
+            DiagramCommandFeature(
+                "add_transition", {"id": str, "source_id": str, "target_id": str, "label": CommandDefault(str, "")}
+            ),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

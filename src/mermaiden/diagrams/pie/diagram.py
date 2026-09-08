@@ -5,7 +5,12 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from .configuration import PieDiagramConfiguration
 from .constraints import PieConstraint
 from .elements import PieSlice
@@ -23,6 +28,18 @@ class PieDiagram(DiagramModel):
         "Pie chart",
         "pie",
         "PieDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=PieDiagramConfiguration,
+        elements=(PieSlice,),
+        relations=(),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature("set_title", {"title": str}),
+            DiagramCommandFeature("show_values", {}),
+            DiagramCommandFeature("add_slice", {"id": str, "label": str, "value": float}),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

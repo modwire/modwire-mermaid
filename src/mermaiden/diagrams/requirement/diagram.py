@@ -5,7 +5,13 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    CommandDefault,
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from .configuration import RequirementDiagramConfiguration
 from .constraints import RequirementDiagramConstraint
 from .elements import (
@@ -28,6 +34,31 @@ class RequirementDiagram(DiagramModel):
         "Requirement diagram",
         "requirement",
         "RequirementDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=RequirementDiagramConfiguration,
+        elements=(Requirement, RequirementElement),
+        relations=(RequirementRelation,),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature(
+                "add_requirement",
+                {
+                    "id": str,
+                    "requirement_id": str,
+                    "text": str,
+                    "requirement_type": CommandDefault(RequirementType, RequirementType.REQUIREMENT),
+                    "risk": CommandDefault(Risk, Risk.MEDIUM),
+                    "verification_method": CommandDefault(VerificationMethod, VerificationMethod.ANALYSIS),
+                },
+            ),
+            DiagramCommandFeature("add_element", {"id": str, "element_type": str, "document_reference": str}),
+            DiagramCommandFeature(
+                "add_relation",
+                {"id": str, "source_id": str, "target_id": str, "relation_kind": RequirementRelationKind},
+            ),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

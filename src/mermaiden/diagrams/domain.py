@@ -7,6 +7,7 @@ from typing import Annotated, ClassVar, cast
 from pydantic import BaseModel, ConfigDict, Field, SerializeAsAny
 
 from ..core.domain import (
+    Annotation,
     BlockingConstraint,
     ChangeReport,
     Constraint,
@@ -14,6 +15,7 @@ from ..core.domain import (
     Container,
     Diagram,
     Element,
+    Relation,
     RequiresChildren,
     ValidationReport,
     Violation,
@@ -130,7 +132,9 @@ class DiagramConstraint(BlockingConstraint):
 
 @dataclass(frozen=True, slots=True)
 class Members(DiagramConstraint):
-    package: str
+    elements: tuple[type[Element], ...]
+    relations: tuple[type[Relation], ...]
+    annotations: tuple[type[Annotation], ...]
 
     def visit(self, diagram: ConstraintDiagram) -> tuple[Violation, ...]:
         issues = [
@@ -139,7 +143,7 @@ class Members(DiagramConstraint):
                 path=f"elements.{item.id}",
             )
             for item in diagram.walk_elements("")
-            if item.__class__.__module__ != f"{self.package}.elements"
+            if type(item) not in self.elements
         ]
         issues.extend(
             self.violation(
@@ -147,7 +151,7 @@ class Members(DiagramConstraint):
                 path=f"relations.{item.id}",
             )
             for item in diagram.find_relations("")
-            if item.__class__.__module__ != f"{self.package}.relations"
+            if type(item) not in self.relations
         )
         issues.extend(
             self.violation(
@@ -155,7 +159,7 @@ class Members(DiagramConstraint):
                 path=f"annotations.{item.id}",
             )
             for item in diagram.find_annotations("")
-            if item.__class__.__module__ != f"{self.package}.annotations"
+            if type(item) not in self.annotations
         )
         issues.extend(
             self.violation(
@@ -177,8 +181,39 @@ class DiagramDefinition:
 
 
 @dataclass(frozen=True, slots=True)
+class CommandDefault:
+    annotation: object
+    value: object
+
+
+@dataclass(frozen=True, slots=True)
+class CommandVariadic:
+    annotation: object
+
+
+@dataclass(frozen=True, slots=True)
+class DiagramCommandFeature:
+    name: str
+    parameters: Mapping[str, object]
+
+    @property
+    def variadic(self) -> str | None:
+        return next((name for name, value in self.parameters.items() if isinstance(value, CommandVariadic)), None)
+
+
+@dataclass(frozen=True, slots=True)
+class DiagramFeature:
+    configuration: type[MermaidDiagramConfiguration]
+    elements: tuple[type[Element], ...] = ()
+    relations: tuple[type[Relation], ...] = ()
+    annotations: tuple[type[Annotation], ...] = ()
+    commands: tuple[DiagramCommandFeature, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
 class DiagramModel(DiagramAggregate):
     definition: ClassVar[DiagramDefinition]
+    feature: ClassVar[DiagramFeature]
     structure: ConstraintInspection
     constraints: Sequence[Constraint]
     configuration: MermaidDiagramConfiguration
@@ -253,7 +288,7 @@ class DiagramModel(DiagramAggregate):
 
     @property
     def observer(self) -> DiagramObserver[Constraint]:
-        members = Members(type(self).__module__.removesuffix(".diagram"))
+        members = Members(self.feature.elements, self.feature.relations, self.feature.annotations)
         return DiagramObserver(self.structure, (members, *self.constraints))
 
 

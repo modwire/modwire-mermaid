@@ -5,10 +5,17 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    CommandDefault,
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from .configuration import GitGraphDiagramConfiguration
 from .constraints import GitGraphDiagramConstraint
 from .elements import Branch, Checkout, Commit, CommitType
+from .relations import CommitRelation
 
 
 @injectable(as_type=DiagramModel, qualifier="gitgraph", lifetime="transient")
@@ -21,6 +28,26 @@ class GitGraphDiagram(DiagramModel):
         "Git Graph",
         "gitGraph",
         "GitGraphDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=GitGraphDiagramConfiguration,
+        elements=(Commit, Branch, Checkout),
+        relations=(CommitRelation,),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature(
+                "add_commit",
+                {
+                    "id": str,
+                    "label": str,
+                    "commit_type": CommandDefault(CommitType | str, ""),
+                    "tag": CommandDefault(str, ""),
+                },
+            ),
+            DiagramCommandFeature("add_branch", {"id": str, "label": str, "order": CommandDefault(int | None, None)}),
+            DiagramCommandFeature("checkout", {"id": str, "branch": str}),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

@@ -5,7 +5,12 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from .configuration import RadarConfiguration
 from .constraints import RadarConstraint
 from .elements import RadarAxis, RadarCurve
@@ -27,6 +32,22 @@ class Radar(DiagramModel):
         "Radar chart",
         "radar",
         "RadarDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=RadarConfiguration,
+        elements=(RadarAxis, RadarCurve),
+        relations=(),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature("set_title", {"title": str}),
+            DiagramCommandFeature("set_legend", {"visible": bool}),
+            DiagramCommandFeature("set_range", {"minimum": float, "maximum": float}),
+            DiagramCommandFeature("set_graticule", {"graticule": str}),
+            DiagramCommandFeature("set_ticks", {"ticks": int}),
+            DiagramCommandFeature("add_axis", {"id": str, "label": str}),
+            DiagramCommandFeature("add_curve", {"id": str, "label": str, "values": tuple[float, ...]}),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

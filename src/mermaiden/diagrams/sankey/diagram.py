@@ -5,7 +5,12 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from .configuration import SankeyDiagramConfiguration
 from .constraints import SankeyConstraint
 from .elements import SankeyNode
@@ -22,6 +27,17 @@ class Sankey(DiagramModel):
         "Sankey diagram",
         "sankey",
         "SankeyDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=SankeyDiagramConfiguration,
+        elements=(SankeyNode,),
+        relations=(SankeyLink,),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature("add_node", {"id": str, "label": str}),
+            DiagramCommandFeature("add_flow", {"id": str, "source_id": str, "target_id": str, "value": float}),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

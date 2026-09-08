@@ -6,8 +6,14 @@ from pydantic import Field
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
-from .annotations import ArchitectureNotes
+from ..domain import (
+    CommandDefault,
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
+from .annotations import ArchitectureNote, ArchitectureNotes
 from .configuration import ArchitectureDiagramConfiguration
 from .constraints.structure import ArchitectureConstraint
 from .elements import ArchitectureGroup, Junction, Service
@@ -27,6 +33,41 @@ class Architecture(DiagramModel):
         "Architecture diagram",
         "architecture",
         "ArchitectureDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=ArchitectureDiagramConfiguration,
+        elements=(ArchitectureGroup, Service, Junction),
+        relations=(Edge, Alignment),
+        annotations=(ArchitectureNote,),
+        commands=(
+            DiagramCommandFeature(
+                "add_group",
+                {
+                    "id": str,
+                    "label": str,
+                    "parent_id": CommandDefault(str, ""),
+                    "columns": CommandDefault(Annotated[int, Field(ge=1)], 1),
+                },
+            ),
+            DiagramCommandFeature("add_service", {"id": str, "label": str, "group_id": CommandDefault(str, "")}),
+            DiagramCommandFeature(
+                "add_junction", {"id": str, "label": CommandDefault(str, ""), "group_id": CommandDefault(str, "")}
+            ),
+            DiagramCommandFeature(
+                "add_edge",
+                {
+                    "id": str,
+                    "source_id": str,
+                    "target_id": str,
+                    "source_port": CommandDefault(Port, Port.RIGHT),
+                    "target_port": CommandDefault(Port, Port.LEFT),
+                    "label": CommandDefault(str, ""),
+                },
+            ),
+            DiagramCommandFeature("add_alignment", {"id": str, "axis": AlignmentAxis, "member_ids": tuple[str, ...]}),
+            DiagramCommandFeature("add_note", {"id": str, "element_id": str, "text": str}),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

@@ -5,7 +5,14 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel, MermaidDiagramConfiguration
+from ..domain import (
+    CommandDefault,
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+    MermaidDiagramConfiguration,
+)
 from .configuration import EntityRelationshipDiagramConfiguration, EntityRelationshipDirection
 from .constraints import EntityRelationshipDiagramConstraint
 from .elements import Entity, EntityAttribute, EntityAttributeDataType
@@ -26,6 +33,40 @@ class EntityRelationshipDiagram(DiagramModel):
         "Entity relationship diagram",
         "er",
         "ErDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=EntityRelationshipDiagramConfiguration,
+        elements=(EntityAttribute, Entity),
+        relations=(EntityRelationship,),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature("set_direction", {"direction": EntityRelationshipDirection}),
+            DiagramCommandFeature("add_entity", {"id": str, "label": str}),
+            DiagramCommandFeature(
+                "add_attribute",
+                {
+                    "id": str,
+                    "label": str,
+                    "data_type": EntityAttributeDataType,
+                    "entity_id": str,
+                    "keys": CommandDefault(tuple[str, ...], ()),
+                    "comment": CommandDefault(str, ""),
+                },
+            ),
+            DiagramCommandFeature(
+                "add_relationship",
+                {
+                    "id": str,
+                    "source_id": str,
+                    "target_id": str,
+                    "label": str,
+                    "source_cardinality": CommandDefault(Cardinality, Cardinality.EXACTLY_ONE),
+                    "target_cardinality": CommandDefault(Cardinality, Cardinality.EXACTLY_ONE),
+                    "identifying": CommandDefault(bool, True),
+                },
+            ),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

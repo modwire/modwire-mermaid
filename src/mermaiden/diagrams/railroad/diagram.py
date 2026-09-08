@@ -5,7 +5,12 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from .configuration import RailroadDiagramConfiguration
 from .constraints import RailroadDiagramConstraint
 from .elements import (
@@ -31,6 +36,33 @@ class RailroadDiagram(DiagramModel):
         "Railroad diagram",
         "railroad",
         "RailroadDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=RailroadDiagramConfiguration,
+        elements=(
+            Terminal,
+            NonTerminal,
+            Special,
+            CompositeExpression,
+            SequenceExpression,
+            AlternativeExpression,
+            OptionalExpression,
+            RepetitionExpression,
+            GroupExpression,
+        ),
+        relations=(),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature("add_rule", {"id": str, "label": str}),
+            DiagramCommandFeature("add_terminal", {"id": str, "label": str, "rule_id": str}),
+            DiagramCommandFeature("add_non_terminal", {"id": str, "label": str, "rule_id": str}),
+            DiagramCommandFeature("add_special", {"id": str, "label": str, "parent_id": str}),
+            DiagramCommandFeature("add_alternative", {"id": str, "parent_id": str}),
+            DiagramCommandFeature("add_optional", {"id": str, "parent_id": str}),
+            DiagramCommandFeature("add_repetition", {"id": str, "parent_id": str}),
+            DiagramCommandFeature("add_group", {"id": str, "parent_id": str}),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

@@ -5,8 +5,14 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
-from .annotations import ClassNotes
+from ..domain import (
+    CommandDefault,
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
+from .annotations import ClassNote, ClassNotes
 from .configuration import ClassDiagramConfiguration
 from .constraints import ClassDiagramConstraint
 from .elements import Class, ClassNamespace
@@ -25,6 +31,48 @@ class ClassDiagram(DiagramModel):
         "Class diagram",
         "class",
         "ClassDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=ClassDiagramConfiguration,
+        elements=(Class, ClassNamespace),
+        relations=(ClassRelation,),
+        annotations=(ClassNote,),
+        commands=(
+            DiagramCommandFeature(
+                "add_class",
+                {
+                    "id": ClassIdentifier,
+                    "label": ClassText,
+                    "attributes": CommandDefault(Sequence[ClassAttribute], ()),
+                    "methods": CommandDefault(Sequence[ClassMethod], ()),
+                    "annotations": CommandDefault(Sequence[MemberName], ()),
+                    "comment": CommandDefault(OptionalClassText, ""),
+                    "parent_id": CommandDefault(str, ""),
+                },
+            ),
+            DiagramCommandFeature(
+                "add_namespace",
+                {
+                    "id": ClassIdentifier,
+                    "label": CommandDefault(OptionalClassText, ""),
+                    "comment": CommandDefault(OptionalClassText, ""),
+                },
+            ),
+            DiagramCommandFeature(
+                "add_relation",
+                {
+                    "id": ClassIdentifier,
+                    "source_id": ClassIdentifier,
+                    "target_id": ClassIdentifier,
+                    "relation_kind": CommandDefault(ClassRelationKind, ClassRelationKind.ASSOCIATION),
+                    "label": CommandDefault(OptionalClassText, ""),
+                    "source_label": CommandDefault(OptionalClassText, ""),
+                    "target_label": CommandDefault(OptionalClassText, ""),
+                },
+            ),
+            DiagramCommandFeature("add_note", {"id": ClassIdentifier, "class_id": ClassIdentifier, "text": ClassText}),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

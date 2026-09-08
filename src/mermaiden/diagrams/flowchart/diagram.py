@@ -5,8 +5,14 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
-from .annotations import Notes
+from ..domain import (
+    CommandDefault,
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
+from .annotations import Note, Notes
 from .configuration import FlowchartDiagramConfiguration
 from .constraints.domain import FlowchartConstraint
 from .elements import (
@@ -37,6 +43,56 @@ class Flowchart(DiagramModel):
         "Flowchart",
         "flowchart",
         "FlowchartDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=FlowchartDiagramConfiguration,
+        elements=(
+            FlowNode,
+            Start,
+            End,
+            Action,
+            Decision,
+            InputOutput,
+            DataStore,
+            Document,
+            Subprocess,
+            Junction,
+            FlowGroup,
+        ),
+        relations=(Flow, ConditionalFlow),
+        annotations=(Note,),
+        commands=(
+            DiagramCommandFeature(
+                "add_group",
+                {
+                    "id": str,
+                    "label": str,
+                    "parent_id": CommandDefault(str, ""),
+                    "direction": CommandDefault(Direction | None, None),
+                },
+            ),
+            DiagramCommandFeature("add_node", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
+            DiagramCommandFeature("add_start", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
+            DiagramCommandFeature("add_end", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
+            DiagramCommandFeature("add_action", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
+            DiagramCommandFeature("add_decision", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
+            DiagramCommandFeature("add_input_output", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
+            DiagramCommandFeature("add_data_store", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
+            DiagramCommandFeature("add_document", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
+            DiagramCommandFeature("add_subprocess", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
+            DiagramCommandFeature("add_junction", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
+            DiagramCommandFeature(
+                "add_flow", {"id": str, "source_id": str, "target_id": str, "label": CommandDefault(str, "")}
+            ),
+            DiagramCommandFeature(
+                "add_conditional_flow", {"id": str, "source_id": str, "target_id": str, "condition": str}
+            ),
+            DiagramCommandFeature(
+                "add_note", {"id": str, "text": str, "element_ids": CommandDefault(Sequence[str], ())}
+            ),
+            DiagramCommandFeature("remove_flow", {"id": str}),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:

@@ -5,7 +5,13 @@ from typing import ClassVar
 from wireup import injectable
 
 from ...core.domain import ChangeReport, Container, Element
-from ..domain import DiagramDefinition, DiagramModel
+from ..domain import (
+    CommandDefault,
+    DiagramCommandFeature,
+    DiagramDefinition,
+    DiagramFeature,
+    DiagramModel,
+)
 from .configuration import KanbanDiagramConfiguration
 from .constraints import KanbanDiagramConstraint
 from .elements import Column, KanbanPriority, Task
@@ -21,6 +27,27 @@ class KanbanDiagram(DiagramModel):
         "Kanban diagram",
         "kanban",
         "KanbanDiagramConfig",
+    )
+
+    feature: ClassVar[DiagramFeature] = DiagramFeature(
+        configuration=KanbanDiagramConfiguration,
+        elements=(Task, Column),
+        relations=(),
+        annotations=(),
+        commands=(
+            DiagramCommandFeature("add_column", {"id": str, "label": str}),
+            DiagramCommandFeature(
+                "add_task",
+                {
+                    "id": str,
+                    "label": str,
+                    "column_id": str,
+                    "assigned": CommandDefault(str, ""),
+                    "ticket": CommandDefault(str, ""),
+                    "priority": CommandDefault(KanbanPriority | str, ""),
+                },
+            ),
+        ),
     )
 
     def accepts_parent(self, element_type: type[Element], parent_type: type[Container] | None) -> bool:
