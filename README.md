@@ -12,8 +12,8 @@ Python 3.12 or later is required.
 pip install mermaiden
 ```
 
-The wheel declares and installs its Python dependencies. Generating Mermaid source and using the `fixtures`, `preview`,
-and `compat` CLI commands need no additional tools. Full SVG validation through `Application.validate_render()` shells
+The wheel declares and installs its Python dependencies. The `compat` CLI command needs no additional tools.
+Full SVG validation through `Application.validate_render()` shells
 out to Mermaid CLI and requires Node.js with npm/npx plus a compatible browser; set `PUPPETEER_EXECUTABLE_PATH` when
 using a system browser.
 
@@ -146,11 +146,7 @@ The repository uses a single host-mode CI target:
 make ci
 ```
 
-It installs the development dependencies, runs linting, type checks, tests, compatibility validation, Mermaid CLI rendering, and wheel validation. To open the locally generated diagram preview, run:
-
-```sh
-make diagrams-test
-```
+It installs the development dependencies, runs linting, type checks, tests, compatibility validation, Mermaid CLI rendering, and wheel validation.
 
 ## Release
 

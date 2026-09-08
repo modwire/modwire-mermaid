@@ -1,18 +1,19 @@
-from ...diagrams.application import DiagramsApplication
-from ...diagrams.architecture.configuration import ArchitectureDiagramConfiguration
-from ...diagrams.architecture.diagram import Architecture
-from ...diagrams.architecture.relations import AlignmentAxis, Port
-from ...diagrams.block.diagram import BlockDiagram
-from ...diagrams.classdiagram.diagram import ClassDiagram
-from ...diagrams.classdiagram.relations import ClassRelationKind
-from ...diagrams.classdiagram.values.members import ClassAttribute, ClassMethod, ClassType
-from ...diagrams.domain import DiagramModel
-from ...diagrams.flowchart.diagram import Flowchart
-from ...diagrams.treeview.diagram import TreeView
+from mermaiden import Application
+from mermaiden.diagrams.architecture.configuration import ArchitectureDiagramConfiguration
+from mermaiden.diagrams.architecture.diagram import Architecture
+from mermaiden.diagrams.architecture.relations import AlignmentAxis, Port
+from mermaiden.diagrams.block.diagram import BlockDiagram
+from mermaiden.diagrams.classdiagram.diagram import ClassDiagram
+from mermaiden.diagrams.classdiagram.relations import ClassRelationKind
+from mermaiden.diagrams.classdiagram.values.members import ClassAttribute, ClassMethod, ClassType
+from mermaiden.diagrams.flowchart.diagram import Flowchart
+from mermaiden.diagrams.treeview.diagram import TreeView
+
+from .models import DiagramFixture
 
 
-def build_structural_fixtures(registry: DiagramsApplication) -> dict[str, DiagramModel]:
-    flowchart = registry.get_diagram("flowchart")
+def build_structural_fixtures(application: Application) -> tuple[DiagramFixture, ...]:
+    flowchart = application.create_diagram("flowchart")
     assert isinstance(flowchart, Flowchart)
     flowchart.add_group("entry", "Entry")
     flowchart.add_group("process", "Process")
@@ -26,8 +27,10 @@ def build_structural_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     flowchart.add_subprocess("subprocess", "Subprocess", "process")
     flowchart.add_junction("junction", "Junction", "process")
     flowchart.add_end("end", "End", "process")
+    flowchart.add_end("alternate_end", "Alternate end", "process")
     flowchart.add_flow("start_ready", "start", "ready")
     flowchart.add_conditional_flow("ready_work", "ready", "work", "yes")
+    flowchart.add_conditional_flow("ready_node", "ready", "node", "no")
     flowchart.add_flow("work_node", "work", "node")
     flowchart.add_flow("node_input", "node", "input")
     flowchart.add_flow("input_data", "input", "data")
@@ -35,11 +38,12 @@ def build_structural_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     flowchart.add_flow("document_subprocess", "document", "subprocess")
     flowchart.add_flow("subprocess_junction", "subprocess", "junction")
     flowchart.add_flow("junction_end", "junction", "end")
+    flowchart.add_flow("junction_alternate", "junction", "alternate_end")
     flowchart.add_note("start_note", "Start process", ("start",))
     flowchart.add_note("work_note", "Process work", ("work",))
     flowchart.add_note("end_note", "Finish process", ("end",))
 
-    treeview = registry.get_diagram("treeView-beta")
+    treeview = application.create_diagram("treeView-beta")
     assert isinstance(treeview, TreeView)
     for id, label in (("root", "root"), ("source", "src"), ("package", "mermaiden"), ("tests", "tests")):
         treeview.add_directory(id, label)
@@ -54,7 +58,7 @@ def build_structural_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     treeview.add_branch("root_overview", "root", "overview")
     treeview.add_annotation("readme_note", "readme", highlight=True, description="Documentation")
 
-    classes = registry.get_diagram("classDiagram")
+    classes = application.create_diagram("classDiagram")
     assert isinstance(classes, ClassDiagram)
     classes.add_namespace("domain", "Domain", comment="Domain types")
     classes.add_class(
@@ -74,7 +78,7 @@ def build_structural_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     classes.add_note("duck_note", "Duck", "Concrete type")
     classes.add_note("pond_note", "Pond", "Aggregate")
 
-    architecture = registry.get_diagram("architecture-beta")
+    architecture = application.create_diagram("architecture-beta")
     assert isinstance(architecture, Architecture)
     architecture.configure(ArchitectureDiagramConfiguration(node_separation=96, seed=7))
     architecture.add_group("clients", "Clients", columns=2)
@@ -92,7 +96,7 @@ def build_structural_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     architecture.add_note("api_note", "api", "Public API")
     architecture.add_note("database_note", "database", "Persistent storage")
 
-    block = registry.get_diagram("block")
+    block = application.create_diagram("block")
     assert isinstance(block, BlockDiagram)
     block.set_columns(3)
     block.add_block("frontend", "Frontend")
@@ -101,10 +105,5 @@ def build_structural_fixtures(registry: DiagramsApplication) -> dict[str, Diagra
     block.add_block("api", "API", parent_id="backend")
     block.add_block("database", "Database", parent_id="backend")
 
-    return {
-        "flowchart": flowchart,
-        "treeview": treeview,
-        "classdiagram": classes,
-        "architecture": architecture,
-        "block": block,
-    }
+    builder = build_structural_fixtures.__name__
+    return tuple(DiagramFixture(diagram, builder) for diagram in (flowchart, treeview, classes, architecture, block))

@@ -1,41 +1,20 @@
+from mermaiden import Application
 from mermaiden.cli import MermaidenCli
+from tests.fixtures.catalog import FixtureCatalog
 
 
 def test_application_validates_every_registered_diagram_against_pinned_mermaid_schema() -> None:
-    report = MermaidenCli.create().compatibility_report()
+    with Application.create() as application, MermaidenCli.create() as cli:
+        report = cli.compatibility_report()
+        expected = tuple(
+            (info.id, info.config_key, info.schema_definition) for info in application.available_diagrams()
+        )
+        upstream = {item.config_key: item for item in cli.mermaid_diagram_configs()}
 
     assert report.lock.mermaid_version == "11.16.0"
     assert report.valid
     assert not report.missing_diagrams
-    assert [(item.diagram_id, item.config_key, item.schema_definition) for item in report.diagrams] == [
-        ("architecture-beta", "architecture", "ArchitectureDiagramConfig"),
-        ("block", "block", "BlockDiagramConfig"),
-        ("C4Context", "c4", "C4DiagramConfig"),
-        ("classDiagram", "class", "ClassDiagramConfig"),
-        ("cynefin-beta", "cynefin", "CynefinDiagramConfig"),
-        ("erDiagram", "er", "ErDiagramConfig"),
-        ("eventmodeling", "eventmodeling", "EventModelingDiagramConfig"),
-        ("flowchart", "flowchart", "FlowchartDiagramConfig"),
-        ("gantt", "gantt", "GanttDiagramConfig"),
-        ("gitGraph", "gitGraph", "GitGraphDiagramConfig"),
-        ("ishikawa-beta", "ishikawa", "IshikawaDiagramConfig"),
-        ("journey", "journey", "JourneyDiagramConfig"),
-        ("kanban", "kanban", "KanbanDiagramConfig"),
-        ("mindmap", "mindmap", "MindmapDiagramConfig"),
-        ("packet", "packet", "PacketDiagramConfig"),
-        ("pie", "pie", "PieDiagramConfig"),
-        ("radar-beta", "radar", "RadarDiagramConfig"),
-        ("railroad-ebnf-beta", "railroad", "RailroadDiagramConfig"),
-        ("requirementDiagram", "requirement", "RequirementDiagramConfig"),
-        ("sankey", "sankey", "SankeyDiagramConfig"),
-        ("sequenceDiagram", "sequence", "SequenceDiagramConfig"),
-        ("stateDiagram-v2", "state", "StateDiagramConfig"),
-        ("swimlane-beta", "swimlane", "SwimlaneDiagramConfig"),
-        ("timeline", "timeline", "TimelineDiagramConfig"),
-        ("treeView-beta", "treeView", "TreeViewDiagramConfig"),
-        ("venn-beta", "venn", "VennDiagramConfig"),
-        ("wardley-beta", "wardley-beta", "WardleyDiagramConfig"),
-    ]
+    assert tuple((item.diagram_id, item.config_key, item.schema_definition) for item in report.diagrams) == expected
     configurations = {item.diagram_id: item.configuration.values for item in report.diagrams}
     assert all(
         values == {"wrap": True}
@@ -129,7 +108,6 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
         "padding": 8,
         "useDebugLayout": False,
     }
-    upstream = {item.config_key: item for item in MermaidenCli.create().mermaid_diagram_configs()}
     assert all(
         item.configuration.schema_definition == upstream[item.configuration.config_key].schema_definition
         for item in report.diagrams
@@ -137,14 +115,16 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
 
 
 def test_application_validates_populated_compatibility_fixtures_with_one_parser_run() -> None:
-    report = MermaidenCli.create().verify_compatibility()
+    with Application.create() as application, MermaidenCli.create() as cli:
+        report = cli.verify_compatibility(FixtureCatalog(application).render())
 
     assert report.valid
     assert not report.syntax_violations
 
 
 def test_application_lists_diagram_configs_from_mermaid_schema() -> None:
-    configs = MermaidenCli.create().mermaid_diagram_configs()
+    with MermaidenCli.create() as cli:
+        configs = cli.mermaid_diagram_configs()
 
     mindmap = next(item for item in configs if item.config_key == "mindmap")
     assert mindmap.schema_definition == "MindmapDiagramConfig"

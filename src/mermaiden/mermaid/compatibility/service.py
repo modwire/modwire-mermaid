@@ -1,10 +1,10 @@
+from collections.abc import Mapping
 from dataclasses import dataclass
 
 from wireup import injectable
 
 from ...diagrams.application import DiagramsApplication
 from ..application import MermaidApplication
-from ..fixtures import DiagramFixtures
 from .configuration import ConfigurationViolation, DiagramConfigurationContract, MermaidConfiguration
 from .parser import MermaidSyntaxValidator, MermaidSyntaxViolation
 from .schema import MermaidSchemaLock, MermaidSchemaStore
@@ -56,34 +56,38 @@ class CompatibilityReport:
 @injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class MermaidCompatibilityService:
-    fixtures: DiagramFixtures
     syntax: MermaidSyntaxValidator
     registry: DiagramsApplication
     renderer: MermaidApplication
     schemas: MermaidSchemaStore
 
     def inspect(self) -> CompatibilityReport:
-        return self._inspect(False)
+        return self._inspect({})
 
-    def verify(self) -> CompatibilityReport:
-        return self._inspect(True)
+    def verify(self, sources: Mapping[str, str]) -> CompatibilityReport:
+        return self._inspect(sources)
 
-    def _inspect(self, verify_syntax: bool) -> CompatibilityReport:
+    def _inspect(self, sources: Mapping[str, str]) -> CompatibilityReport:
         lock = self.schemas.lock()
         configuration = MermaidConfiguration(self.schemas.load())
         diagrams: list[DiagramCompatibility] = []
-        missing: list[MissingDiagramCompatibility] = []
-        fixture_sources = self.fixtures.render_compatibility_sources() if verify_syntax else {}
-        sources: dict[str, str] = {}
-        for upstream in self.schemas.diagram_configs():
-            try:
-                info = self.registry.get_by_config_key(upstream.config_key)
-            except KeyError:
-                missing.append(MissingDiagramCompatibility(upstream.config_key, upstream.schema_definition))
+        upstream_configs = self.schemas.diagram_configs()
+        upstream_by_key = {item.config_key: item for item in upstream_configs}
+        registered = self.registry.available()
+        registered_keys = {item.config_key for item in registered}
+        missing = [
+            MissingDiagramCompatibility(item.config_key, item.schema_definition)
+            for item in upstream_configs
+            if item.config_key not in registered_keys
+        ]
+        validation_sources: dict[str, str] = {}
+        for info in registered:
+            upstream = upstream_by_key.get(info.config_key)
+            if upstream is None:
                 continue
             source = self.renderer.render(self.registry.get_diagram(info.id))
             local = configuration.local_contract(info.config_key, info.schema_definition, source)
-            sources[info.id] = fixture_sources[info.id] if verify_syntax and info.id in fixture_sources else source
+            validation_sources[info.id] = sources.get(info.id, source)
             diagrams.append(
                 DiagramCompatibility(
                     info.id,
@@ -92,5 +96,5 @@ class MermaidCompatibilityService:
                     configuration.supports(local, upstream),
                 )
             )
-        syntax_violations = self.syntax.validate(sources) if verify_syntax else ()
+        syntax_violations = self.syntax.validate(validation_sources) if sources else ()
         return CompatibilityReport(lock, tuple(diagrams), tuple(missing), syntax_violations)
