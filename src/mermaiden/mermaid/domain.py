@@ -5,10 +5,14 @@ from pathlib import Path
 
 from wireup import injectable
 
+from .schema import MermaidSchemaStore
+
 
 @injectable
 @dataclass(frozen=True, slots=True)
 class MermaidPreview:
+    schemas: MermaidSchemaStore
+
     def write_sources(self, sources: Mapping[str, str], output: Path) -> Path:
         sections = "\n".join(self._source_section(name, source) for name, source in sources.items())
         output.parent.mkdir(parents=True, exist_ok=True)
@@ -27,7 +31,7 @@ class MermaidPreview:
 <body>
 {sections}
 <script type="module">
-import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@{self.schemas.version}/dist/mermaid.esm.min.mjs";
 mermaid.initialize({{ startOnLoad: true }});
 </script>
 </body>

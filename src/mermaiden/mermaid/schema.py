@@ -24,7 +24,11 @@ class MermaidDiagramConfig:
 @injectable
 @dataclass(frozen=True, slots=True)
 class MermaidSchemaStore:
-    root: Path = field(default=Path(__file__).parent, init=False)
+    root: Path = field(default=Path(__file__).parent / "compatibility", init=False)
+
+    @property
+    def version(self) -> str:
+        return self.lock().mermaid_version
 
     def lock(self) -> MermaidSchemaLock:
         payload = cast(dict[str, str], json.loads((self.root / "schema.lock.json").read_text(encoding="utf-8")))
@@ -36,7 +40,10 @@ class MermaidSchemaStore:
         lock = self.lock()
         checksum = hashlib.sha256(content).hexdigest()
         if checksum != lock.sha256:
-            raise ValueError(f"Mermaid schema checksum mismatch: expected {lock.sha256}, received {checksum}.")
+            raise ValueError(
+                "Mermaid schema version mismatch: authority 'schema.lock.json' "
+                f"expected checksum '{lock.sha256}', consumer '{path.name}' observed '{checksum}'."
+            )
         return cast(dict[str, Any], json.loads(content))
 
     def diagram_configs(self) -> tuple[MermaidDiagramConfig, ...]:

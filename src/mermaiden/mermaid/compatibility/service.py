@@ -6,10 +6,10 @@ from wireup import injectable
 from ...diagrams.application import DiagramsApplication
 from ...diagrams.catalog.service import DiagramCatalog
 from ..application import MermaidApplication
+from ..schema import MermaidSchemaLock, MermaidSchemaStore
 from ..templates import MermaidTemplateOwnership
 from .configuration import ConfigurationViolation, DiagramConfigurationContract, MermaidConfiguration
 from .parser import MermaidSyntaxValidator, MermaidSyntaxViolation
-from .schema import MermaidSchemaLock, MermaidSchemaStore
 
 
 @dataclass(frozen=True, slots=True)

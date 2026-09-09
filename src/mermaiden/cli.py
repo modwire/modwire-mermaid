@@ -6,7 +6,7 @@ from wireup import ScopedSyncContainer
 
 from .bootstrap import process_scope
 from .mermaid.compatibility import CompatibilityReport, MermaidCompatibilityService
-from .mermaid.compatibility.schema import MermaidDiagramConfig, MermaidSchemaStore
+from .mermaid.schema import MermaidDiagramConfig, MermaidSchemaStore
 
 
 class MermaidenCli:

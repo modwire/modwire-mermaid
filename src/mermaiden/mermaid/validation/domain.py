@@ -2,13 +2,12 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 
-MERMAID_VERSION = "11.16.0"
-
 
 class MermaidRenderDiagnosticCode(StrEnum):
     DIAGRAM_INVALID = "diagram_invalid"
     SOURCE_GENERATION_FAILED = "source_generation_failed"
     RENDERER_UNAVAILABLE = "renderer_unavailable"
+    VERSION_MISMATCH = "version_mismatch"
     RENDER_TIMEOUT = "render_timeout"
     RENDER_FAILED = "render_failed"
     SVG_MISSING = "svg_missing"
@@ -41,3 +40,4 @@ class MermaidCliResult:
     svgs: Mapping[str, str]
     output: str = ""
     timed_out: bool = False
+    observed_version: str = ""
