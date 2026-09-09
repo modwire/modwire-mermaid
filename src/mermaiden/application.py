@@ -1,4 +1,5 @@
 from collections.abc import Mapping
+from pathlib import Path
 from types import TracebackType
 
 from wireup import ScopedSyncContainer
@@ -13,6 +14,8 @@ from .diagrams.services.diagram_factory import DiagramFactory
 from .diagrams.services.persistence import DiagramPersistenceApplication
 from .domain import CommandPayload, DiagramCommand, UnknownCommand
 from .mermaid.application import MermaidApplication
+from .mermaid.schema import MermaidSchemaStore
+from .mermaid.services.preview import MermaidPreviewApplication
 from .mermaid.validation import MermaidRenderReport, MermaidRenderValidator
 from .mutations.commands.application import DiagramCommandApplication
 from .runtime.snapshot import DiagramSnapshot
@@ -76,6 +79,15 @@ class Application:
     def validate_render(self, diagram: Diagram) -> MermaidRenderReport:
         self._ensure_open()
         return self._scope.get(MermaidRenderValidator).validate(diagram)
+
+    @property
+    def mermaid_version(self) -> str:
+        self._ensure_open()
+        return self._scope.get(MermaidSchemaStore).version
+
+    def write_preview(self, sources: Mapping[str, str], output: Path) -> Path:
+        self._ensure_open()
+        return self._scope.get(MermaidPreviewApplication).write_sources(sources, output)
 
     def close(self) -> None:
         if self._closed:

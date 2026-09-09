@@ -62,6 +62,14 @@ class MermaidRenderValidator:
         return tuple(self.report(diagram_id, result) for diagram_id in sources)
 
     def report(self, diagram_id: str, result: MermaidCliResult) -> MermaidRenderReport:
+        if result.observed_version and result.observed_version != self.mermaid_version:
+            return self.failure(
+                diagram_id,
+                MermaidRenderDiagnosticCode.VERSION_MISMATCH,
+                "Mermaid version mismatch.",
+                "Authority 'schema.lock.json' "
+                f"expected '{self.mermaid_version}'; consumer 'mmdc' observed '{result.observed_version}'.",
+            )
         if result.timed_out:
             return self.failure(
                 diagram_id,

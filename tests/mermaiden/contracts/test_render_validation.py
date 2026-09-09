@@ -1,5 +1,6 @@
-from collections.abc import Mapping
-from typing import cast
+import subprocess
+from collections.abc import Mapping, Sequence
+from typing import Any, cast
 from xml.etree import ElementTree
 
 import pytest
@@ -8,6 +9,47 @@ from mermaiden import Application
 
 
 class TestRenderValidation:
+    def test_renderer_uses_the_lock_installed_cli_and_reports_timeouts(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        command: list[str] = []
+
+        def timeout(arguments: Sequence[str], **_options: Any) -> None:
+            command.extend(arguments)
+            raise subprocess.TimeoutExpired(arguments, 60)
+
+        monkeypatch.setattr(subprocess, "run", timeout)
+        application = Application.create()
+        diagram = application.create_diagram("sequenceDiagram")
+        application.execute(diagram, "add_participant", {"id": "example", "label": "Example"})
+
+        report = application.validate_render(diagram)
+
+        assert command[0] == "mmdc"
+        assert "npx" not in command
+        assert report.diagnostics[0].code == "render_timeout"
+        assert "60-second timeout" in report.diagnostics[0].details
+
+    def test_renderer_rejects_an_installed_mermaid_version_mismatch(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        def mismatched_version(arguments: Sequence[str], **_options: Any) -> subprocess.CompletedProcess[str]:
+            return subprocess.CompletedProcess(arguments, 0, stdout="0.0.0\n", stderr="")
+
+        monkeypatch.setattr(subprocess, "run", mismatched_version)
+        application = Application.create()
+        diagram = application.create_diagram("sequenceDiagram")
+        application.execute(diagram, "add_participant", {"id": "example", "label": "Example"})
+
+        report = application.validate_render(diagram)
+
+        assert report.diagnostics[0].code == "version_mismatch"
+        assert "schema.lock.json" in report.diagnostics[0].details
+        assert "consumer 'mmdc' observed '0.0.0'" in report.diagnostics[0].details
+        assert f"expected '{application.mermaid_version}'" in report.diagnostics[0].details
+
     @pytest.mark.integration
     def test_class_relation_markers_render_at_every_semantic_target(self) -> None:
         application = Application.create()
@@ -209,7 +251,7 @@ class TestRenderValidation:
         assert application.snapshot(restored).to_dict() == payload
         assert not report.success
         assert report.diagram_id == "sequenceDiagram"
-        assert report.mermaid_version == "11.16.0"
+        assert report.mermaid_version == application.mermaid_version
         assert report.diagnostics[0].code == "diagram_invalid"
         assert "Diagram requires at least one element" in report.diagnostics[0].details
         with pytest.raises(RuntimeError, match="Cannot render invalid diagram 'sequenceDiagram'"):
@@ -246,7 +288,7 @@ class TestRenderValidation:
 
         assert report.success
         assert report.diagram_id == "sequenceDiagram"
-        assert report.mermaid_version == "11.16.0"
+        assert report.mermaid_version == application.mermaid_version
         assert report.svg.startswith("<svg")
         assert not report.diagnostics
         assert application.snapshot(diagram).to_dict() == before

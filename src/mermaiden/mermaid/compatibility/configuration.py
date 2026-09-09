@@ -7,7 +7,7 @@ from jsonschema import Draft201909Validator
 from jsonschema.exceptions import ValidationError
 from yaml import safe_load
 
-from .schema import MermaidDiagramConfig
+from ..schema import MermaidDiagramConfig
 
 
 @dataclass(frozen=True, slots=True)

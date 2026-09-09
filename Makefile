@@ -1,4 +1,4 @@
-.PHONY: ci compat fast-check format integration mutation-contract package-check
+.PHONY: ci compat diagrams-validate fast-check format integration mermaid-sync mutation-contract package-check
 
 VENV := .venv
 PYTHON := $(VENV)/bin/python
@@ -8,6 +8,10 @@ $(PYTHON):
 
 compat: $(PYTHON)
 	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli compat
+
+mermaid-sync: $(PYTHON)
+	@mermaid_version="$$(PYTHONPATH=src $(PYTHON) -c 'from mermaiden import Application; print(Application.create().mermaid_version)')"; \
+	PUPPETEER_SKIP_DOWNLOAD=true npm install --save-dev --save-exact "@mermaid-js/mermaid-cli@$$mermaid_version"
 
 format: $(PYTHON)
 	@$(PYTHON) -m ruff format .
@@ -42,9 +46,11 @@ integration: $(PYTHON)
 	@PUPPETEER_SKIP_DOWNLOAD=true npm ci
 	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" $(PYTHON) -m pytest -m integration
 
+diagrams-validate: integration
+
 ci: $(PYTHON)
 	@$(PYTHON) -m ensurepip --upgrade
 	@$(PYTHON) -m pip install -e ".[dev]"
 	@$(MAKE) fast-check
-	@$(MAKE) integration
+	@$(MAKE) diagrams-validate
 	@$(MAKE) package-check

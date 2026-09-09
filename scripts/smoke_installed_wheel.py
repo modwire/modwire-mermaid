@@ -32,6 +32,8 @@ class InstalledWheelSmoke:
         return Application.create()
 
     def verify_application(self, application: Application) -> None:
+        if not application.mermaid_version:
+            raise RuntimeError("The installed package does not expose its pinned Mermaid version.")
         if not any(info.id == "block" for info in application.available_diagrams()):
             raise RuntimeError("The installed diagram catalog does not contain 'block'.")
         description = application.diagram_description("block")

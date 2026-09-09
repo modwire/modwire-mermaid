@@ -12,8 +12,9 @@ def test_application_validates_every_registered_diagram_against_pinned_mermaid_s
             (info.id, info.config_key, info.schema_definition) for info in application.available_diagrams()
         )
         upstream = {item.config_key: item for item in cli.mermaid_diagram_configs()}
+        mermaid_version = application.mermaid_version
 
-    assert report.lock.mermaid_version == "11.16.0"
+    assert report.lock.mermaid_version == mermaid_version
     assert report.valid
     assert not report.missing_diagrams
     assert tuple((item.diagram_id, item.config_key, item.schema_definition) for item in report.diagrams) == expected
