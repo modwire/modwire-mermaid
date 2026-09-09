@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, OptionalText, Text, Texts
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -42,25 +43,25 @@ class EntityRelationshipDiagram(DiagramModel):
         annotations=(),
         commands=(
             DiagramCommandFeature("set_direction", {"direction": EntityRelationshipDirection}),
-            DiagramCommandFeature("add_entity", {"id": str, "label": str}),
+            DiagramCommandFeature("add_entity", {"id": Identifier, "label": Text}),
             DiagramCommandFeature(
                 "add_attribute",
                 {
-                    "id": str,
-                    "label": str,
+                    "id": Identifier,
+                    "label": Text,
                     "data_type": EntityAttributeDataType,
-                    "entity_id": str,
-                    "keys": CommandDefault(tuple[str, ...], ()),
-                    "comment": CommandDefault(str, ""),
+                    "entity_id": Identifier,
+                    "keys": CommandDefault(Texts, ()),
+                    "comment": CommandDefault(OptionalText, ""),
                 },
             ),
             DiagramCommandFeature(
                 "add_relationship",
                 {
-                    "id": str,
-                    "source_id": str,
-                    "target_id": str,
-                    "label": str,
+                    "id": Identifier,
+                    "source_id": Identifier,
+                    "target_id": Identifier,
+                    "label": Text,
                     "source_cardinality": CommandDefault(Cardinality, Cardinality.EXACTLY_ONE),
                     "target_cardinality": CommandDefault(Cardinality, Cardinality.EXACTLY_ONE),
                     "identifying": CommandDefault(bool, True),
@@ -78,7 +79,7 @@ class EntityRelationshipDiagram(DiagramModel):
         DiagramModel.configure(self, configuration)
         object.__setattr__(self, "direction", self.configuration.layout_direction)
 
-    def set_direction(self, direction: EntityRelationshipDirection) -> None:
+    def set_direction(self, direction: str) -> None:
         values = self.configuration.model_dump()
         values["layout_direction"] = direction
         self.configure(EntityRelationshipDiagramConfiguration.model_validate(values))
@@ -90,7 +91,7 @@ class EntityRelationshipDiagram(DiagramModel):
         self,
         id: str,
         label: str,
-        data_type: EntityAttributeDataType,
+        data_type: str,
         entity_id: str,
         keys: tuple[str, ...] = (),
         comment: str = "",

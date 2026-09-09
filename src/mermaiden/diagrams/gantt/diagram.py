@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, OptionalIdentifier, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -14,7 +15,7 @@ from ..domain import (
 )
 from .configuration import GanttConfiguration
 from .constraints import GanttConstraint
-from .elements import GanttFinish, GanttStart, Marker, Milestone, Section, Task, TaskStatus
+from .elements import GanttDate, GanttDateFormat, GanttFinish, GanttStart, Marker, Milestone, Section, Task, TaskStatus
 
 
 @injectable(as_type=DiagramModel, qualifier="gantt", lifetime="transient")
@@ -37,15 +38,15 @@ class Gantt(DiagramModel):
         relations=(),
         annotations=(),
         commands=(
-            DiagramCommandFeature("set_title", {"title": str}),
-            DiagramCommandFeature("set_date_format", {"date_format": str}),
-            DiagramCommandFeature("add_section", {"id": str, "label": str}),
+            DiagramCommandFeature("set_title", {"title": Text}),
+            DiagramCommandFeature("set_date_format", {"date_format": GanttDateFormat}),
+            DiagramCommandFeature("add_section", {"id": Identifier, "label": Text}),
             DiagramCommandFeature(
                 "add_task",
                 {
-                    "id": str,
-                    "label": str,
-                    "section_id": str,
+                    "id": Identifier,
+                    "label": Text,
+                    "section_id": OptionalIdentifier,
                     "status": CommandDefault(TaskStatus, TaskStatus.PLANNED),
                     "critical": CommandDefault(bool, False),
                     "start": GanttStart,
@@ -55,16 +56,16 @@ class Gantt(DiagramModel):
             DiagramCommandFeature(
                 "add_milestone",
                 {
-                    "id": str,
-                    "label": str,
-                    "section_id": str,
+                    "id": Identifier,
+                    "label": Text,
+                    "section_id": OptionalIdentifier,
                     "status": CommandDefault(TaskStatus, TaskStatus.PLANNED),
                     "critical": CommandDefault(bool, False),
                     "start": GanttStart,
                     "finish": GanttFinish,
                 },
             ),
-            DiagramCommandFeature("add_marker", {"id": str, "label": str, "date": str}),
+            DiagramCommandFeature("add_marker", {"id": Identifier, "label": Text, "date": GanttDate}),
         ),
     )
 

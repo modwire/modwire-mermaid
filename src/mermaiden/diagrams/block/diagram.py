@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, OptionalIdentifier, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -40,8 +41,8 @@ class BlockDiagram(DiagramModel):
             DiagramCommandFeature(
                 "add_group",
                 {
-                    "id": str,
-                    "label": str,
+                    "id": Identifier,
+                    "label": Text,
                     "columns": CommandDefault(int | None, None),
                     "span": CommandDefault(int | None, None),
                 },
@@ -49,14 +50,19 @@ class BlockDiagram(DiagramModel):
             DiagramCommandFeature(
                 "add_block",
                 {
-                    "id": str,
-                    "label": str,
+                    "id": Identifier,
+                    "label": Text,
                     "span": CommandDefault(int | None, None),
-                    "parent_id": CommandDefault(str, ""),
+                    "parent_id": CommandDefault(OptionalIdentifier, ""),
                 },
             ),
             DiagramCommandFeature(
-                "add_space", {"id": str, "span": CommandDefault(int | None, None), "parent_id": CommandDefault(str, "")}
+                "add_space",
+                {
+                    "id": Identifier,
+                    "span": CommandDefault(int | None, None),
+                    "parent_id": CommandDefault(OptionalIdentifier, ""),
+                },
             ),
         ),
     )

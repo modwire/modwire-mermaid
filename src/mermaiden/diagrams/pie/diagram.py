@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     DiagramCommandFeature,
@@ -36,9 +37,9 @@ class PieDiagram(DiagramModel):
         relations=(),
         annotations=(),
         commands=(
-            DiagramCommandFeature("set_title", {"title": str}),
+            DiagramCommandFeature("set_title", {"title": Text}),
             DiagramCommandFeature("show_values", {}),
-            DiagramCommandFeature("add_slice", {"id": str, "label": str, "value": float}),
+            DiagramCommandFeature("add_slice", {"id": Identifier, "label": Text, "value": float}),
         ),
     )
 

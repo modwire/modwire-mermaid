@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, OptionalText, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -12,7 +13,7 @@ from ..domain import (
     DiagramFeature,
     DiagramModel,
 )
-from .annotations import TreeAnnotation, TreeAnnotations
+from .annotations import TreeAnnotation, TreeAnnotations, TreeIcon
 from .configuration import TreeViewDiagramConfiguration
 from .constraints.domain import TreeViewConstraint
 from .elements import TreeItem, TreeItemType
@@ -37,19 +38,19 @@ class TreeView(DiagramModel):
         relations=(TreeBranch,),
         annotations=(TreeAnnotation,),
         commands=(
-            DiagramCommandFeature("add_item", {"id": str, "label": str}),
-            DiagramCommandFeature("add_directory", {"id": str, "label": str}),
-            DiagramCommandFeature("add_file", {"id": str, "label": str}),
-            DiagramCommandFeature("classify_item", {"id": str, "item_type": TreeItemType}),
-            DiagramCommandFeature("add_branch", {"id": str, "parent_id": str, "child_id": str}),
+            DiagramCommandFeature("add_item", {"id": Identifier, "label": Text}),
+            DiagramCommandFeature("add_directory", {"id": Identifier, "label": Text}),
+            DiagramCommandFeature("add_file", {"id": Identifier, "label": Text}),
+            DiagramCommandFeature("classify_item", {"id": Identifier, "item_type": TreeItemType}),
+            DiagramCommandFeature("add_branch", {"id": Identifier, "parent_id": Identifier, "child_id": Identifier}),
             DiagramCommandFeature(
                 "add_annotation",
                 {
-                    "id": str,
-                    "element_id": str,
+                    "id": Identifier,
+                    "element_id": Identifier,
                     "highlight": CommandDefault(bool, False),
-                    "icon": CommandDefault(str, ""),
-                    "description": CommandDefault(str, ""),
+                    "icon": CommandDefault(TreeIcon, ""),
+                    "description": CommandDefault(OptionalText, ""),
                 },
             ),
         ),

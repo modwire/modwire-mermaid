@@ -1,5 +1,8 @@
 from enum import StrEnum
 
+from pydantic import Field
+
+from ...core.characters import OptionalText
 from ...core.domain import Container, Entity
 
 
@@ -20,4 +23,4 @@ class Participant(Entity):
 
 
 class ParticipantBox(Container):
-    color: str = ""
+    color: str = Field(default="", pattern=OptionalText.pattern, description=OptionalText.description)

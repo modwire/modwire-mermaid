@@ -1,12 +1,21 @@
 from collections.abc import Mapping, Sequence
 
+from pydantic import Field
+
+from ...core.characters import CharacterPolicy, OptionalText
 from ...core.domain import Annotation, OperationError, TargetKind, TargetRef
+
+
+class TreeIcon(CharacterPolicy):
+    pattern = r"^[\w-]*(?::[\w-]+)?$"
+    description = "Empty or a Mermaid Tree View icon name with an optional pack prefix."
+    root: str = Field(pattern=pattern, description=description, json_schema_extra={"x-character-policy": "TreeIcon"})
 
 
 class TreeAnnotation(Annotation):
     highlight: bool = False
-    icon: str = ""
-    description: str = ""
+    icon: str = Field(default="", pattern=TreeIcon.pattern, description=TreeIcon.description)
+    description: str = Field(default="", pattern=OptionalText.pattern, description=OptionalText.description)
 
 
 class TreeAnnotations:

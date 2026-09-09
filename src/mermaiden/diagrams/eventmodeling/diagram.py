@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     DiagramCommandFeature,
@@ -38,12 +39,12 @@ class EventModelingDiagram(DiagramModel):
         relations=(Flow,),
         annotations=(),
         commands=(
-            DiagramCommandFeature("add_swimlane", {"id": str, "label": str}),
-            DiagramCommandFeature("add_actor", {"id": str, "label": str, "swimlane_id": str}),
-            DiagramCommandFeature("add_command", {"id": str, "label": str, "swimlane_id": str}),
-            DiagramCommandFeature("add_view", {"id": str, "label": str, "swimlane_id": str}),
-            DiagramCommandFeature("add_event", {"id": str, "label": str, "swimlane_id": str}),
-            DiagramCommandFeature("add_flow", {"id": str, "source_id": str, "target_id": str}),
+            DiagramCommandFeature("add_swimlane", {"id": Identifier, "label": Text}),
+            DiagramCommandFeature("add_actor", {"id": Identifier, "label": Text, "swimlane_id": Identifier}),
+            DiagramCommandFeature("add_command", {"id": Identifier, "label": Text, "swimlane_id": Identifier}),
+            DiagramCommandFeature("add_view", {"id": Identifier, "label": Text, "swimlane_id": Identifier}),
+            DiagramCommandFeature("add_event", {"id": Identifier, "label": Text, "swimlane_id": Identifier}),
+            DiagramCommandFeature("add_flow", {"id": Identifier, "source_id": Identifier, "target_id": Identifier}),
         ),
     )
 

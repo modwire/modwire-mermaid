@@ -30,7 +30,7 @@ class MermaidValueFormatter:
 
     def class_text(self, value: object) -> str:
         return "".join(
-            character if character.isalnum() or character in " _-.,/" else f"#{ord(character)};"
+            character if character.isalnum() or character in " _-.,/;" else f"#{ord(character)};"
             for character in str(value)
         )
 

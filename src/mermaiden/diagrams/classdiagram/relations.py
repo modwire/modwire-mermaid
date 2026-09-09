@@ -1,5 +1,7 @@
 from enum import StrEnum
 
+from pydantic import Field
+
 from ...core.domain import Relation
 from .values.text import ClassIdentifier, OptionalClassText
 
@@ -14,8 +16,8 @@ class ClassRelationKind(StrEnum):
 
 
 class ClassRelation(Relation):
-    id: ClassIdentifier
-    label: OptionalClassText = ""
+    id: str = Field(pattern=ClassIdentifier.pattern, description=ClassIdentifier.description)
+    label: str = Field(default="", pattern=OptionalClassText.pattern, description=OptionalClassText.description)
     relation_kind: ClassRelationKind = ClassRelationKind.ASSOCIATION
-    source_label: OptionalClassText = ""
-    target_label: OptionalClassText = ""
+    source_label: str = Field(default="", pattern=OptionalClassText.pattern, description=OptionalClassText.description)
+    target_label: str = Field(default="", pattern=OptionalClassText.pattern, description=OptionalClassText.description)

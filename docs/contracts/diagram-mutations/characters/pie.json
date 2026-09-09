@@ -1,0 +1,63 @@
+{
+  "diagram_id": "pie",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_slice": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "configure": {
+      "$.highlightSlice": [
+        "OptionalIdentifier"
+      ],
+      "$.legendPosition": [
+        "LegendPosition values"
+      ]
+    },
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'pie_slice'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "set_title": {
+      "$.title": [
+        "Identifier"
+      ]
+    },
+    "show_values": {},
+    "update_element": {
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'pie_slice'"
+      ]
+    }
+  }
+}

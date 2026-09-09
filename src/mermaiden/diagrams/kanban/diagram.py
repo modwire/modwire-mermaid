@@ -1,9 +1,10 @@
 from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import ClassVar, Literal
 
 from wireup import injectable
 
+from ...core.characters import Identifier, OptionalText, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -35,16 +36,16 @@ class KanbanDiagram(DiagramModel):
         relations=(),
         annotations=(),
         commands=(
-            DiagramCommandFeature("add_column", {"id": str, "label": str}),
+            DiagramCommandFeature("add_column", {"id": Identifier, "label": Text}),
             DiagramCommandFeature(
                 "add_task",
                 {
-                    "id": str,
-                    "label": str,
-                    "column_id": str,
-                    "assigned": CommandDefault(str, ""),
-                    "ticket": CommandDefault(str, ""),
-                    "priority": CommandDefault(KanbanPriority | str, ""),
+                    "id": Identifier,
+                    "label": Text,
+                    "column_id": Identifier,
+                    "assigned": CommandDefault(OptionalText, ""),
+                    "ticket": CommandDefault(OptionalText, ""),
+                    "priority": CommandDefault(KanbanPriority | Literal[""], ""),
                 },
             ),
         ),

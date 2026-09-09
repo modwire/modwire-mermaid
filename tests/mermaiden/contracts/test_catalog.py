@@ -1,3 +1,5 @@
+from typing import cast
+
 import pytest
 from pydantic import ValidationError
 
@@ -95,7 +97,8 @@ class TestDiagramCatalog:
     def test_requires_one_or_two_sequence_note_targets(self) -> None:
         payload = Application.create().command_payload("sequenceDiagram", "add_note")
         schema = payload.model_json_schema()
-        targets = schema["properties"]["participant_ids"]
+        reference = cast(str, schema["properties"]["participant_ids"]["$ref"])
+        targets = schema["$defs"][reference.removeprefix("#/$defs/")]
 
         assert "participant_ids" in schema["required"]
         assert targets["type"] == "array"

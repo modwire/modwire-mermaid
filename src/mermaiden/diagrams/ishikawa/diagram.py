@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, OptionalIdentifier, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -36,9 +37,11 @@ class IshikawaDiagram(DiagramModel):
         relations=(CauseRelation,),
         annotations=(),
         commands=(
-            DiagramCommandFeature("add_effect", {"id": str, "label": str}),
-            DiagramCommandFeature("add_category", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
-            DiagramCommandFeature("add_cause", {"id": str, "label": str, "parent_id": str}),
+            DiagramCommandFeature("add_effect", {"id": Identifier, "label": Text}),
+            DiagramCommandFeature(
+                "add_category", {"id": Identifier, "label": Text, "parent_id": CommandDefault(OptionalIdentifier, "")}
+            ),
+            DiagramCommandFeature("add_cause", {"id": Identifier, "label": Text, "parent_id": Identifier}),
         ),
     )
 

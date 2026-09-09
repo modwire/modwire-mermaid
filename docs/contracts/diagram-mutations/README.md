@@ -2,6 +2,7 @@
 
 This documentation is generated from public `Application` discovery and `contract.json` semantics.
 Run `make mutation-contract` after changing the public catalog or contract semantics.
+The [character-policy matrices](characters/README.md) record every advertised command string field.
 
 Contract version: `1`.
 

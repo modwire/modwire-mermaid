@@ -8,12 +8,12 @@ from .values.text import ClassIdentifier, ClassText
 
 
 class ClassNote(Annotation):
-    id: ClassIdentifier
+    id: str = Field(pattern=ClassIdentifier.pattern, description=ClassIdentifier.description)
     targets: Annotated[
         tuple[Annotated[TargetRef, Field(json_schema_extra={"properties": {"kind": {"const": "element"}}})], ...],
         Field(min_length=1, max_length=1),
     ]
-    text: ClassText
+    text: str = Field(pattern=ClassText.pattern, description=ClassText.description)
 
     @field_validator("targets")
     @classmethod

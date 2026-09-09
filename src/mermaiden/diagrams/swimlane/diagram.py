@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, OptionalText, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -38,19 +39,26 @@ class SwimlaneDiagram(DiagramModel):
         relations=(Flow, ConditionalFlow),
         annotations=(),
         commands=(
-            DiagramCommandFeature("add_lane", {"id": str, "label": str}),
-            DiagramCommandFeature("add_activity", {"id": str, "label": str, "lane_id": str}),
-            DiagramCommandFeature("add_start", {"id": str, "label": str, "lane_id": str}),
-            DiagramCommandFeature("add_end", {"id": str, "label": str, "lane_id": str}),
-            DiagramCommandFeature("add_decision", {"id": str, "label": str, "lane_id": str}),
-            DiagramCommandFeature("add_connector", {"id": str, "label": str, "lane_id": str}),
+            DiagramCommandFeature("add_lane", {"id": Identifier, "label": Text}),
+            DiagramCommandFeature("add_activity", {"id": Identifier, "label": Text, "lane_id": Identifier}),
+            DiagramCommandFeature("add_start", {"id": Identifier, "label": Text, "lane_id": Identifier}),
+            DiagramCommandFeature("add_end", {"id": Identifier, "label": Text, "lane_id": Identifier}),
+            DiagramCommandFeature("add_decision", {"id": Identifier, "label": Text, "lane_id": Identifier}),
+            DiagramCommandFeature("add_connector", {"id": Identifier, "label": Text, "lane_id": Identifier}),
             DiagramCommandFeature(
-                "add_flow", {"id": str, "source_id": str, "target_id": str, "label": CommandDefault(str, "")}
+                "add_flow",
+                {
+                    "id": Identifier,
+                    "source_id": Identifier,
+                    "target_id": Identifier,
+                    "label": CommandDefault(OptionalText, ""),
+                },
             ),
             DiagramCommandFeature(
-                "add_conditional_flow", {"id": str, "source_id": str, "target_id": str, "condition": str}
+                "add_conditional_flow",
+                {"id": Identifier, "source_id": Identifier, "target_id": Identifier, "condition": Text},
             ),
-            DiagramCommandFeature("remove_flow", {"id": str}),
+            DiagramCommandFeature("remove_flow", {"id": Identifier}),
         ),
     )
 

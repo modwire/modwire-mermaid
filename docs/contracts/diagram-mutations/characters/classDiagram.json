@@ -1,0 +1,216 @@
+{
+  "diagram_id": "classDiagram",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_class": {
+      "$.annotations[]": [
+        "MemberName"
+      ],
+      "$.attributes[].name": [
+        "MemberName"
+      ],
+      "$.attributes[].type.name": [
+        "Dot-qualified ASCII type name."
+      ],
+      "$.attributes[].visibility": [
+        "Visibility values"
+      ],
+      "$.comment": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.methods[].modifier": [
+        "MethodModifier values"
+      ],
+      "$.methods[].name": [
+        "MemberName"
+      ],
+      "$.methods[].parameters[].name": [
+        "MemberName"
+      ],
+      "$.methods[].parameters[].type.name": [
+        "Dot-qualified ASCII type name."
+      ],
+      "$.methods[].return_type.name": [
+        "Dot-qualified ASCII type name."
+      ],
+      "$.methods[].visibility": [
+        "Visibility values"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "add_namespace": {
+      "$.comment": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "OptionalIdentifier"
+      ]
+    },
+    "add_note": {
+      "$.class_id": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.text": [
+        "Identifier"
+      ]
+    },
+    "add_relation": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "OptionalIdentifier"
+      ],
+      "$.relation_kind": [
+        "ClassRelationKind values"
+      ],
+      "$.source_id": [
+        "Identifier"
+      ],
+      "$.source_label": [
+        "OptionalIdentifier"
+      ],
+      "$.target_id": [
+        "Identifier"
+      ],
+      "$.target_label": [
+        "OptionalIdentifier"
+      ]
+    },
+    "configure": {},
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'class'",
+        "constant 'class_namespace'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_annotation": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "remove_relation": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "update_annotation": {
+      "$.changes.targets[].id": [
+        "Identifier"
+      ],
+      "$.changes.targets[].kind": [
+        "TargetKind values"
+      ],
+      "$.changes.text": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'class_note'"
+      ]
+    },
+    "update_element": {
+      "$.changes.annotations[]": [
+        "MemberName"
+      ],
+      "$.changes.attributes[].name": [
+        "MemberName"
+      ],
+      "$.changes.attributes[].type.name": [
+        "Dot-qualified ASCII type name."
+      ],
+      "$.changes.attributes[].visibility": [
+        "Visibility values"
+      ],
+      "$.changes.comment": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.changes.methods[].modifier": [
+        "MethodModifier values"
+      ],
+      "$.changes.methods[].name": [
+        "MemberName"
+      ],
+      "$.changes.methods[].parameters[].name": [
+        "MemberName"
+      ],
+      "$.changes.methods[].parameters[].type.name": [
+        "Dot-qualified ASCII type name."
+      ],
+      "$.changes.methods[].return_type.name": [
+        "Dot-qualified ASCII type name."
+      ],
+      "$.changes.methods[].visibility": [
+        "Visibility values"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'class'",
+        "constant 'class_namespace'"
+      ]
+    },
+    "update_relation": {
+      "$.changes.element_ids[]": [
+        "Identifier"
+      ],
+      "$.changes.label": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.relation_kind": [
+        "ClassRelationKind values"
+      ],
+      "$.changes.source_label": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.target_label": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'class_relation'"
+      ]
+    }
+  }
+}

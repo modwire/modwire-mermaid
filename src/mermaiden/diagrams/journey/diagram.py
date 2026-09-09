@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, Text, Texts
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     DiagramCommandFeature,
@@ -35,10 +36,11 @@ class Journey(DiagramModel):
         relations=(),
         annotations=(),
         commands=(
-            DiagramCommandFeature("set_title", {"title": str}),
-            DiagramCommandFeature("add_section", {"id": str, "label": str}),
+            DiagramCommandFeature("set_title", {"title": Text}),
+            DiagramCommandFeature("add_section", {"id": Identifier, "label": Text}),
             DiagramCommandFeature(
-                "add_task", {"id": str, "label": str, "score": int, "actors": tuple[str, ...], "section_id": str}
+                "add_task",
+                {"id": Identifier, "label": Text, "score": int, "actors": Texts, "section_id": Identifier},
             ),
         ),
     )

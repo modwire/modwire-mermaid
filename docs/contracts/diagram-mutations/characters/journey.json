@@ -1,0 +1,74 @@
+{
+  "diagram_id": "journey",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_section": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_task": {
+      "$.actors[]": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.section_id": [
+        "Identifier"
+      ]
+    },
+    "configure": {},
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'journey_section'",
+        "constant 'journey_task'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "set_title": {
+      "$.title": [
+        "Identifier"
+      ]
+    },
+    "update_element": {
+      "$.changes.actors[]": [
+        "Identifier"
+      ],
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'journey_section'",
+        "constant 'journey_task'"
+      ]
+    }
+  }
+}

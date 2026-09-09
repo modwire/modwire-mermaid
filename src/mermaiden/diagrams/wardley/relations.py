@@ -1,5 +1,7 @@
+from typing import Literal
+
 from ...core.domain import Relation
 
 
 class Dependency(Relation):
-    operator: str = "->"
+    operator: Literal["->"] = "->"

@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     DiagramCommandFeature,
@@ -54,14 +55,14 @@ class RailroadDiagram(DiagramModel):
         relations=(),
         annotations=(),
         commands=(
-            DiagramCommandFeature("add_rule", {"id": str, "label": str}),
-            DiagramCommandFeature("add_terminal", {"id": str, "label": str, "rule_id": str}),
-            DiagramCommandFeature("add_non_terminal", {"id": str, "label": str, "rule_id": str}),
-            DiagramCommandFeature("add_special", {"id": str, "label": str, "parent_id": str}),
-            DiagramCommandFeature("add_alternative", {"id": str, "parent_id": str}),
-            DiagramCommandFeature("add_optional", {"id": str, "parent_id": str}),
-            DiagramCommandFeature("add_repetition", {"id": str, "parent_id": str}),
-            DiagramCommandFeature("add_group", {"id": str, "parent_id": str}),
+            DiagramCommandFeature("add_rule", {"id": Identifier, "label": Text}),
+            DiagramCommandFeature("add_terminal", {"id": Identifier, "label": Text, "rule_id": Identifier}),
+            DiagramCommandFeature("add_non_terminal", {"id": Identifier, "label": Text, "rule_id": Identifier}),
+            DiagramCommandFeature("add_special", {"id": Identifier, "label": Text, "parent_id": Identifier}),
+            DiagramCommandFeature("add_alternative", {"id": Identifier, "parent_id": Identifier}),
+            DiagramCommandFeature("add_optional", {"id": Identifier, "parent_id": Identifier}),
+            DiagramCommandFeature("add_repetition", {"id": Identifier, "parent_id": Identifier}),
+            DiagramCommandFeature("add_group", {"id": Identifier, "parent_id": Identifier}),
         ),
     )
 

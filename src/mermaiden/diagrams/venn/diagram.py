@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, Identifiers, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -35,12 +36,14 @@ class Venn(DiagramModel):
         relations=(),
         annotations=(),
         commands=(
-            DiagramCommandFeature("add_set", {"id": str, "label": str, "size": CommandDefault(float | None, None)}),
+            DiagramCommandFeature(
+                "add_set", {"id": Identifier, "label": Text, "size": CommandDefault(float | None, None)}
+            ),
             DiagramCommandFeature(
                 "add_union",
-                {"id": str, "label": str, "set_ids": tuple[str, ...], "size": CommandDefault(float | None, None)},
+                {"id": Identifier, "label": Text, "set_ids": Identifiers, "size": CommandDefault(float | None, None)},
             ),
-            DiagramCommandFeature("add_text", {"id": str, "label": str, "parent_id": str}),
+            DiagramCommandFeature("add_text", {"id": Identifier, "label": Text, "parent_id": Identifier}),
         ),
     )
 

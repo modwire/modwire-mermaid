@@ -1,0 +1,112 @@
+{
+  "diagram_id": "wardley-beta",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_anchor": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_component": {
+      "$.decorators[]": [
+        "ComponentDecorator values"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_dependency": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "OptionalIdentifier"
+      ],
+      "$.source_id": [
+        "Identifier"
+      ],
+      "$.target_id": [
+        "Identifier"
+      ]
+    },
+    "add_evolution": {
+      "$.component_id": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "configure": {},
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'component'",
+        "constant 'evolution'",
+        "constant 'pipeline'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "remove_relation": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "update_element": {
+      "$.changes.decorators[]": [
+        "ComponentDecorator values"
+      ],
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'component'",
+        "constant 'evolution'",
+        "constant 'pipeline'"
+      ]
+    },
+    "update_relation": {
+      "$.changes.element_ids[]": [
+        "Identifier"
+      ],
+      "$.changes.label": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.operator": [
+        "constant '->'"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'dependency'"
+      ]
+    }
+  }
+}

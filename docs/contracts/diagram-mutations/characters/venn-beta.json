@@ -1,0 +1,79 @@
+{
+  "diagram_id": "venn-beta",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_set": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_text": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "Identifier"
+      ]
+    },
+    "add_union": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.set_ids[]": [
+        "Identifier"
+      ]
+    },
+    "configure": {},
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'venn_set'",
+        "constant 'venn_text'",
+        "constant 'venn_union'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "update_element": {
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.changes.set_ids[]": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'venn_set'",
+        "constant 'venn_text'",
+        "constant 'venn_union'"
+      ]
+    }
+  }
+}

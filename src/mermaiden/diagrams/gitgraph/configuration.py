@@ -1,3 +1,6 @@
+from pydantic import Field
+
+from ...core.characters import Text
 from ..domain import MermaidConfigurationModel, MermaidDiagramConfiguration
 
 
@@ -12,7 +15,7 @@ class GitGraphDiagramConfiguration(MermaidDiagramConfiguration):
     title_top_margin: int = 25
     diagram_padding: float = 8
     node_label: GitGraphNodeLabel = GitGraphNodeLabel()
-    main_branch_name: str = "main"
+    main_branch_name: str = Field(default="main", pattern=Text.pattern, description=Text.description)
     main_branch_order: float = 0
     show_commit_label: bool = True
     show_branches: bool = True

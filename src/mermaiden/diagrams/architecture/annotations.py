@@ -1,10 +1,13 @@
 from collections.abc import Mapping, Sequence
 
+from pydantic import Field
+
+from ...core.characters import Text
 from ...core.domain import Annotation, OperationError, TargetKind, TargetRef
 
 
 class ArchitectureNote(Annotation):
-    text: str
+    text: str = Field(pattern=Text.pattern, description=Text.description)
 
 
 class ArchitectureNotes:

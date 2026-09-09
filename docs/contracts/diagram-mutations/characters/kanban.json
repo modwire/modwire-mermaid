@@ -1,0 +1,86 @@
+{
+  "diagram_id": "kanban",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_column": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_task": {
+      "$.assigned": [
+        "OptionalIdentifier"
+      ],
+      "$.column_id": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.priority": [
+        "KanbanPriority values",
+        "constant ''"
+      ],
+      "$.ticket": [
+        "OptionalIdentifier"
+      ]
+    },
+    "configure": {
+      "$.ticketBaseUrl": [
+        "OptionalIdentifier"
+      ]
+    },
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'column'",
+        "constant 'task'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "update_element": {
+      "$.changes.assigned": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.changes.priority": [
+        "pattern '^(?:Very High|High|Low|Very Low)?$'"
+      ],
+      "$.changes.ticket": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'column'",
+        "constant 'task'"
+      ]
+    }
+  }
+}

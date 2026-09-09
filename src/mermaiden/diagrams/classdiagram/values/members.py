@@ -21,24 +21,24 @@ class MethodModifier(StrEnum):
 
 
 class ClassType(ValueModel):
-    name: TypeName
+    name: str = Field(pattern=TypeName.pattern, description=TypeName.description)
     arguments: Annotated[tuple["ClassType", ...], Field(max_length=1)] = ()
 
 
 class ClassAttribute(ValueModel):
-    name: MemberName
+    name: str = Field(pattern=MemberName.pattern, description=MemberName.description)
     type: ClassType
     visibility: Visibility = Visibility.PUBLIC
     static: StrictBool = False
 
 
 class ClassParameter(ValueModel):
-    name: MemberName
+    name: str = Field(pattern=MemberName.pattern, description=MemberName.description)
     type: ClassType
 
 
 class ClassMethod(ValueModel):
-    name: MemberName
+    name: str = Field(pattern=MemberName.pattern, description=MemberName.description)
     parameters: tuple[ClassParameter, ...] = ()
     return_type: ClassType
     visibility: Visibility = Visibility.PUBLIC

@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     DiagramCommandFeature,
@@ -35,8 +36,10 @@ class Sankey(DiagramModel):
         relations=(SankeyLink,),
         annotations=(),
         commands=(
-            DiagramCommandFeature("add_node", {"id": str, "label": str}),
-            DiagramCommandFeature("add_flow", {"id": str, "source_id": str, "target_id": str, "value": float}),
+            DiagramCommandFeature("add_node", {"id": Identifier, "label": Text}),
+            DiagramCommandFeature(
+                "add_flow", {"id": Identifier, "source_id": Identifier, "target_id": Identifier, "value": float}
+            ),
         ),
     )
 

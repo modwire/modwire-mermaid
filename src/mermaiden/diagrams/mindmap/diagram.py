@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     DiagramCommandFeature,
@@ -34,14 +35,14 @@ class Mindmap(DiagramModel):
         relations=(),
         annotations=(),
         commands=(
-            DiagramCommandFeature("add_root", {"id": str, "label": str}),
-            DiagramCommandFeature("add_node", {"id": str, "label": str, "parent_id": str}),
-            DiagramCommandFeature("add_square", {"id": str, "label": str, "parent_id": str}),
-            DiagramCommandFeature("add_rounded_square", {"id": str, "label": str, "parent_id": str}),
-            DiagramCommandFeature("add_circle", {"id": str, "label": str, "parent_id": str}),
-            DiagramCommandFeature("add_bang", {"id": str, "label": str, "parent_id": str}),
-            DiagramCommandFeature("add_cloud", {"id": str, "label": str, "parent_id": str}),
-            DiagramCommandFeature("add_hexagon", {"id": str, "label": str, "parent_id": str}),
+            DiagramCommandFeature("add_root", {"id": Identifier, "label": Text}),
+            DiagramCommandFeature("add_node", {"id": Identifier, "label": Text, "parent_id": Identifier}),
+            DiagramCommandFeature("add_square", {"id": Identifier, "label": Text, "parent_id": Identifier}),
+            DiagramCommandFeature("add_rounded_square", {"id": Identifier, "label": Text, "parent_id": Identifier}),
+            DiagramCommandFeature("add_circle", {"id": Identifier, "label": Text, "parent_id": Identifier}),
+            DiagramCommandFeature("add_bang", {"id": Identifier, "label": Text, "parent_id": Identifier}),
+            DiagramCommandFeature("add_cloud", {"id": Identifier, "label": Text, "parent_id": Identifier}),
+            DiagramCommandFeature("add_hexagon", {"id": Identifier, "label": Text, "parent_id": Identifier}),
         ),
     )
 

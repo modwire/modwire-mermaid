@@ -1,0 +1,89 @@
+{
+  "diagram_id": "cynefin-beta",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_item": {
+      "$.domain": [
+        "DomainKind values"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_transition": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "OptionalIdentifier"
+      ],
+      "$.source_id": [
+        "Identifier"
+      ],
+      "$.target_id": [
+        "Identifier"
+      ]
+    },
+    "configure": {},
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'domain'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "remove_relation": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "update_element": {
+      "$.changes.domain": [
+        "DomainKind values"
+      ],
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'domain'"
+      ]
+    },
+    "update_relation": {
+      "$.changes.element_ids[]": [
+        "Identifier"
+      ],
+      "$.changes.label": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'transition'"
+      ]
+    }
+  }
+}

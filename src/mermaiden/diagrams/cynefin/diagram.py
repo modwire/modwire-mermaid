@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, OptionalText, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -36,9 +37,15 @@ class CynefinDiagram(DiagramModel):
         relations=(Transition,),
         annotations=(),
         commands=(
-            DiagramCommandFeature("add_item", {"id": str, "label": str, "domain": DomainKind}),
+            DiagramCommandFeature("add_item", {"id": Identifier, "label": Text, "domain": DomainKind}),
             DiagramCommandFeature(
-                "add_transition", {"id": str, "source_id": str, "target_id": str, "label": CommandDefault(str, "")}
+                "add_transition",
+                {
+                    "id": Identifier,
+                    "source_id": Identifier,
+                    "target_id": Identifier,
+                    "label": CommandDefault(OptionalText, ""),
+                },
             ),
         ),
     )

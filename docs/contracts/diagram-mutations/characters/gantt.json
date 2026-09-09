@@ -1,0 +1,184 @@
+{
+  "diagram_id": "gantt",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_marker": {
+      "$.date": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_milestone": {
+      "$.finish.date": [
+        "Identifier"
+      ],
+      "$.finish.kind": [
+        "constant 'duration'",
+        "constant 'end_date'",
+        "constant 'until'"
+      ],
+      "$.finish.unit": [
+        "DurationUnit values"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.section_id": [
+        "OptionalIdentifier"
+      ],
+      "$.start.date": [
+        "Identifier"
+      ],
+      "$.start.kind": [
+        "constant 'automatic'",
+        "constant 'date'",
+        "constant 'dependencies'"
+      ],
+      "$.start.task_ids[]": [
+        "Identifier"
+      ],
+      "$.status": [
+        "TaskStatus values"
+      ]
+    },
+    "add_section": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_task": {
+      "$.finish.date": [
+        "Identifier"
+      ],
+      "$.finish.kind": [
+        "constant 'duration'",
+        "constant 'end_date'",
+        "constant 'until'"
+      ],
+      "$.finish.unit": [
+        "DurationUnit values"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.section_id": [
+        "OptionalIdentifier"
+      ],
+      "$.start.date": [
+        "Identifier"
+      ],
+      "$.start.kind": [
+        "constant 'automatic'",
+        "constant 'date'",
+        "constant 'dependencies'"
+      ],
+      "$.start.task_ids[]": [
+        "Identifier"
+      ],
+      "$.status": [
+        "TaskStatus values"
+      ]
+    },
+    "configure": {
+      "$.axisFormat": [
+        "Identifier"
+      ],
+      "$.weekday": [
+        "Identifier"
+      ]
+    },
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'marker'",
+        "constant 'milestone'",
+        "constant 'section'",
+        "constant 'task'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "set_date_format": {
+      "$.date_format": [
+        "Identifier"
+      ]
+    },
+    "set_title": {
+      "$.title": [
+        "Identifier"
+      ]
+    },
+    "update_element": {
+      "$.changes.date": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.finish.date": [
+        "Identifier"
+      ],
+      "$.changes.finish.kind": [
+        "constant 'duration'",
+        "constant 'end_date'",
+        "constant 'until'"
+      ],
+      "$.changes.finish.unit": [
+        "DurationUnit values"
+      ],
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.changes.start.date": [
+        "Identifier"
+      ],
+      "$.changes.start.kind": [
+        "constant 'automatic'",
+        "constant 'date'",
+        "constant 'dependencies'"
+      ],
+      "$.changes.start.task_ids[]": [
+        "Identifier"
+      ],
+      "$.changes.status": [
+        "TaskStatus values"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'marker'",
+        "constant 'milestone'",
+        "constant 'section'",
+        "constant 'task'"
+      ]
+    }
+  }
+}
