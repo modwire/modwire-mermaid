@@ -9,6 +9,56 @@ from mermaiden import Application
 
 class TestRenderValidation:
     @pytest.mark.integration
+    def test_class_relation_markers_render_at_every_semantic_target(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("classDiagram")
+        markers = {
+            "inheritance": "extensionEnd",
+            "composition": "compositionEnd",
+            "aggregation": "aggregationEnd",
+            "dependency": "dependencyEnd",
+            "realization": "extensionEnd",
+        }
+        for relation_kind in markers:
+            application.execute(
+                diagram,
+                "add_class",
+                {"id": f"{relation_kind}_source", "label": f"{relation_kind} source"},
+            )
+            application.execute(
+                diagram,
+                "add_class",
+                {"id": f"{relation_kind}_target", "label": f"{relation_kind} target"},
+            )
+            application.execute(
+                diagram,
+                "add_relation",
+                {
+                    "id": relation_kind,
+                    "source_id": f"{relation_kind}_source",
+                    "target_id": f"{relation_kind}_target",
+                    "relation_kind": relation_kind,
+                },
+            )
+
+        report = application.validate_render(diagram)
+
+        assert report.success, report.diagnostics
+        svg = ElementTree.fromstring(report.svg)
+        relation_paths = tuple(
+            element for element in svg.iter() if "relation" in element.attrib.get("class", "").split()
+        )
+        assert len(relation_paths) == len(markers)
+        for relation_kind, marker in markers.items():
+            path = next(
+                element
+                for element in relation_paths
+                if f"c_v_{relation_kind}_source_c_v_{relation_kind}_target" in element.attrib["id"]
+            )
+            assert "marker-start" not in path.attrib
+            assert path.attrib["marker-end"].endswith(f"classDiagram-{marker})")
+
+    @pytest.mark.integration
     def test_class_text_preserves_slashes_in_mermaid_source_and_svg(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("classDiagram")

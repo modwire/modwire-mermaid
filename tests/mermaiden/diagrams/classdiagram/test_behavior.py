@@ -29,8 +29,8 @@ class TestClassDiagram:
                 "add_relation",
                 {
                     "id": "inherits",
-                    "source_id": "animal",
-                    "target_id": "duck",
+                    "source_id": "duck",
+                    "target_id": "animal",
                     "relation_kind": "inheritance",
                     "label": "extends",
                 },
@@ -44,9 +44,65 @@ class TestClassDiagram:
 
         assert 'namespace c_v_domain["Domain"]' in source
         assert "abstract" in source
-        assert "<|--" in source
+        assert "--|>" in source
         assert "note for c_v_animal" in source
         assert application.render(restored) == source
+
+    @pytest.mark.parametrize(
+        ("relation_kind", "connector"),
+        (
+            ("association", "--"),
+            ("inheritance", "--|>"),
+            ("composition", "--*"),
+            ("aggregation", "--o"),
+            ("dependency", "..>"),
+            ("realization", "..|>"),
+        ),
+    )
+    def test_relation_markers_follow_semantic_source_to_target_through_update_and_restore(
+        self,
+        relation_kind: str,
+        connector: str,
+    ) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("classDiagram")
+        application.execute(diagram, "add_class", {"id": "source", "label": "Source"})
+        application.execute(diagram, "add_class", {"id": "target", "label": "Target"})
+        application.execute(diagram, "add_class", {"id": "new_target", "label": "New target"})
+        application.execute(
+            diagram,
+            "add_relation",
+            {
+                "id": "relation",
+                "source_id": "source",
+                "target_id": "target",
+                "relation_kind": relation_kind,
+                "label": "uses",
+                "source_label": "one",
+                "target_label": "many",
+            },
+        )
+
+        source = application.render(diagram)
+        assert f'c_v_source "one" {connector} "many" c_v_target : uses' in source
+
+        restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
+        assert application.render(restored) == source
+
+        application.execute(
+            restored,
+            "update_relation",
+            {
+                "id": "relation",
+                "kind": "class_relation",
+                "changes": {"element_ids": ["source", "new_target"]},
+            },
+        )
+        updated_source = application.render(restored)
+        assert f'c_v_source "one" {connector} "many" c_v_new_target : uses' in updated_source
+
+        updated = application.restore(json.loads(json.dumps(application.snapshot(restored).to_dict())))
+        assert application.render(updated) == updated_source
 
     def test_rejects_bad_relations_duplicate_classes_and_unknown_note_targets(self) -> None:
         application = Application.create()
