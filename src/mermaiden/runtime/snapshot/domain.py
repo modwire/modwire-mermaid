@@ -1,9 +1,8 @@
 from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Final
+from typing import Any, Protocol
 
-SNAPSHOT_VERSION = 4
-TRANSIENT_DIAGRAM_FIELDS: Final = frozenset({"runtime", "structure", "constraints", "configuration", "mutations"})
+SNAPSHOT_VERSION = 5
 
 
 class SnapshotError(RuntimeError):
@@ -32,3 +31,43 @@ class DiagramSnapshot:
             "annotations": list(self.annotations),
             "properties": dict(self.properties),
         }
+
+
+@dataclass(frozen=True, slots=True)
+class SnapshotType:
+    discriminator: str
+    value_type: type[Any]
+
+
+@dataclass(frozen=True, slots=True)
+class SnapshotContract:
+    owner: str
+    configuration: SnapshotType
+    elements: tuple[SnapshotType, ...]
+    relations: tuple[SnapshotType, ...]
+    annotations: tuple[SnapshotType, ...]
+    values: tuple[SnapshotType, ...]
+    enums: tuple[SnapshotType, ...]
+    properties: Mapping[str, object]
+
+    @property
+    def types(self) -> tuple[SnapshotType, ...]:
+        return (
+            self.configuration,
+            *self.elements,
+            *self.relations,
+            *self.annotations,
+            *self.values,
+            *self.enums,
+        )
+
+
+class SnapshotTypeRegistry(Protocol):
+    def contract(self, owner: str) -> SnapshotContract: ...
+
+    def reference(self, owner: str, value_type: type[object]) -> str: ...
+
+    def resolve(self, owner: str, discriminator: str, expected: Any) -> type[Any]: ...
+
+    @property
+    def fingerprint(self) -> str: ...

@@ -12,6 +12,7 @@ from ..domain import (
     DiagramDefinition,
     DiagramFeature,
     DiagramModel,
+    PersistedDiagramProperty,
 )
 from .configuration import TimelineDiagramConfiguration
 from .constraints import TimelineConstraint
@@ -33,6 +34,7 @@ class Timeline(DiagramModel):
 
     feature: ClassVar[DiagramFeature] = DiagramFeature(
         configuration=TimelineDiagramConfiguration,
+        snapshot_properties=(PersistedDiagramProperty("title", str),),
         elements=(TimelineSection, TimelinePeriod, TimelineEvent),
         relations=(),
         annotations=(),

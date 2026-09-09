@@ -12,6 +12,7 @@ from ..domain import (
     DiagramDefinition,
     DiagramFeature,
     DiagramModel,
+    PersistedDiagramProperty,
 )
 from ..flowchart.elements import Direction
 from .configuration import SwimlaneConfiguration
@@ -35,6 +36,7 @@ class SwimlaneDiagram(DiagramModel):
 
     feature: ClassVar[DiagramFeature] = DiagramFeature(
         configuration=SwimlaneConfiguration,
+        snapshot_properties=(PersistedDiagramProperty("direction", Direction),),
         elements=(Swimlane, SwimlaneNode, Activity, Start, End, Decision, Connector),
         relations=(Flow, ConditionalFlow),
         annotations=(),

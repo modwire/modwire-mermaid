@@ -169,7 +169,7 @@ class TestApplication:
         payload = application.snapshot(diagram).to_dict()
         restored = application.restore(json.loads(json.dumps(payload)))
 
-        assert payload["version"] == 4
+        assert payload["version"] == 5
         assert "configuration" not in cast(Mapping[str, object], payload["properties"])
         assert not self._contains_none(payload["configuration"])
         assert application.snapshot(restored).to_dict() == payload

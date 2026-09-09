@@ -57,7 +57,14 @@ if not report.success:
 svg = report.svg
 ```
 
-Snapshots have a versioned envelope and may be stored as JSON. Newly created and incomplete diagrams are marked as drafts: callers may snapshot and restore them between accepted commands, but `Application.render()` rejects them until their blocking constraints are resolved. Snapshot parsing and typed hydration still reject malformed persisted data, and restoration verifies snapshots that were recorded as valid. Command argument values use the diagram operation names; JSON string values are accepted for enum arguments.
+Snapshots have a versioned envelope and may be stored as JSON. Version 5 uses registry-owned discriminators such as
+`mermaiden/element/classDiagram/class`; snapshots never contain importable Python module paths. Its closed envelope
+schema is published at `src/mermaiden/runtime/snapshot/schema.v5.json`. Earlier and unknown versions are rejected;
+there is no implicit migration or compatibility reader. Newly created and incomplete diagrams are marked as drafts:
+callers may snapshot and restore them between accepted commands, but `Application.render()` rejects them until their
+blocking constraints are resolved. Snapshot parsing and typed hydration reject malformed persisted data, and
+restoration verifies snapshots that were recorded as valid. Command argument values use the diagram operation names;
+JSON string values are accepted for enum arguments.
 
 The caller can discover the REST contract without maintaining a manifest. `diagram_description()` returns JSON Schema for the diagram's elements, relations, annotations, and commands. `command_payload()` returns the generated Pydantic request model for one command.
 

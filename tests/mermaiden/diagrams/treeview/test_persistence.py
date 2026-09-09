@@ -84,7 +84,7 @@ class TestTreeViewPersistence:
             "treeView-beta\nroot/\n  child-one/ icon(folder)\n    leaf.txt :::highlight\n  child-two/ ## Second child\n"
         )
 
-    def test_restores_legacy_items_without_a_type_as_generic_items(self) -> None:
+    def test_rejects_items_missing_a_persisted_field(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("treeView-beta")
         application.execute(diagram, "add_item", {"id": "legacy", "label": "legacy/"})
@@ -93,18 +93,8 @@ class TestTreeViewPersistence:
             "item_type"
         )
 
-        restored = application.restore(json.loads(json.dumps(snapshot)))
-        restored_snapshot = application.snapshot(restored).to_dict()
-        restored_fields = cast(
-            Mapping[str, object],
-            cast(Mapping[str, object], cast(list[object], restored_snapshot["elements"])[0])["fields"],
-        )
-
-        assert restored_fields["item_type"] == {
-            "$enum": "mermaiden.diagrams.treeview.elements:TreeItemType",
-            "value": "item",
-        }
-        assert application.render(restored).endswith("treeView-beta\nlegacy/\n")
+        with pytest.raises(RuntimeError, match="missing 'item_type'"):
+            application.restore(json.loads(json.dumps(snapshot)))
 
     def test_round_trip_preserves_types_and_classification_preserves_branches(self) -> None:
         application = Application.create()
@@ -133,15 +123,15 @@ class TestTreeViewPersistence:
             for fields in (cast(Mapping[str, object], cast(Mapping[str, object], encoded)["fields"]),)
         }
         assert fields_by_id["root"]["item_type"] == {
-            "$enum": "mermaiden.diagrams.treeview.elements:TreeItemType",
+            "$enum": "mermaiden/enum/treeView-beta/tree_item_type",
             "value": "directory",
         }
         assert fields_by_id["leaf"]["item_type"] == {
-            "$enum": "mermaiden.diagrams.treeview.elements:TreeItemType",
+            "$enum": "mermaiden/enum/treeView-beta/tree_item_type",
             "value": "file",
         }
         assert fields_by_id["license"]["item_type"] == {
-            "$enum": "mermaiden.diagrams.treeview.elements:TreeItemType",
+            "$enum": "mermaiden/enum/treeView-beta/tree_item_type",
             "value": "file",
         }
         assert application.snapshot(restored).to_dict() == snapshot

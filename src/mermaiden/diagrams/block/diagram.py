@@ -12,6 +12,7 @@ from ..domain import (
     DiagramDefinition,
     DiagramFeature,
     DiagramModel,
+    PersistedDiagramProperty,
 )
 from .configuration import BlockDiagramConfiguration
 from .constraints import BlockDiagramConstraint
@@ -33,6 +34,7 @@ class BlockDiagram(DiagramModel):
 
     feature: ClassVar[DiagramFeature] = DiagramFeature(
         configuration=BlockDiagramConfiguration,
+        snapshot_properties=(PersistedDiagramProperty("columns", int | None),),
         elements=(BlockGroup, BlockNode, BlockSpace),
         relations=(),
         annotations=(),

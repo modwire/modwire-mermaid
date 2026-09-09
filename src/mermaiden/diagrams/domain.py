@@ -202,12 +202,19 @@ class DiagramCommandFeature:
 
 
 @dataclass(frozen=True, slots=True)
+class PersistedDiagramProperty:
+    name: str
+    annotation: object
+
+
+@dataclass(frozen=True, slots=True)
 class DiagramFeature:
     configuration: type[MermaidDiagramConfiguration]
     elements: tuple[type[Element], ...] = ()
     relations: tuple[type[Relation], ...] = ()
     annotations: tuple[type[Annotation], ...] = ()
     commands: tuple[DiagramCommandFeature, ...] = ()
+    snapshot_properties: tuple[PersistedDiagramProperty, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)

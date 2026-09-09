@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/szpak-dev/mermaiden/blob/main/src/mermaiden/runtime/snapshot/schema.v5.json",
+  "title": "Mermaiden diagram snapshot version 5",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "kind",
+    "draft",
+    "configuration",
+    "elements",
+    "relations",
+    "annotations",
+    "properties"
+  ],
+  "properties": {
+    "version": {
+      "const": 5,
+      "type": "integer"
+    },
+    "kind": {
+      "type": "string",
+      "minLength": 1
+    },
+    "draft": {
+      "type": "boolean"
+    },
+    "configuration": {
+      "$ref": "#/$defs/typedValue"
+    },
+    "elements": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/typedValue"
+      }
+    },
+    "relations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/typedValue"
+      }
+    },
+    "annotations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/typedValue"
+      }
+    },
+    "properties": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^(?!\\$).+$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/value"
+      }
+    }
+  },
+  "$defs": {
+    "discriminator": {
+      "type": "string",
+      "pattern": "^mermaiden/(?:element|relation|annotation|configuration|enum|value)/[^/]+/[^/]+$"
+    },
+    "typedValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$type",
+        "fields"
+      ],
+      "properties": {
+        "$type": {
+          "$ref": "#/$defs/discriminator"
+        },
+        "fields": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^(?!\\$).+$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/value"
+          }
+        }
+      }
+    },
+    "enumValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "$enum",
+        "value"
+      ],
+      "properties": {
+        "$enum": {
+          "$ref": "#/$defs/discriminator"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "mapping": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^(?!\\$).+$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/value"
+      }
+    },
+    "value": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "integer"
+        },
+        {
+          "type": "number",
+          "not": {
+            "type": "integer"
+          }
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/value"
+          }
+        },
+        {
+          "$ref": "#/$defs/typedValue"
+        },
+        {
+          "$ref": "#/$defs/enumValue"
+        },
+        {
+          "$ref": "#/$defs/mapping"
+        }
+      ]
+    }
+  },
+  "x-registry-fingerprint": "22df195513386fea0c97546fb2f2ab133395676b302e954d9806f15bdb504477"
+}

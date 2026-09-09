@@ -12,6 +12,7 @@ from ..domain import (
     DiagramDefinition,
     DiagramFeature,
     DiagramModel,
+    PersistedDiagramProperty,
 )
 from .configuration import RadarConfiguration
 from .constraints import RadarConstraint
@@ -32,7 +33,7 @@ class Radar(DiagramModel):
     show_legend: bool = field(default=True, init=False)
     minimum: float | None = field(default=None, init=False)
     maximum: float | None = field(default=None, init=False)
-    graticule: str = field(default="circle", init=False)
+    graticule: RadarGraticule = field(default=RadarGraticule.CIRCLE, init=False)
     ticks: int | None = field(default=None, init=False)
     definition: ClassVar[DiagramDefinition] = DiagramDefinition(
         "radar-beta",
@@ -43,6 +44,14 @@ class Radar(DiagramModel):
 
     feature: ClassVar[DiagramFeature] = DiagramFeature(
         configuration=RadarConfiguration,
+        snapshot_properties=(
+            PersistedDiagramProperty("title", str),
+            PersistedDiagramProperty("show_legend", bool),
+            PersistedDiagramProperty("minimum", float | None),
+            PersistedDiagramProperty("maximum", float | None),
+            PersistedDiagramProperty("graticule", RadarGraticule),
+            PersistedDiagramProperty("ticks", int | None),
+        ),
         elements=(RadarAxis, RadarCurve),
         relations=(),
         annotations=(),
@@ -70,7 +79,7 @@ class Radar(DiagramModel):
         object.__setattr__(self, "minimum", minimum)
         object.__setattr__(self, "maximum", maximum)
 
-    def set_graticule(self, graticule: str) -> None:
+    def set_graticule(self, graticule: RadarGraticule) -> None:
         object.__setattr__(self, "graticule", graticule)
 
     def set_ticks(self, ticks: int) -> None:

@@ -12,6 +12,7 @@ from ..domain import (
     DiagramDefinition,
     DiagramFeature,
     DiagramModel,
+    PersistedDiagramProperty,
 )
 from .annotations import Note, Notes
 from .configuration import FlowchartDiagramConfiguration
@@ -48,6 +49,7 @@ class Flowchart(DiagramModel):
 
     feature: ClassVar[DiagramFeature] = DiagramFeature(
         configuration=FlowchartDiagramConfiguration,
+        snapshot_properties=(PersistedDiagramProperty("direction", Direction),),
         elements=(
             FlowNode,
             Start,

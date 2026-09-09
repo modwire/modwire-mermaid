@@ -11,6 +11,7 @@ from ..domain import (
     DiagramDefinition,
     DiagramFeature,
     DiagramModel,
+    PersistedDiagramProperty,
 )
 from .configuration import PieDiagramConfiguration
 from .constraints import PieConstraint
@@ -33,6 +34,10 @@ class PieDiagram(DiagramModel):
 
     feature: ClassVar[DiagramFeature] = DiagramFeature(
         configuration=PieDiagramConfiguration,
+        snapshot_properties=(
+            PersistedDiagramProperty("title", str),
+            PersistedDiagramProperty("show_data", bool),
+        ),
         elements=(PieSlice,),
         relations=(),
         annotations=(),

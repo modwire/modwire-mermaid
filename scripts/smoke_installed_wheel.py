@@ -137,7 +137,10 @@ class InstalledWheelSmoke:
                 raise RuntimeError("The installed package did not render the completed restored flowchart.")
 
     def persist(self, application: Application, diagram: Any) -> dict[str, object]:
-        return cast(dict[str, object], json.loads(json.dumps(application.snapshot(diagram).to_dict())))
+        encoded = json.dumps(application.snapshot(diagram).to_dict())
+        if "mermaiden." in encoded:
+            raise RuntimeError("The installed package leaked Python module paths into its snapshot contract.")
+        return cast(dict[str, object], json.loads(encoded))
 
     def verify_cli(self, temporary: Path) -> None:
         help_result = self.run_cli(temporary, "--help")

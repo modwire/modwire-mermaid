@@ -4,7 +4,7 @@ from mermaiden.diagrams.er.relations import Cardinality
 from mermaiden.diagrams.mindmap.diagram import Mindmap
 from mermaiden.diagrams.packet.diagram import Packet
 from mermaiden.diagrams.pie.diagram import PieDiagram
-from mermaiden.diagrams.radar.diagram import Radar
+from mermaiden.diagrams.radar.diagram import Radar, RadarGraticule
 from mermaiden.diagrams.requirement.diagram import RequirementDiagram
 from mermaiden.diagrams.requirement.elements import RequirementType, Risk, VerificationMethod
 from mermaiden.diagrams.requirement.relations import RequirementRelationKind
@@ -120,7 +120,7 @@ def build_analytical_fixtures(application: Application) -> tuple[DiagramFixture,
     radar.add_curve("restaurant_a", "Restaurant A", (4, 3, 2))
     radar.add_curve("restaurant_b", "Restaurant B", (3, 4, 3))
     radar.set_range(0, 5)
-    radar.set_graticule("polygon")
+    radar.set_graticule(RadarGraticule.POLYGON)
     radar.set_ticks(5)
 
     packet = application.create_diagram("packet")
