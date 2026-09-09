@@ -2,7 +2,9 @@ import json
 from collections.abc import Mapping
 from typing import cast
 
-from mermaiden.application import Application, DiagramCommand
+import pytest
+
+from mermaiden import Application
 
 
 class TestTreeViewPersistence:
@@ -20,35 +22,40 @@ class TestTreeViewPersistence:
         assert item_type_schema["enum"] == ["item", "directory", "file"]
         assert item_type_property["default"] == "item"
 
+        removal_schema = application.command_payload("treeView-beta", "remove_element").model_json_schema()
+        removal_description = cast(str, removal_schema["description"])
+        assert "complete diagram-defined subtree" in removal_description
+        assert "removed atomically" in removal_description
+
     def test_preserves_addressability_through_incremental_branches_and_annotations(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("treeView-beta")
         revisions = (
-            DiagramCommand("add_directory", {"id": "example_root", "label": "root"}),
-            DiagramCommand("add_directory", {"id": "example_child_one", "label": "child-one"}),
-            DiagramCommand("add_directory", {"id": "example_child_two", "label": "child-two"}),
-            DiagramCommand("add_file", {"id": "example_grandchild", "label": "leaf.txt"}),
-            DiagramCommand(
+            ("add_directory", {"id": "example_root", "label": "root"}),
+            ("add_directory", {"id": "example_child_one", "label": "child-one"}),
+            ("add_directory", {"id": "example_child_two", "label": "child-two"}),
+            ("add_file", {"id": "example_grandchild", "label": "leaf.txt"}),
+            (
                 "add_annotation",
                 {"id": "before_branch", "element_id": "example_child_one", "icon": "folder"},
             ),
-            DiagramCommand(
+            (
                 "add_branch",
                 {"id": "first_sibling", "parent_id": "example_root", "child_id": "example_child_one"},
             ),
-            DiagramCommand(
+            (
                 "add_branch",
                 {"id": "second_sibling", "parent_id": "example_root", "child_id": "example_child_two"},
             ),
-            DiagramCommand(
+            (
                 "add_annotation",
                 {"id": "after_branch", "element_id": "example_child_two", "description": "Second child"},
             ),
-            DiagramCommand(
+            (
                 "add_branch",
                 {"id": "nested", "parent_id": "example_child_one", "child_id": "example_grandchild"},
             ),
-            DiagramCommand(
+            (
                 "add_annotation",
                 {"id": "after_nested_branch", "element_id": "example_grandchild", "highlight": True},
             ),
@@ -56,10 +63,10 @@ class TestTreeViewPersistence:
         expected_ids: set[str] = set()
         source = ""
 
-        for command in revisions:
-            report = application.apply(diagram, command)
-            if command.operation in {"add_item", "add_directory", "add_file"}:
-                expected_ids.add(cast(str, command.arguments["id"]))
+        for operation, arguments in revisions:
+            report = application.execute(diagram, operation, arguments)
+            if operation in {"add_item", "add_directory", "add_file"}:
+                expected_ids.add(cast(str, arguments["id"]))
             snapshot = application.snapshot(diagram).to_dict()
             persisted_ids = {
                 cast(str, cast(Mapping[str, object], cast(Mapping[str, object], element)["fields"])["id"])
@@ -80,7 +87,7 @@ class TestTreeViewPersistence:
     def test_restores_legacy_items_without_a_type_as_generic_items(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("treeView-beta")
-        application.apply(diagram, DiagramCommand("add_item", {"id": "legacy", "label": "legacy/"}))
+        application.execute(diagram, "add_item", {"id": "legacy", "label": "legacy/"})
         snapshot = application.snapshot(diagram).to_dict()
         cast(dict[str, object], cast(Mapping[str, object], cast(list[object], snapshot["elements"])[0])["fields"]).pop(
             "item_type"
@@ -102,19 +109,21 @@ class TestTreeViewPersistence:
     def test_round_trip_preserves_types_and_classification_preserves_branches(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("treeView-beta")
-        application.apply(diagram, DiagramCommand("add_directory", {"id": "root", "label": "root"}))
-        application.apply(diagram, DiagramCommand("add_item", {"id": "leaf", "label": "README.md"}))
-        application.apply(diagram, DiagramCommand("add_file", {"id": "license", "label": "LICENSE"}))
-        application.apply(
+        application.execute(diagram, "add_directory", {"id": "root", "label": "root"})
+        application.execute(diagram, "add_item", {"id": "leaf", "label": "README.md"})
+        application.execute(diagram, "add_file", {"id": "license", "label": "LICENSE"})
+        application.execute(
             diagram,
-            DiagramCommand("add_branch", {"id": "contains", "parent_id": "root", "child_id": "leaf"}),
+            "add_branch",
+            {"id": "contains", "parent_id": "root", "child_id": "leaf"},
         )
-        application.apply(
+        application.execute(
             diagram,
-            DiagramCommand("add_branch", {"id": "licenses", "parent_id": "root", "child_id": "license"}),
+            "add_branch",
+            {"id": "licenses", "parent_id": "root", "child_id": "license"},
         )
 
-        application.apply(diagram, DiagramCommand("classify_item", {"id": "leaf", "item_type": "file"}))
+        application.execute(diagram, "classify_item", {"id": "leaf", "item_type": "file"})
         snapshot = application.snapshot(diagram).to_dict()
         restored = application.restore(json.loads(json.dumps(snapshot)))
 
@@ -137,3 +146,29 @@ class TestTreeViewPersistence:
         }
         assert application.snapshot(restored).to_dict() == snapshot
         assert application.render(restored).endswith("treeView-beta\nroot/\n  README.md\n  LICENSE\n")
+
+    def test_restores_and_edits_the_empty_draft_after_removing_the_final_item(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("treeView-beta")
+        application.execute(diagram, "add_file", {"id": "only", "label": "only.txt"})
+
+        report = application.execute(diagram, "remove_element", {"id": "only"})
+        snapshot = application.snapshot(diagram).to_dict()
+        validation = application.validate_render(diagram)
+
+        assert report is not None
+        assert tuple((item.kind, item.id) for item in report.removed) == (("element", "only"),)
+        assert snapshot["draft"] is True
+        assert snapshot["elements"] == []
+        assert snapshot["relations"] == []
+        assert snapshot["annotations"] == []
+        assert not validation.success
+        assert validation.svg == ""
+        assert validation.diagnostics[0].code == "diagram_invalid"
+        with pytest.raises(RuntimeError, match="Cannot render invalid diagram 'treeView-beta'"):
+            application.render(diagram)
+
+        restored = application.restore(json.loads(json.dumps(snapshot)))
+        application.execute(restored, "add_directory", {"id": "replacement", "label": "replacement"})
+
+        assert application.render(restored).endswith("treeView-beta\nreplacement/\n")

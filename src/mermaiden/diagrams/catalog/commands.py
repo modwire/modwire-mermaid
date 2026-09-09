@@ -114,7 +114,14 @@ class DiagramCommandCatalog:
                 )
             fields[name] = core_schema.typed_dict_field(field_schema, required=default is None)
         schema = core_schema.typed_dict_schema(fields, extra_behavior="forbid")
-        return CommandPayloadSchema(schema, ())
+        description = ""
+        if command.name == "remove_element":
+            description = (
+                "Without cascade, removal is rejected when the element has descendants, relations, or annotations. "
+                "With cascade, the complete diagram-defined subtree and all dependent relations and annotations "
+                "are removed atomically."
+            )
+        return CommandPayloadSchema(schema, (), description)
 
     def validate(
         self,

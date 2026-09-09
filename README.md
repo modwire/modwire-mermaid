@@ -67,6 +67,11 @@ payload_type = application.command_payload("sequenceDiagram", "add_participant")
 payload = payload_type.model_validate({"id": "api", "kind": "control"})
 ```
 
+Element removal is conservative by default: `remove_element` rejects an element that still has descendants,
+relations, or annotations. Passing `cascade: true` removes the complete diagram-defined subtree and every dependent
+relation and annotation atomically. In Tree View diagrams, branches define that subtree. Removing the final element
+returns the diagram to an empty, persistable draft; drafts have no Mermaid source until they become valid again.
+
 ## Updating and moving elements
 
 Mutation arguments are JSON-shaped and validated before the diagram changes. Updates preserve identity, moves preserve the complete subtree, and reorders require the exact current members of one collection. Rejected mutations leave the complete snapshot unchanged.

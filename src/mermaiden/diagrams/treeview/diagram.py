@@ -68,6 +68,19 @@ class TreeView(DiagramModel):
         }
         return tuple(item for item in self.root_elements if isinstance(item, TreeItem) and item.id not in child_ids)
 
+    def element_descendants(self, id: str) -> tuple[str, ...]:
+        descendants: list[str] = []
+        parents = [id]
+        while parents:
+            parent_id = parents.pop(0)
+            for relation in self.find_relations(parent_id):
+                if not isinstance(relation, TreeBranch) or relation.parent_id != parent_id:
+                    continue
+                if relation.child_id not in descendants and relation.child_id != id:
+                    descendants.append(relation.child_id)
+                    parents.append(relation.child_id)
+        return tuple(descendants)
+
     def add_item(self, id: str, label: str) -> ChangeReport:
         return self._add_element(f"add tree item '{id}'", TreeItem(id=id, label=label))
 

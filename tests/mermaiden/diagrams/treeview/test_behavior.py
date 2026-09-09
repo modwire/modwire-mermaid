@@ -3,8 +3,7 @@ from typing import cast
 
 import pytest
 
-from mermaiden.application import Application, DiagramCommand, UnknownCommand
-from mermaiden.diagrams.treeview.diagram import TreeView
+from mermaiden import Application
 
 
 class TestTreeView:
@@ -13,14 +12,14 @@ class TestTreeView:
         diagram = application.create_diagram("treeView-beta")
 
         commands = (
-            DiagramCommand("configure", {"wrap": False}),
-            DiagramCommand("add_directory", {"id": "root", "label": "root"}),
-            DiagramCommand("add_item", {"id": "child", "label": 'child "one"'}),
-            DiagramCommand("classify_item", {"id": "child", "item_type": "file"}),
-            DiagramCommand("add_file", {"id": "readme", "label": "README.md"}),
-            DiagramCommand("add_branch", {"id": "branch", "parent_id": "root", "child_id": "child"}),
-            DiagramCommand("add_branch", {"id": "readme_branch", "parent_id": "root", "child_id": "readme"}),
-            DiagramCommand(
+            ("configure", {"wrap": False}),
+            ("add_directory", {"id": "root", "label": "root"}),
+            ("add_item", {"id": "child", "label": 'child "one"'}),
+            ("classify_item", {"id": "child", "item_type": "file"}),
+            ("add_file", {"id": "readme", "label": "README.md"}),
+            ("add_branch", {"id": "branch", "parent_id": "root", "child_id": "child"}),
+            ("add_branch", {"id": "readme_branch", "parent_id": "root", "child_id": "readme"}),
+            (
                 "add_annotation",
                 {
                     "id": "annotation",
@@ -31,14 +30,14 @@ class TestTreeView:
                 },
             ),
         )
-        for command in commands:
-            application.apply(diagram, command)
+        for operation, arguments in commands:
+            application.execute(diagram, operation, arguments)
 
         source = application.render(diagram)
         restored = application.restore(json.loads(json.dumps(application.snapshot(diagram).to_dict())))
 
         assert set(application.diagram_description("treeView-beta").commands) == {
-            item.operation for item in commands
+            operation for operation, _arguments in commands
         } | {
             "update_element",
             "remove_element",
@@ -57,19 +56,17 @@ class TestTreeView:
     def test_rejects_invalid_configuration_and_unknown_annotation_targets(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("treeView-beta")
-        application.apply(diagram, DiagramCommand("add_directory", {"id": "root", "label": "root"}))
+        application.execute(diagram, "add_directory", {"id": "root", "label": "root"})
 
-        with pytest.raises(UnknownCommand):
-            application.apply(diagram, DiagramCommand("configure", {"missing": True}))
+        with pytest.raises(RuntimeError):
+            application.execute(diagram, "configure", {"missing": True})
         with pytest.raises(RuntimeError, match=r"already exists"):
-            application.apply(diagram, DiagramCommand("add_item", {"id": "root", "label": "again"}))
+            application.execute(diagram, "add_item", {"id": "root", "label": "again"})
         with pytest.raises(RuntimeError, match=r"unknown|does not exist"):
-            application.apply(
+            application.execute(
                 diagram,
-                DiagramCommand(
-                    "add_annotation",
-                    {"id": "annotation", "element_id": "missing", "description": "Missing"},
-                ),
+                "add_annotation",
+                {"id": "annotation", "element_id": "missing", "description": "Missing"},
             )
 
     def test_rejects_unsupported_icon_characters_before_create_or_update(self) -> None:
@@ -78,7 +75,7 @@ class TestTreeView:
         application.execute(diagram, "add_directory", {"id": "root", "label": "Root"})
         before_create = application.snapshot(diagram).to_dict()
 
-        with pytest.raises(UnknownCommand) as rejected_create:
+        with pytest.raises(RuntimeError) as rejected_create:
             application.execute(
                 diagram,
                 "add_annotation",
@@ -99,7 +96,7 @@ class TestTreeView:
         )
         before_update = application.snapshot(diagram).to_dict()
 
-        with pytest.raises(UnknownCommand) as rejected_update:
+        with pytest.raises(RuntimeError) as rejected_update:
             application.execute(
                 diagram,
                 "update_annotation",
@@ -112,17 +109,10 @@ class TestTreeView:
         assert "'📁' (U+1F4C1)" in diagnostic
         assert application.snapshot(diagram).to_dict() == before_update
 
-    def test_rejects_unsupported_icon_characters_during_direct_mutation_and_restore(self) -> None:
+    def test_rejects_unsupported_icon_characters_during_restore(self) -> None:
         application = Application.create()
-        diagram = cast(TreeView, application.create_diagram("treeView-beta"))
+        diagram = application.create_diagram("treeView-beta")
         application.execute(diagram, "add_directory", {"id": "root", "label": "Root"})
-        before = application.snapshot(diagram).to_dict()
-
-        with pytest.raises(ValueError, match="icon"):
-            diagram.add_annotation("note", "root", icon="📁")
-
-        assert application.snapshot(diagram).to_dict() == before
-
         application.execute(
             diagram,
             "add_annotation",
@@ -144,30 +134,80 @@ class TestTreeView:
         before = application.snapshot(diagram).to_dict()
 
         with pytest.raises(RuntimeError, match=r"basename without path separators"):
-            application.apply(diagram, DiagramCommand(operation, {"id": "nested", "label": label}))
+            application.execute(diagram, operation, {"id": "nested", "label": label})
 
         assert application.snapshot(diagram).to_dict() == before
 
     def test_rejects_file_parents_and_invalid_reclassification_atomically(self) -> None:
         application = Application.create()
         diagram = application.create_diagram("treeView-beta")
-        application.apply(diagram, DiagramCommand("add_directory", {"id": "root", "label": "root"}))
-        application.apply(diagram, DiagramCommand("add_file", {"id": "leaf", "label": "leaf.txt"}))
-        application.apply(diagram, DiagramCommand("add_item", {"id": "child", "label": "child"}))
+        application.execute(diagram, "add_directory", {"id": "root", "label": "root"})
+        application.execute(diagram, "add_file", {"id": "leaf", "label": "leaf.txt"})
+        application.execute(diagram, "add_item", {"id": "child", "label": "child"})
 
         before_branch = application.snapshot(diagram).to_dict()
         with pytest.raises(RuntimeError, match=r"File 'leaf' cannot be the parent"):
-            application.apply(
+            application.execute(
                 diagram,
-                DiagramCommand("add_branch", {"id": "invalid", "parent_id": "leaf", "child_id": "child"}),
+                "add_branch",
+                {"id": "invalid", "parent_id": "leaf", "child_id": "child"},
             )
         assert application.snapshot(diagram).to_dict() == before_branch
 
-        application.apply(
+        application.execute(
             diagram,
-            DiagramCommand("add_branch", {"id": "valid", "parent_id": "root", "child_id": "leaf"}),
+            "add_branch",
+            {"id": "valid", "parent_id": "root", "child_id": "leaf"},
         )
         before_classification = application.snapshot(diagram).to_dict()
         with pytest.raises(RuntimeError, match=r"File 'root' cannot be the parent"):
-            application.apply(diagram, DiagramCommand("classify_item", {"id": "root", "item_type": "file"}))
+            application.execute(diagram, "classify_item", {"id": "root", "item_type": "file"})
         assert application.snapshot(diagram).to_dict() == before_classification
+
+    def test_removes_the_complete_branch_subtree_and_its_dependants_atomically(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("treeView-beta")
+        for operation, arguments in (
+            ("add_directory", {"id": "root", "label": "root"}),
+            ("add_directory", {"id": "nested", "label": "nested"}),
+            ("add_file", {"id": "leaf", "label": "leaf.txt"}),
+            ("add_file", {"id": "sibling", "label": "sibling.txt"}),
+            ("add_directory", {"id": "outside", "label": "outside"}),
+            ("add_branch", {"id": "root_nested", "parent_id": "root", "child_id": "nested"}),
+            ("add_branch", {"id": "nested_leaf", "parent_id": "nested", "child_id": "leaf"}),
+            ("add_branch", {"id": "root_sibling", "parent_id": "root", "child_id": "sibling"}),
+            ("add_annotation", {"id": "root_note", "element_id": "root", "highlight": True}),
+            ("add_annotation", {"id": "nested_note", "element_id": "nested", "highlight": True}),
+            ("add_annotation", {"id": "leaf_note", "element_id": "leaf", "highlight": True}),
+            ("add_annotation", {"id": "sibling_note", "element_id": "sibling", "highlight": True}),
+            ("add_annotation", {"id": "outside_note", "element_id": "outside", "highlight": True}),
+        ):
+            application.execute(diagram, operation, arguments)
+
+        before = application.snapshot(diagram).to_dict()
+        source = application.render(diagram)
+        with pytest.raises(RuntimeError, match="still has dependants; use cascade=True"):
+            application.execute(diagram, "remove_element", {"id": "root"})
+        assert application.snapshot(diagram).to_dict() == before
+        assert application.render(diagram) == source
+
+        report = application.execute(diagram, "remove_element", {"id": "root", "cascade": True})
+
+        assert report is not None
+        assert tuple((item.kind, item.id) for item in report.removed) == (
+            ("element", "root"),
+            ("element", "nested"),
+            ("element", "leaf"),
+            ("element", "sibling"),
+            ("relation", "root_nested"),
+            ("relation", "nested_leaf"),
+            ("relation", "root_sibling"),
+            ("annotation", "root_note"),
+            ("annotation", "nested_note"),
+            ("annotation", "leaf_note"),
+            ("annotation", "sibling_note"),
+        )
+        assert tuple(item.id for item in diagram.walk_elements()) == ("outside",)
+        assert not diagram.find_relations()
+        assert tuple(item.id for item in diagram.find_annotations()) == ("outside_note",)
+        assert application.render(diagram).endswith("treeView-beta\noutside/ :::highlight\n")

@@ -16,12 +16,15 @@ class Elements:
         elements = self._insert(self.state.current.elements, element, parent_id)
         return replace(self.state.current, elements=elements)
 
-    def remove(self, id: str) -> tuple[DiagramData, tuple[str, ...]]:
+    def remove(self, id: str, descendant_ids: Sequence[str] = ()) -> tuple[DiagramData, tuple[str, ...]]:
         target = self.find(id)
         if target is None:
             raise OperationError(f"Element '{id}' does not exist.")
-        removed = tuple(item.id for item in self._walk((target,)))
-        elements = self._remove(self.state.current.elements, id)
+        selected = {*(item.id for item in self._walk((target,))), *descendant_ids}
+        removed = tuple(item.id for item in self.walk() if item.id in selected)
+        elements = self.state.current.elements
+        for removed_id in removed:
+            elements = self._remove(elements, removed_id)
         return replace(self.state.current, elements=elements), removed
 
     def update(self, id: str, kind: str, changes: Mapping[str, object]) -> DiagramData:
