@@ -1,0 +1,220 @@
+{
+  "diagram_id": "stateDiagram-v2",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_choice": {
+      "$.composite_id": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "OptionalIdentifier"
+      ]
+    },
+    "add_composite": {
+      "$.composite_id": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_final": {
+      "$.composite_id": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "add_fork": {
+      "$.composite_id": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "OptionalIdentifier"
+      ]
+    },
+    "add_initial": {
+      "$.composite_id": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "add_join": {
+      "$.composite_id": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "OptionalIdentifier"
+      ]
+    },
+    "add_note": {
+      "$.composite_id": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.position": [
+        "NotePosition values"
+      ],
+      "$.state_id": [
+        "Identifier"
+      ],
+      "$.text": [
+        "Identifier"
+      ]
+    },
+    "add_state": {
+      "$.composite_id": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_transition": {
+      "$.composite_id": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "OptionalIdentifier"
+      ],
+      "$.source_id": [
+        "Identifier"
+      ],
+      "$.target_id": [
+        "Identifier"
+      ]
+    },
+    "configure": {
+      "$.defaultRenderer": [
+        "StateRenderer values"
+      ]
+    },
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'choice'",
+        "constant 'composite_state'",
+        "constant 'final'",
+        "constant 'fork'",
+        "constant 'initial'",
+        "constant 'join'",
+        "constant 'state'",
+        "constant 'state_node'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_annotation": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "remove_relation": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "remove_transition": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "update_annotation": {
+      "$.changes.position": [
+        "NotePosition values"
+      ],
+      "$.changes.scope_id": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.targets[].id": [
+        "Identifier"
+      ],
+      "$.changes.targets[].kind": [
+        "TargetKind values"
+      ],
+      "$.changes.text": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'state_note'"
+      ]
+    },
+    "update_element": {
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'choice'",
+        "constant 'composite_state'",
+        "constant 'final'",
+        "constant 'fork'",
+        "constant 'initial'",
+        "constant 'join'",
+        "constant 'state'",
+        "constant 'state_node'"
+      ]
+    },
+    "update_relation": {
+      "$.changes.element_ids[]": [
+        "Identifier"
+      ],
+      "$.changes.label": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.scope_id": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'state_transition'"
+      ]
+    }
+  }
+}

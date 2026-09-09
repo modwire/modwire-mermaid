@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, OptionalIdentifier, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -36,10 +37,12 @@ class Timeline(DiagramModel):
         relations=(),
         annotations=(),
         commands=(
-            DiagramCommandFeature("set_title", {"title": str}),
-            DiagramCommandFeature("add_section", {"id": str, "label": str}),
-            DiagramCommandFeature("add_period", {"id": str, "label": str, "section_id": CommandDefault(str, "")}),
-            DiagramCommandFeature("add_event", {"id": str, "label": str, "period_id": str}),
+            DiagramCommandFeature("set_title", {"title": Text}),
+            DiagramCommandFeature("add_section", {"id": Identifier, "label": Text}),
+            DiagramCommandFeature(
+                "add_period", {"id": Identifier, "label": Text, "section_id": CommandDefault(OptionalIdentifier, "")}
+            ),
+            DiagramCommandFeature("add_event", {"id": Identifier, "label": Text, "period_id": Identifier}),
         ),
     )
 

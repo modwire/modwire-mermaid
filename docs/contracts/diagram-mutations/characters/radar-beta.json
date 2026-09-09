@@ -1,0 +1,73 @@
+{
+  "diagram_id": "radar-beta",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_axis": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_curve": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "configure": {},
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'radar_axis'",
+        "constant 'radar_curve'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "set_graticule": {
+      "$.graticule": [
+        "RadarGraticule values"
+      ]
+    },
+    "set_legend": {},
+    "set_range": {},
+    "set_ticks": {},
+    "set_title": {
+      "$.title": [
+        "Identifier"
+      ]
+    },
+    "update_element": {
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'radar_axis'",
+        "constant 'radar_curve'"
+      ]
+    }
+  }
+}

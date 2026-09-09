@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, OptionalText, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -36,45 +37,49 @@ class C4ContextDiagram(DiagramModel):
         relations=(Relationship,),
         annotations=(),
         commands=(
-            DiagramCommandFeature("add_person", {"id": str, "label": str, "description": CommandDefault(str, "")}),
+            DiagramCommandFeature(
+                "add_person", {"id": Identifier, "label": Text, "description": CommandDefault(OptionalText, "")}
+            ),
             DiagramCommandFeature(
                 "add_system",
                 {
-                    "id": str,
-                    "label": str,
-                    "description": CommandDefault(str, ""),
-                    "technology": CommandDefault(str, ""),
+                    "id": Identifier,
+                    "label": Text,
+                    "description": CommandDefault(OptionalText, ""),
+                    "technology": CommandDefault(OptionalText, ""),
                 },
             ),
             DiagramCommandFeature(
                 "add_database",
                 {
-                    "id": str,
-                    "label": str,
-                    "description": CommandDefault(str, ""),
-                    "technology": CommandDefault(str, ""),
+                    "id": Identifier,
+                    "label": Text,
+                    "description": CommandDefault(OptionalText, ""),
+                    "technology": CommandDefault(OptionalText, ""),
                 },
             ),
             DiagramCommandFeature(
                 "add_queue",
                 {
-                    "id": str,
-                    "label": str,
-                    "description": CommandDefault(str, ""),
-                    "technology": CommandDefault(str, ""),
+                    "id": Identifier,
+                    "label": Text,
+                    "description": CommandDefault(OptionalText, ""),
+                    "technology": CommandDefault(OptionalText, ""),
                 },
             ),
             DiagramCommandFeature(
                 "add_relationship",
                 {
-                    "id": str,
-                    "source_id": str,
-                    "target_id": str,
-                    "label": str,
+                    "id": Identifier,
+                    "source_id": Identifier,
+                    "target_id": Identifier,
+                    "label": Text,
                     "direction": CommandDefault(RelationshipDirection, RelationshipDirection.DEFAULT),
                 },
             ),
-            DiagramCommandFeature("set_relationship_label_offset", {"id": str, "offset_x": int, "offset_y": int}),
+            DiagramCommandFeature(
+                "set_relationship_label_offset", {"id": Identifier, "offset_x": int, "offset_y": int}
+            ),
         ),
     )
 

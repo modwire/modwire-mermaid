@@ -1,0 +1,141 @@
+{
+  "diagram_id": "erDiagram",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_attribute": {
+      "$.comment": [
+        "OptionalIdentifier"
+      ],
+      "$.data_type": [
+        "EntityAttributeDataType"
+      ],
+      "$.entity_id": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.keys[]": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_entity": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_relationship": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.source_cardinality": [
+        "Cardinality values"
+      ],
+      "$.source_id": [
+        "Identifier"
+      ],
+      "$.target_cardinality": [
+        "Cardinality values"
+      ],
+      "$.target_id": [
+        "Identifier"
+      ]
+    },
+    "configure": {
+      "$.fill": [
+        "Identifier"
+      ],
+      "$.layoutDirection": [
+        "EntityRelationshipDirection values"
+      ],
+      "$.stroke": [
+        "Identifier"
+      ]
+    },
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'entity'",
+        "constant 'entity_attribute'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "remove_relation": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "set_direction": {
+      "$.direction": [
+        "EntityRelationshipDirection values"
+      ]
+    },
+    "update_element": {
+      "$.changes.comment": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.data_type": [
+        "EntityAttributeDataType"
+      ],
+      "$.changes.keys[]": [
+        "Identifier"
+      ],
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'entity'",
+        "constant 'entity_attribute'"
+      ]
+    },
+    "update_relation": {
+      "$.changes.element_ids[]": [
+        "Identifier"
+      ],
+      "$.changes.label": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.source_cardinality": [
+        "Cardinality values"
+      ],
+      "$.changes.target_cardinality": [
+        "Cardinality values"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'entity_relationship'"
+      ]
+    }
+  }
+}

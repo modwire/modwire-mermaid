@@ -1,6 +1,9 @@
 from collections.abc import Mapping, Sequence
 from enum import StrEnum
 
+from pydantic import Field
+
+from ...core.characters import OptionalIdentifier, Text
 from ...core.domain import Annotation, OperationError, TargetKind, TargetRef
 
 
@@ -10,9 +13,9 @@ class NotePosition(StrEnum):
 
 
 class StateNote(Annotation):
-    text: str
+    text: str = Field(pattern=Text.pattern, description=Text.description)
     position: NotePosition
-    scope_id: str = ""
+    scope_id: str = Field(default="", pattern=OptionalIdentifier.pattern, description=OptionalIdentifier.description)
 
 
 class StateNotes:

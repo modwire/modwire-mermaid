@@ -49,7 +49,7 @@ class TestKanban:
         diagram = application.create_diagram("kanban")
         application.apply(diagram, DiagramCommand("add_column", {"id": "todo", "label": "Todo"}))
 
-        with pytest.raises(RuntimeError, match=r"unsupported priority"):
+        with pytest.raises(RuntimeError, match=r"'add_task' has invalid arguments"):
             application.apply(
                 diagram,
                 DiagramCommand("add_task", {"id": "bad", "label": "Bad", "column_id": "todo", "priority": "Urgent"}),

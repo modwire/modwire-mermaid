@@ -1,4 +1,6 @@
-from pydantic import field_validator
+from typing import Annotated
+
+from pydantic import Field, field_validator
 
 from ...core.domain import Container, Entity
 from .values.members import ClassAttribute, ClassMethod
@@ -6,12 +8,12 @@ from .values.text import ClassIdentifier, ClassText, MemberName, OptionalClassTe
 
 
 class Class(Entity):
-    id: ClassIdentifier
-    label: ClassText
+    id: str = Field(pattern=ClassIdentifier.pattern, description=ClassIdentifier.description)
+    label: str = Field(pattern=ClassText.pattern, description=ClassText.description)
     attributes: tuple[ClassAttribute, ...] = ()
     methods: tuple[ClassMethod, ...] = ()
-    annotations: tuple[MemberName, ...] = ()
-    comment: OptionalClassText = ""
+    annotations: tuple[Annotated[str, Field(pattern=MemberName.pattern, description=MemberName.description)], ...] = ()
+    comment: str = Field(default="", pattern=OptionalClassText.pattern, description=OptionalClassText.description)
 
     @field_validator("attributes")
     @classmethod
@@ -30,6 +32,6 @@ class Class(Entity):
 
 
 class ClassNamespace(Container):
-    id: ClassIdentifier
-    label: ClassText
-    comment: OptionalClassText = ""
+    id: str = Field(pattern=ClassIdentifier.pattern, description=ClassIdentifier.description)
+    label: str = Field(pattern=ClassText.pattern, description=ClassText.description)
+    comment: str = Field(default="", pattern=OptionalClassText.pattern, description=OptionalClassText.description)

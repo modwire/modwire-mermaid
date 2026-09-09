@@ -1,8 +1,10 @@
 import json
+from typing import cast
 
 import pytest
 
 from mermaiden.application import Application, DiagramCommand, UnknownCommand
+from mermaiden.diagrams.treeview.diagram import TreeView
 
 
 class TestTreeView:
@@ -69,6 +71,70 @@ class TestTreeView:
                     {"id": "annotation", "element_id": "missing", "description": "Missing"},
                 ),
             )
+
+    def test_rejects_unsupported_icon_characters_before_create_or_update(self) -> None:
+        application = Application.create()
+        diagram = application.create_diagram("treeView-beta")
+        application.execute(diagram, "add_directory", {"id": "root", "label": "Root"})
+        before_create = application.snapshot(diagram).to_dict()
+
+        with pytest.raises(UnknownCommand) as rejected_create:
+            application.execute(
+                diagram,
+                "add_annotation",
+                {"id": "note", "element_id": "root", "icon": "📁"},
+            )
+
+        diagnostic = str(rejected_create.value)
+        assert "add_annotation" in diagnostic
+        assert "icon" in diagnostic
+        assert "'📁' (U+1F4C1)" in diagnostic
+        assert "rule pattern" in diagnostic
+        assert application.snapshot(diagram).to_dict() == before_create
+
+        application.execute(
+            diagram,
+            "add_annotation",
+            {"id": "note", "element_id": "root", "icon": "folder"},
+        )
+        before_update = application.snapshot(diagram).to_dict()
+
+        with pytest.raises(UnknownCommand) as rejected_update:
+            application.execute(
+                diagram,
+                "update_annotation",
+                {"id": "note", "kind": "tree_annotation", "changes": {"icon": "📁"}},
+            )
+
+        diagnostic = str(rejected_update.value)
+        assert "update_annotation" in diagnostic
+        assert "changes.icon" in diagnostic
+        assert "'📁' (U+1F4C1)" in diagnostic
+        assert application.snapshot(diagram).to_dict() == before_update
+
+    def test_rejects_unsupported_icon_characters_during_direct_mutation_and_restore(self) -> None:
+        application = Application.create()
+        diagram = cast(TreeView, application.create_diagram("treeView-beta"))
+        application.execute(diagram, "add_directory", {"id": "root", "label": "Root"})
+        before = application.snapshot(diagram).to_dict()
+
+        with pytest.raises(ValueError, match="icon"):
+            diagram.add_annotation("note", "root", icon="📁")
+
+        assert application.snapshot(diagram).to_dict() == before
+
+        application.execute(
+            diagram,
+            "add_annotation",
+            {"id": "note", "element_id": "root", "icon": "folder"},
+        )
+        payload = application.snapshot(diagram).to_dict()
+        annotations = cast(list[dict[str, object]], payload["annotations"])
+        fields = cast(dict[str, object], annotations[0]["fields"])
+        fields["icon"] = "📁"
+
+        with pytest.raises(ValueError, match="icon"):
+            application.restore(payload)
 
     @pytest.mark.parametrize("operation", ["add_directory", "add_file"])
     @pytest.mark.parametrize("label", ["src/package", r"src\package"])

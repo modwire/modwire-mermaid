@@ -1,0 +1,145 @@
+{
+  "diagram_id": "requirementDiagram",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_element": {
+      "$.document_reference": [
+        "Identifier"
+      ],
+      "$.element_type": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "add_relation": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.relation_kind": [
+        "RequirementRelationKind values"
+      ],
+      "$.source_id": [
+        "Identifier"
+      ],
+      "$.target_id": [
+        "Identifier"
+      ]
+    },
+    "add_requirement": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.requirement_id": [
+        "Identifier"
+      ],
+      "$.requirement_type": [
+        "RequirementType values"
+      ],
+      "$.risk": [
+        "Risk values"
+      ],
+      "$.text": [
+        "Identifier"
+      ],
+      "$.verification_method": [
+        "VerificationMethod values"
+      ]
+    },
+    "configure": {
+      "$.rectBorderColor": [
+        "Identifier"
+      ],
+      "$.rectBorderSize": [
+        "Identifier"
+      ],
+      "$.rectFill": [
+        "Identifier"
+      ],
+      "$.textColor": [
+        "Identifier"
+      ]
+    },
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'requirement'",
+        "constant 'requirement_element'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "remove_relation": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "update_element": {
+      "$.changes.document_reference": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.element_type": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.changes.requirement_id": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.requirement_type": [
+        "RequirementType values"
+      ],
+      "$.changes.risk": [
+        "Risk values"
+      ],
+      "$.changes.text": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.verification_method": [
+        "VerificationMethod values"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'requirement'",
+        "constant 'requirement_element'"
+      ]
+    },
+    "update_relation": {
+      "$.changes.element_ids[]": [
+        "Identifier"
+      ],
+      "$.changes.label": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.relation_kind": [
+        "RequirementRelationKind values"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'requirement_relation'"
+      ]
+    }
+  }
+}

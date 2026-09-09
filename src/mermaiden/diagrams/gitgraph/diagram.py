@@ -1,9 +1,10 @@
 from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import ClassVar, Literal
 
 from wireup import injectable
 
+from ...core.characters import Identifier, OptionalText, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -39,14 +40,16 @@ class GitGraphDiagram(DiagramModel):
             DiagramCommandFeature(
                 "add_commit",
                 {
-                    "id": str,
-                    "label": str,
-                    "commit_type": CommandDefault(CommitType | str, ""),
-                    "tag": CommandDefault(str, ""),
+                    "id": Identifier,
+                    "label": Text,
+                    "commit_type": CommandDefault(CommitType | Literal[""], ""),
+                    "tag": CommandDefault(OptionalText, ""),
                 },
             ),
-            DiagramCommandFeature("add_branch", {"id": str, "label": str, "order": CommandDefault(int | None, None)}),
-            DiagramCommandFeature("checkout", {"id": str, "branch": str}),
+            DiagramCommandFeature(
+                "add_branch", {"id": Identifier, "label": Text, "order": CommandDefault(int | None, None)}
+            ),
+            DiagramCommandFeature("checkout", {"id": Identifier, "branch": Identifier}),
         ),
     )
 

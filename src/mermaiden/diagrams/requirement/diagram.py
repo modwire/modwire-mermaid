@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -45,18 +46,23 @@ class RequirementDiagram(DiagramModel):
             DiagramCommandFeature(
                 "add_requirement",
                 {
-                    "id": str,
-                    "requirement_id": str,
-                    "text": str,
+                    "id": Identifier,
+                    "requirement_id": Identifier,
+                    "text": Text,
                     "requirement_type": CommandDefault(RequirementType, RequirementType.REQUIREMENT),
                     "risk": CommandDefault(Risk, Risk.MEDIUM),
                     "verification_method": CommandDefault(VerificationMethod, VerificationMethod.ANALYSIS),
                 },
             ),
-            DiagramCommandFeature("add_element", {"id": str, "element_type": str, "document_reference": str}),
+            DiagramCommandFeature("add_element", {"id": Identifier, "element_type": Text, "document_reference": Text}),
             DiagramCommandFeature(
                 "add_relation",
-                {"id": str, "source_id": str, "target_id": str, "relation_kind": RequirementRelationKind},
+                {
+                    "id": Identifier,
+                    "source_id": Identifier,
+                    "target_id": Identifier,
+                    "relation_kind": RequirementRelationKind,
+                },
             ),
         ),
     )

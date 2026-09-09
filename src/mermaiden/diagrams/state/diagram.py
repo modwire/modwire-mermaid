@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, OptionalIdentifier, OptionalText, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -39,40 +40,66 @@ class StateDiagram(DiagramModel):
         relations=(StateTransition,),
         annotations=(StateNote,),
         commands=(
-            DiagramCommandFeature("add_state", {"id": str, "label": str, "composite_id": CommandDefault(str, "")}),
-            DiagramCommandFeature("add_initial", {"id": str, "composite_id": CommandDefault(str, "")}),
-            DiagramCommandFeature("add_final", {"id": str, "composite_id": CommandDefault(str, "")}),
-            DiagramCommandFeature("add_composite", {"id": str, "label": str, "composite_id": CommandDefault(str, "")}),
             DiagramCommandFeature(
-                "add_choice", {"id": str, "label": CommandDefault(str, ""), "composite_id": CommandDefault(str, "")}
+                "add_state", {"id": Identifier, "label": Text, "composite_id": CommandDefault(OptionalIdentifier, "")}
             ),
             DiagramCommandFeature(
-                "add_fork", {"id": str, "label": CommandDefault(str, ""), "composite_id": CommandDefault(str, "")}
+                "add_initial",
+                {"id": Identifier, "composite_id": CommandDefault(OptionalIdentifier, "")},
             ),
             DiagramCommandFeature(
-                "add_join", {"id": str, "label": CommandDefault(str, ""), "composite_id": CommandDefault(str, "")}
+                "add_final",
+                {"id": Identifier, "composite_id": CommandDefault(OptionalIdentifier, "")},
+            ),
+            DiagramCommandFeature(
+                "add_composite",
+                {"id": Identifier, "label": Text, "composite_id": CommandDefault(OptionalIdentifier, "")},
+            ),
+            DiagramCommandFeature(
+                "add_choice",
+                {
+                    "id": Identifier,
+                    "label": CommandDefault(OptionalText, ""),
+                    "composite_id": CommandDefault(OptionalIdentifier, ""),
+                },
+            ),
+            DiagramCommandFeature(
+                "add_fork",
+                {
+                    "id": Identifier,
+                    "label": CommandDefault(OptionalText, ""),
+                    "composite_id": CommandDefault(OptionalIdentifier, ""),
+                },
+            ),
+            DiagramCommandFeature(
+                "add_join",
+                {
+                    "id": Identifier,
+                    "label": CommandDefault(OptionalText, ""),
+                    "composite_id": CommandDefault(OptionalIdentifier, ""),
+                },
             ),
             DiagramCommandFeature(
                 "add_transition",
                 {
-                    "id": str,
-                    "source_id": str,
-                    "target_id": str,
-                    "label": CommandDefault(str, ""),
-                    "composite_id": CommandDefault(str, ""),
+                    "id": Identifier,
+                    "source_id": Identifier,
+                    "target_id": Identifier,
+                    "label": CommandDefault(OptionalText, ""),
+                    "composite_id": CommandDefault(OptionalIdentifier, ""),
                 },
             ),
             DiagramCommandFeature(
                 "add_note",
                 {
-                    "id": str,
-                    "state_id": str,
-                    "text": str,
+                    "id": Identifier,
+                    "state_id": Identifier,
+                    "text": Text,
                     "position": CommandDefault(NotePosition, NotePosition.RIGHT),
-                    "composite_id": CommandDefault(str, ""),
+                    "composite_id": CommandDefault(OptionalIdentifier, ""),
                 },
             ),
-            DiagramCommandFeature("remove_transition", {"id": str}),
+            DiagramCommandFeature("remove_transition", {"id": Identifier}),
         ),
     )
 

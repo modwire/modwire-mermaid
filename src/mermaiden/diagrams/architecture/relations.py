@@ -1,8 +1,9 @@
 from enum import StrEnum
-from typing import Self
+from typing import Annotated, Self
 
 from pydantic import Field, model_validator
 
+from ...core.characters import Identifier
 from ...core.domain import Relation
 
 
@@ -24,7 +25,9 @@ class Edge(Relation):
 
 
 class Alignment(Relation):
-    element_ids: tuple[str, ...] = Field(min_length=2)
+    element_ids: tuple[Annotated[str, Field(pattern=Identifier.pattern, description=Identifier.description)], ...] = (
+        Field(min_length=2)
+    )
     axis: AlignmentAxis
 
     @property

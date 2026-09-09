@@ -1,5 +1,8 @@
+from typing import Annotated
+
 from pydantic import Field, field_validator
 
+from ...core.characters import Text
 from ..domain import MermaidDiagramConfiguration
 
 
@@ -15,7 +18,7 @@ class C4ContextDiagramConfiguration(MermaidDiagramConfiguration):
     c4_shape_in_row: int = Field(default=4, ge=0)
     next_line_padding_x: float = 0
     c4_boundary_in_row: int = Field(default=2, ge=0)
-    message_font_size: float | str = 12
+    message_font_size: float | Annotated[str, Field(pattern=Text.pattern, description=Text.description)] = 12
 
     @field_validator("message_font_size")
     @classmethod

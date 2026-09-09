@@ -62,7 +62,7 @@ class TestRenderValidation:
             {
                 "id": "note",
                 "class_id": "Order[Item]",
-                "text": 'Use "quotes", <b>literal</b> & #quot;',
+                "text": 'Use "quotes"; <b>literal</b> & #quot;',
             },
         )
         before = application.snapshot(diagram).to_dict()
@@ -83,10 +83,11 @@ class TestRenderValidation:
             "bills: order",
             'one "order"',
             "0..*",
-            'Use "quotes", <b>literal</b> & #quot;',
+            'Use "quotes"; <b>literal</b> & #quot;',
         ):
             assert label in text
         assert "Old name" not in text
+        assert "#59;" not in application.render(diagram)
         assert application.snapshot(diagram).to_dict() == before
 
     @pytest.mark.integration

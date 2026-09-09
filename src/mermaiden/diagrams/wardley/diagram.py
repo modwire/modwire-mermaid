@@ -5,6 +5,7 @@ from typing import Annotated, ClassVar
 from pydantic import Field
 from wireup import injectable
 
+from ...core.characters import Identifier, OptionalText, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -40,18 +41,26 @@ class WardleyDiagram(DiagramModel):
             DiagramCommandFeature(
                 "add_component",
                 {
-                    "id": str,
-                    "label": str,
+                    "id": Identifier,
+                    "label": Text,
                     "visibility": float,
                     "evolution": float,
                     "decorators": CommandDefault(Annotated[tuple[ComponentDecorator, ...], Field(max_length=1)], ()),
                 },
             ),
-            DiagramCommandFeature("add_anchor", {"id": str, "label": str, "visibility": float, "evolution": float}),
             DiagramCommandFeature(
-                "add_dependency", {"id": str, "source_id": str, "target_id": str, "label": CommandDefault(str, "")}
+                "add_anchor", {"id": Identifier, "label": Text, "visibility": float, "evolution": float}
             ),
-            DiagramCommandFeature("add_evolution", {"id": str, "component_id": str, "target": float}),
+            DiagramCommandFeature(
+                "add_dependency",
+                {
+                    "id": Identifier,
+                    "source_id": Identifier,
+                    "target_id": Identifier,
+                    "label": CommandDefault(OptionalText, ""),
+                },
+            ),
+            DiagramCommandFeature("add_evolution", {"id": Identifier, "component_id": Identifier, "target": float}),
         ),
     )
 

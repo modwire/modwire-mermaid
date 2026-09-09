@@ -1,9 +1,11 @@
 from collections.abc import Sequence
 from dataclasses import dataclass, field
+from enum import StrEnum
 from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     DiagramCommandFeature,
@@ -14,6 +16,11 @@ from ..domain import (
 from .configuration import RadarConfiguration
 from .constraints import RadarConstraint
 from .elements import RadarAxis, RadarCurve
+
+
+class RadarGraticule(StrEnum):
+    CIRCLE = "circle"
+    POLYGON = "polygon"
 
 
 @injectable(as_type=DiagramModel, qualifier="radar", lifetime="transient")
@@ -40,13 +47,13 @@ class Radar(DiagramModel):
         relations=(),
         annotations=(),
         commands=(
-            DiagramCommandFeature("set_title", {"title": str}),
+            DiagramCommandFeature("set_title", {"title": Text}),
             DiagramCommandFeature("set_legend", {"visible": bool}),
             DiagramCommandFeature("set_range", {"minimum": float, "maximum": float}),
-            DiagramCommandFeature("set_graticule", {"graticule": str}),
+            DiagramCommandFeature("set_graticule", {"graticule": RadarGraticule}),
             DiagramCommandFeature("set_ticks", {"ticks": int}),
-            DiagramCommandFeature("add_axis", {"id": str, "label": str}),
-            DiagramCommandFeature("add_curve", {"id": str, "label": str, "values": tuple[float, ...]}),
+            DiagramCommandFeature("add_axis", {"id": Identifier, "label": Text}),
+            DiagramCommandFeature("add_curve", {"id": Identifier, "label": Text, "values": tuple[float, ...]}),
         ),
     )
 

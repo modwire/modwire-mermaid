@@ -5,6 +5,7 @@ from typing import Annotated, ClassVar
 from pydantic import Field
 from wireup import injectable
 
+from ...core.characters import Identifier, Identifiers, OptionalIdentifier, OptionalText, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -44,29 +45,39 @@ class Architecture(DiagramModel):
             DiagramCommandFeature(
                 "add_group",
                 {
-                    "id": str,
-                    "label": str,
-                    "parent_id": CommandDefault(str, ""),
+                    "id": Identifier,
+                    "label": Text,
+                    "parent_id": CommandDefault(OptionalIdentifier, ""),
                     "columns": CommandDefault(Annotated[int, Field(ge=1)], 1),
                 },
             ),
-            DiagramCommandFeature("add_service", {"id": str, "label": str, "group_id": CommandDefault(str, "")}),
             DiagramCommandFeature(
-                "add_junction", {"id": str, "label": CommandDefault(str, ""), "group_id": CommandDefault(str, "")}
+                "add_service", {"id": Identifier, "label": Text, "group_id": CommandDefault(OptionalIdentifier, "")}
+            ),
+            DiagramCommandFeature(
+                "add_junction",
+                {
+                    "id": Identifier,
+                    "label": CommandDefault(OptionalText, ""),
+                    "group_id": CommandDefault(OptionalIdentifier, ""),
+                },
             ),
             DiagramCommandFeature(
                 "add_edge",
                 {
-                    "id": str,
-                    "source_id": str,
-                    "target_id": str,
+                    "id": Identifier,
+                    "source_id": Identifier,
+                    "target_id": Identifier,
                     "source_port": CommandDefault(Port, Port.RIGHT),
                     "target_port": CommandDefault(Port, Port.LEFT),
-                    "label": CommandDefault(str, ""),
+                    "label": CommandDefault(OptionalText, ""),
                 },
             ),
-            DiagramCommandFeature("add_alignment", {"id": str, "axis": AlignmentAxis, "member_ids": tuple[str, ...]}),
-            DiagramCommandFeature("add_note", {"id": str, "element_id": str, "text": str}),
+            DiagramCommandFeature(
+                "add_alignment",
+                {"id": Identifier, "axis": AlignmentAxis, "member_ids": Identifiers},
+            ),
+            DiagramCommandFeature("add_note", {"id": Identifier, "element_id": Identifier, "text": Text}),
         ),
     )
 

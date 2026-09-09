@@ -1,0 +1,143 @@
+{
+  "diagram_id": "mindmap",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_bang": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "Identifier"
+      ]
+    },
+    "add_circle": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "Identifier"
+      ]
+    },
+    "add_cloud": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "Identifier"
+      ]
+    },
+    "add_hexagon": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "Identifier"
+      ]
+    },
+    "add_node": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "Identifier"
+      ]
+    },
+    "add_root": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_rounded_square": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "Identifier"
+      ]
+    },
+    "add_square": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "Identifier"
+      ]
+    },
+    "configure": {
+      "$.layoutAlgorithm": [
+        "Identifier"
+      ]
+    },
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'bang'",
+        "constant 'circle'",
+        "constant 'cloud'",
+        "constant 'hexagon'",
+        "constant 'mindmap_node'",
+        "constant 'rounded_square'",
+        "constant 'square'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "update_element": {
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'bang'",
+        "constant 'circle'",
+        "constant 'cloud'",
+        "constant 'hexagon'",
+        "constant 'mindmap_node'",
+        "constant 'rounded_square'",
+        "constant 'square'"
+      ]
+    }
+  }
+}

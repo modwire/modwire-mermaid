@@ -398,9 +398,11 @@ class TestElementMovement:
             assert reorder_schema["additionalProperties"] is False
             assert reorder_schema["required"] == ["parent_id", "element_ids"]
             element_ids = self._mapping(self._mapping(reorder_schema["properties"])["element_ids"])
+            element_ids = self._reference(reorder_schema, element_ids["$ref"])
             assert element_ids["type"] == "array"
             assert element_ids["uniqueItems"] is True
-            assert self._mapping(element_ids["items"])["minLength"] == 1
+            identifier = self._reference(reorder_schema, self._mapping(element_ids["items"])["$ref"])
+            assert identifier["pattern"]
 
     def _variant(self, schema: Mapping[str, object], kind: str) -> Mapping[str, object]:
         discriminator = self._mapping(schema["discriminator"])

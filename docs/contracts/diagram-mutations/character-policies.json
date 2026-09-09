@@ -1,0 +1,292 @@
+{
+  "generated_from": "Application.diagram_description().commands",
+  "policies": {
+    "AlignmentAxis values": {
+      "enum": [
+        "row",
+        "column"
+      ]
+    },
+    "Cardinality values": {
+      "enum": [
+        "zero_or_one",
+        "exactly_one",
+        "zero_or_more",
+        "one_or_more"
+      ]
+    },
+    "ClassRelationKind values": {
+      "enum": [
+        "association",
+        "inheritance",
+        "composition",
+        "aggregation",
+        "dependency",
+        "realization"
+      ]
+    },
+    "CommitType values": {
+      "enum": [
+        "NORMAL",
+        "REVERSE",
+        "HIGHLIGHT"
+      ]
+    },
+    "ComponentDecorator values": {
+      "enum": [
+        "inertia",
+        "build",
+        "buy",
+        "outsource",
+        "market"
+      ]
+    },
+    "ControlKind values": {
+      "enum": [
+        "loop",
+        "alt",
+        "else",
+        "opt",
+        "par",
+        "and",
+        "critical",
+        "option",
+        "break",
+        "rect",
+        "end"
+      ]
+    },
+    "Direction values": {
+      "enum": [
+        "TD",
+        "LR",
+        "RL",
+        "BT"
+      ]
+    },
+    "DirectiveKind values": {
+      "enum": [
+        "autonumber"
+      ]
+    },
+    "DomainKind values": {
+      "enum": [
+        "complex",
+        "complicated",
+        "clear",
+        "chaotic",
+        "confusion"
+      ]
+    },
+    "Dot-qualified ASCII type name.": {
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?:\\.[A-Za-z_][A-Za-z0-9_]*)*$"
+    },
+    "DurationUnit values": {
+      "enum": [
+        "milliseconds",
+        "seconds",
+        "minutes",
+        "hours",
+        "days",
+        "weeks",
+        "months",
+        "years"
+      ]
+    },
+    "EntityAttributeDataType": {
+      "pattern": "^(?![\\s\\S]*[\\r\\n])(?!(?:[Pp][Kk]|[Ff][Kk]|[Uu][Kk])(?:$|[^A-Za-z0-9_]))(?:[\\*A-Za-z_\\u00C0-\\uFFFF][A-Za-z0-9\\-\\_\\[\\]\\(\\)\\.,\\u00C0-\\uFFFF\\*]*\\??|[^\\s]*~[^\\r\\n]*~[^\\s]*|`[^`]+`\\??)$",
+      "description": "Mermaid entity-relationship attribute data type."
+    },
+    "EntityRelationshipDirection values": {
+      "enum": [
+        "TB",
+        "BT",
+        "LR",
+        "RL"
+      ]
+    },
+    "Identifier": {
+      "pattern": "^[^\\s\\x00-\\x1f\\x7f-\\x9f](?:[^\\x00-\\x1f\\x7f-\\x9f]*[^\\s\\x00-\\x1f\\x7f-\\x9f])?$",
+      "description": "Non-empty identifier without surrounding whitespace or control characters."
+    },
+    "KanbanPriority values": {
+      "enum": [
+        "Very High",
+        "High",
+        "Low",
+        "Very Low"
+      ]
+    },
+    "LegendPosition values": {
+      "enum": [
+        "top",
+        "bottom",
+        "left",
+        "right",
+        "center"
+      ]
+    },
+    "LineHops values": {
+      "enum": [
+        "arc",
+        "gap"
+      ]
+    },
+    "MemberName": {
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+      "description": "ASCII class member name."
+    },
+    "MessageKind values": {
+      "enum": [
+        "solid",
+        "dotted",
+        "open",
+        "dotted_open"
+      ]
+    },
+    "MethodModifier values": {
+      "enum": [
+        "instance",
+        "static",
+        "abstract"
+      ]
+    },
+    "NotePosition values": {
+      "enum": [
+        "left",
+        "right"
+      ]
+    },
+    "OptionalIdentifier": {
+      "pattern": "^(?:[^\\s\\x00-\\x1f\\x7f-\\x9f](?:[^\\x00-\\x1f\\x7f-\\x9f]*[^\\s\\x00-\\x1f\\x7f-\\x9f])?)?$",
+      "description": "Empty root reference or an identifier without surrounding whitespace or control characters."
+    },
+    "OptionalText": {
+      "pattern": "^(?:[^\\s\\x00-\\x1f\\x7f-\\x9f](?:[^\\x00-\\x1f\\x7f-\\x9f]*[^\\s\\x00-\\x1f\\x7f-\\x9f])?)?$",
+      "description": "Empty or single-line text without surrounding whitespace or control characters."
+    },
+    "ParticipantKind values": {
+      "enum": [
+        "participant",
+        "actor",
+        "boundary",
+        "control",
+        "entity",
+        "database",
+        "collections",
+        "queue"
+      ]
+    },
+    "Port values": {
+      "enum": [
+        "top",
+        "right",
+        "bottom",
+        "left"
+      ]
+    },
+    "RadarGraticule values": {
+      "enum": [
+        "circle",
+        "polygon"
+      ]
+    },
+    "RelationshipDirection values": {
+      "enum": [
+        "Rel",
+        "Rel_R",
+        "Rel_L",
+        "Rel_Up",
+        "Rel_Down"
+      ]
+    },
+    "RequirementRelationKind values": {
+      "enum": [
+        "contains",
+        "copies",
+        "derives",
+        "satisfies",
+        "verifies",
+        "refines",
+        "traces"
+      ]
+    },
+    "RequirementType values": {
+      "enum": [
+        "requirement",
+        "functionalRequirement",
+        "interfaceRequirement",
+        "performanceRequirement",
+        "physicalRequirement",
+        "designConstraint"
+      ]
+    },
+    "Risk values": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "StateRenderer values": {
+      "enum": [
+        "dagre-d3",
+        "dagre-wrapper",
+        "elk"
+      ]
+    },
+    "TargetKind values": {
+      "enum": [
+        "element",
+        "relation"
+      ]
+    },
+    "TaskStatus values": {
+      "enum": [
+        "planned",
+        "active",
+        "done"
+      ]
+    },
+    "Text": {
+      "pattern": "^[^\\s\\x00-\\x1f\\x7f-\\x9f](?:[^\\x00-\\x1f\\x7f-\\x9f]*[^\\s\\x00-\\x1f\\x7f-\\x9f])?$",
+      "description": "Non-empty single-line text without surrounding whitespace or control characters."
+    },
+    "TreeIcon": {
+      "pattern": "^[\\w-]*(?::[\\w-]+)?$",
+      "description": "Empty or a Mermaid Tree View icon name with an optional pack prefix."
+    },
+    "TreeItemType values": {
+      "enum": [
+        "item",
+        "directory",
+        "file"
+      ]
+    },
+    "VerificationMethod values": {
+      "enum": [
+        "analysis",
+        "inspection",
+        "test",
+        "demonstration"
+      ]
+    },
+    "Visibility values": {
+      "enum": [
+        "public",
+        "private",
+        "protected",
+        "package"
+      ]
+    },
+    "pattern '^(?:NORMAL|REVERSE|HIGHLIGHT)?$'": {
+      "pattern": "^(?:NORMAL|REVERSE|HIGHLIGHT)?$"
+    },
+    "pattern '^(?:Very High|High|Low|Very Low)?$'": {
+      "pattern": "^(?:Very High|High|Low|Very Low)?$"
+    },
+    "pattern '^(?:activate|deactivate|create|destroy)$'": {
+      "pattern": "^(?:activate|deactivate|create|destroy)$"
+    }
+  }
+}

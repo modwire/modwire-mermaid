@@ -1,0 +1,174 @@
+{
+  "diagram_id": "swimlane-beta",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_activity": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.lane_id": [
+        "Identifier"
+      ]
+    },
+    "add_conditional_flow": {
+      "$.condition": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.source_id": [
+        "Identifier"
+      ],
+      "$.target_id": [
+        "Identifier"
+      ]
+    },
+    "add_connector": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.lane_id": [
+        "Identifier"
+      ]
+    },
+    "add_decision": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.lane_id": [
+        "Identifier"
+      ]
+    },
+    "add_end": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.lane_id": [
+        "Identifier"
+      ]
+    },
+    "add_flow": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "OptionalIdentifier"
+      ],
+      "$.source_id": [
+        "Identifier"
+      ],
+      "$.target_id": [
+        "Identifier"
+      ]
+    },
+    "add_lane": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_start": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.lane_id": [
+        "Identifier"
+      ]
+    },
+    "configure": {
+      "$.lineHops": [
+        "LineHops values"
+      ]
+    },
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'activity'",
+        "constant 'connector'",
+        "constant 'decision'",
+        "constant 'end'",
+        "constant 'start'",
+        "constant 'swimlane'",
+        "constant 'swimlane_node'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "remove_flow": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "remove_relation": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "update_element": {
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'activity'",
+        "constant 'connector'",
+        "constant 'decision'",
+        "constant 'end'",
+        "constant 'start'",
+        "constant 'swimlane'",
+        "constant 'swimlane_node'"
+      ]
+    },
+    "update_relation": {
+      "$.changes.element_ids[]": [
+        "Identifier"
+      ],
+      "$.changes.label": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'conditional_flow'",
+        "constant 'flow'"
+      ]
+    }
+  }
+}

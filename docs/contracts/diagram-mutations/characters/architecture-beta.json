@@ -1,0 +1,172 @@
+{
+  "diagram_id": "architecture-beta",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_alignment": {
+      "$.axis": [
+        "AlignmentAxis values"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.member_ids[]": [
+        "Identifier"
+      ]
+    },
+    "add_edge": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "OptionalIdentifier"
+      ],
+      "$.source_id": [
+        "Identifier"
+      ],
+      "$.source_port": [
+        "Port values"
+      ],
+      "$.target_id": [
+        "Identifier"
+      ],
+      "$.target_port": [
+        "Port values"
+      ]
+    },
+    "add_group": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "add_junction": {
+      "$.group_id": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "OptionalIdentifier"
+      ]
+    },
+    "add_note": {
+      "$.element_id": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.text": [
+        "Identifier"
+      ]
+    },
+    "add_service": {
+      "$.group_id": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "configure": {},
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'architecture_group'",
+        "constant 'junction'",
+        "constant 'service'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_annotation": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "remove_relation": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "update_annotation": {
+      "$.changes.targets[].id": [
+        "Identifier"
+      ],
+      "$.changes.targets[].kind": [
+        "TargetKind values"
+      ],
+      "$.changes.text": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'architecture_note'"
+      ]
+    },
+    "update_element": {
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'architecture_group'",
+        "constant 'junction'",
+        "constant 'service'"
+      ]
+    },
+    "update_relation": {
+      "$.changes.axis": [
+        "AlignmentAxis values"
+      ],
+      "$.changes.element_ids[]": [
+        "Identifier"
+      ],
+      "$.changes.label": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.source_port": [
+        "Port values"
+      ],
+      "$.changes.target_port": [
+        "Port values"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'alignment'",
+        "constant 'edge'"
+      ]
+    }
+  }
+}

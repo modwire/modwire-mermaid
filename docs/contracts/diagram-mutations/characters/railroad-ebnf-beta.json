@@ -1,0 +1,135 @@
+{
+  "diagram_id": "railroad-ebnf-beta",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_alternative": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "Identifier"
+      ]
+    },
+    "add_group": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "Identifier"
+      ]
+    },
+    "add_non_terminal": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.rule_id": [
+        "Identifier"
+      ]
+    },
+    "add_optional": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "Identifier"
+      ]
+    },
+    "add_repetition": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "Identifier"
+      ]
+    },
+    "add_rule": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_special": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "Identifier"
+      ]
+    },
+    "add_terminal": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.rule_id": [
+        "Identifier"
+      ]
+    },
+    "configure": {
+      "$.fontFamily": [
+        "Identifier"
+      ]
+    },
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'alternative_expression'",
+        "constant 'composite_expression'",
+        "constant 'group_expression'",
+        "constant 'non_terminal'",
+        "constant 'optional_expression'",
+        "constant 'repetition_expression'",
+        "constant 'sequence_expression'",
+        "constant 'special'",
+        "constant 'terminal'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "update_element": {
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'alternative_expression'",
+        "constant 'composite_expression'",
+        "constant 'group_expression'",
+        "constant 'non_terminal'",
+        "constant 'optional_expression'",
+        "constant 'repetition_expression'",
+        "constant 'sequence_expression'",
+        "constant 'special'",
+        "constant 'terminal'"
+      ]
+    }
+  }
+}

@@ -1,0 +1,213 @@
+{
+  "diagram_id": "sequenceDiagram",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "activate": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.participant_id": [
+        "Identifier"
+      ]
+    },
+    "add_box": {
+      "$.color": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_message": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "MessageKind values"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.source_id": [
+        "Identifier"
+      ],
+      "$.target_id": [
+        "Identifier"
+      ]
+    },
+    "add_note": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.participant_ids[]": [
+        "Identifier"
+      ],
+      "$.position": [
+        "NotePosition values"
+      ],
+      "$.text": [
+        "Identifier"
+      ]
+    },
+    "add_participant": {
+      "$.box_id": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "ParticipantKind values"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "autonumber": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "configure": {},
+    "control": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "ControlKind values"
+      ],
+      "$.label": [
+        "OptionalIdentifier"
+      ]
+    },
+    "create": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.participant_id": [
+        "Identifier"
+      ]
+    },
+    "deactivate": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.participant_id": [
+        "Identifier"
+      ]
+    },
+    "destroy": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.participant_id": [
+        "Identifier"
+      ]
+    },
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'participant'",
+        "constant 'participant_box'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_annotation": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "remove_relation": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "update_annotation": {
+      "$.changes.position": [
+        "NotePosition values"
+      ],
+      "$.changes.targets[].id": [
+        "Identifier"
+      ],
+      "$.changes.targets[].kind": [
+        "TargetKind values"
+      ],
+      "$.changes.text": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'sequence_note'"
+      ]
+    },
+    "update_element": {
+      "$.changes.color": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.changes.participant_kind": [
+        "ParticipantKind values"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'participant'",
+        "constant 'participant_box'"
+      ]
+    },
+    "update_relation": {
+      "$.changes.action": [
+        "pattern '^(?:activate|deactivate|create|destroy)$'"
+      ],
+      "$.changes.control_kind": [
+        "ControlKind values"
+      ],
+      "$.changes.directive_kind": [
+        "DirectiveKind values"
+      ],
+      "$.changes.element_ids[]": [
+        "Identifier"
+      ],
+      "$.changes.label": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.message_kind": [
+        "MessageKind values"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'control'",
+        "constant 'directive'",
+        "constant 'message'",
+        "constant 'participant_event'"
+      ]
+    }
+  }
+}

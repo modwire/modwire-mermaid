@@ -226,7 +226,8 @@ class TestEntityRelationshipDiagram:
         update_type = update_changes["properties"]["data_type"]
         object_type = cast(Mapping[str, Mapping[str, object]], object_schema["properties"])["data_type"]
 
-        pattern = cast(str, add_type["pattern"])
+        reference = cast(str, add_type["$ref"]).removeprefix("#/$defs/")
+        pattern = cast(str, add_schema["$defs"][reference]["pattern"])
         assert pattern == update_type["pattern"] == object_type["pattern"]
         assert re.search(pattern, "public.geometry(point,4326)?")
         assert re.search(pattern, "positive~ int ~")

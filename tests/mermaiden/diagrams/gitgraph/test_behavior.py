@@ -42,7 +42,7 @@ class TestGitGraph:
         diagram = application.create_diagram("gitGraph")
         application.apply(diagram, DiagramCommand("add_commit", {"id": "first", "label": "FIRST"}))
 
-        with pytest.raises(RuntimeError, match=r"unsupported type"):
+        with pytest.raises(RuntimeError, match=r"'add_commit' has invalid arguments"):
             application.apply(
                 diagram, DiagramCommand("add_commit", {"id": "bad", "label": "BAD", "commit_type": "LOUD"})
             )

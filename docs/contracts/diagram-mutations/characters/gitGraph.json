@@ -1,0 +1,106 @@
+{
+  "diagram_id": "gitGraph",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_branch": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_commit": {
+      "$.commit_type": [
+        "CommitType values",
+        "constant ''"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.tag": [
+        "OptionalIdentifier"
+      ]
+    },
+    "checkout": {
+      "$.branch": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "configure": {
+      "$.mainBranchName": [
+        "Identifier"
+      ]
+    },
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'branch'",
+        "constant 'checkout'",
+        "constant 'commit'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "remove_relation": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "update_element": {
+      "$.changes.commit_type": [
+        "pattern '^(?:NORMAL|REVERSE|HIGHLIGHT)?$'"
+      ],
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.changes.tag": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'branch'",
+        "constant 'checkout'",
+        "constant 'commit'"
+      ]
+    },
+    "update_relation": {
+      "$.changes.element_ids[]": [
+        "Identifier"
+      ],
+      "$.changes.label": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'commit_relation'"
+      ]
+    }
+  }
+}

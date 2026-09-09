@@ -1,6 +1,9 @@
 from collections.abc import Mapping, Sequence
 from enum import StrEnum
 
+from pydantic import Field
+
+from ...core.characters import Text
 from ...core.domain import Annotation, OperationError, TargetKind, TargetRef
 
 
@@ -11,7 +14,7 @@ class NotePosition(StrEnum):
 
 
 class SequenceNote(Annotation):
-    text: str
+    text: str = Field(pattern=Text.pattern, description=Text.description)
     position: NotePosition = NotePosition.OVER
 
 

@@ -1,5 +1,7 @@
 from enum import StrEnum
 
+from pydantic import Field
+
 from ...core.domain import Relation
 
 
@@ -28,6 +30,13 @@ class DirectiveKind(StrEnum):
     AUTONUMBER = "autonumber"
 
 
+class ParticipantAction(StrEnum):
+    ACTIVATE = "activate"
+    DEACTIVATE = "deactivate"
+    CREATE = "create"
+    DESTROY = "destroy"
+
+
 class Message(Relation):
     message_kind: MessageKind = MessageKind.SOLID
     activate: bool = False
@@ -35,7 +44,11 @@ class Message(Relation):
 
 
 class ParticipantEvent(Relation):
-    action: str = "activate"
+    action: str = Field(
+        default="activate",
+        pattern=r"^(?:activate|deactivate|create|destroy)$",
+        json_schema_extra={"enum": ["activate", "deactivate", "create", "destroy"]},
+    )
 
 
 class Control(Relation):

@@ -14,6 +14,8 @@ CONTRACT_ROOT = ROOT / "docs" / "contracts" / "diagram-mutations"
 CONTRACT_PATH = CONTRACT_ROOT / "contract.json"
 DIAGRAMS_PATH = CONTRACT_ROOT / "diagrams"
 DOCUMENT_PATH = CONTRACT_ROOT / "README.md"
+CHARACTER_POLICIES_PATH = CONTRACT_ROOT / "character-policies.json"
+CHARACTER_DIAGRAMS_PATH = CONTRACT_ROOT / "characters"
 RENDER_COMMAND = ROOT / "scripts" / "render_mutation_contract.py"
 
 CATEGORIES = ("elements", "relations", "annotations")
@@ -261,6 +263,10 @@ class TestMutationContract:
 
         assert result.returncode == 0, result.stderr or result.stdout
         assert DOCUMENT_PATH.is_file()
+        assert CHARACTER_POLICIES_PATH.is_file()
+        assert {path.stem for path in CHARACTER_DIAGRAMS_PATH.glob("*.json")} == {
+            info.id for info in Application.create().available_diagrams()
+        }
         json_stems = {path.stem for path in DIAGRAMS_PATH.glob("*.json")}
         markdown_stems = {path.stem for path in DIAGRAMS_PATH.glob("*.md")}
         assert markdown_stems == json_stems

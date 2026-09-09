@@ -3,9 +3,11 @@ from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Protocol, TypeVar
+from typing import Annotated, Protocol, TypeVar
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
+
+from .characters import Identifier, OptionalText, Text
 
 
 class OperationError(Exception):
@@ -34,11 +36,11 @@ class TargetKind(StrEnum):
 
 class TargetRef(ValueModel):
     kind: TargetKind
-    id: str
+    id: str = Field(pattern=Identifier.pattern, description=Identifier.description)
 
 
 class Annotation(ClassifiedValueModel):
-    id: str
+    id: str = Field(pattern=Identifier.pattern, description=Identifier.description)
     targets: tuple[TargetRef, ...]
 
 
@@ -47,8 +49,8 @@ class DataAnnotation(Annotation):
 
 
 class Element(ClassifiedValueModel, ABC):
-    id: str
-    label: str
+    id: str = Field(pattern=Identifier.pattern, description=Identifier.description)
+    label: str = Field(pattern=Text.pattern, description=Text.description)
 
 
 class Entity(Element):
@@ -64,9 +66,9 @@ class Container(Element):
 
 
 class Relation(ClassifiedValueModel):
-    id: str
-    element_ids: tuple[str, ...]
-    label: str = ""
+    id: str = Field(pattern=Identifier.pattern, description=Identifier.description)
+    element_ids: tuple[Annotated[str, Field(pattern=Identifier.pattern, description=Identifier.description)], ...]
+    label: str = Field(default="", pattern=OptionalText.pattern, description=OptionalText.description)
 
     @property
     def source_id(self) -> str:

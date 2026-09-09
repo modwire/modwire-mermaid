@@ -13,6 +13,9 @@ CONTRACT_ROOT = ROOT / "docs" / "contracts" / "diagram-mutations"
 CONTRACT_PATH = CONTRACT_ROOT / "contract.json"
 DIAGRAMS_PATH = CONTRACT_ROOT / "diagrams"
 DOCUMENT_PATH = CONTRACT_ROOT / "README.md"
+CHARACTER_POLICIES_PATH = CONTRACT_ROOT / "character-policies.json"
+CHARACTER_DIAGRAMS_PATH = CONTRACT_ROOT / "characters"
+CHARACTER_DOCUMENT_PATH = CHARACTER_DIAGRAMS_PATH / "README.md"
 
 JsonObject = dict[str, Any]
 
@@ -87,7 +90,20 @@ def _object_contract(schema: Mapping[str, object], category: str) -> JsonObject:
 def render_artifacts(contract: Mapping[str, Any]) -> dict[Path, str]:
     classifications = _object(contract["classifications"], "classifications")
     diagrams = _object(contract["diagrams"], "diagrams")
-    artifacts = {DOCUMENT_PATH: render_overview(contract)}
+    character_contract = discover_character_policies()
+    character_diagrams = _object(character_contract["diagrams"], "character policies.diagrams")
+    artifacts = {
+        DOCUMENT_PATH: render_overview(contract),
+        CHARACTER_POLICIES_PATH: json.dumps(
+            {
+                "generated_from": character_contract["generated_from"],
+                "policies": character_contract["policies"],
+            },
+            indent=2,
+        )
+        + "\n",
+        CHARACTER_DOCUMENT_PATH: render_character_overview(character_diagrams),
+    }
     for diagram_id, value in diagrams.items():
         diagram = _object(value, f"diagrams.{diagram_id}")
         artifacts[DIAGRAMS_PATH / f"{diagram_id}.json"] = (
@@ -98,6 +114,18 @@ def render_artifacts(contract: Mapping[str, Any]) -> dict[Path, str]:
             + "\n"
         )
         artifacts[DIAGRAMS_PATH / f"{diagram_id}.md"] = render_diagram(diagram_id, diagram, classifications)
+    for diagram_id, commands in character_diagrams.items():
+        artifacts[CHARACTER_DIAGRAMS_PATH / f"{diagram_id}.json"] = (
+            json.dumps(
+                {
+                    "diagram_id": diagram_id,
+                    "generated_from": character_contract["generated_from"],
+                    "commands": commands,
+                },
+                indent=2,
+            )
+            + "\n"
+        )
     return artifacts
 
 
@@ -107,6 +135,7 @@ def render_overview(contract: Mapping[str, Any]) -> str:
         "",
         "This documentation is generated from public `Application` discovery and `contract.json` semantics.",
         "Run `make mutation-contract` after changing the public catalog or contract semantics.",
+        "The [character-policy matrices](characters/README.md) record every advertised command string field.",
         "",
         f"Contract version: `{contract['contract_version']}`.",
         "",
@@ -158,6 +187,102 @@ def render_overview(contract: Mapping[str, Any]) -> str:
             f" | {len(_object(diagram['annotations'], 'annotations'))} |"
         )
     return "\n".join(lines).rstrip() + "\n"
+
+
+def render_character_overview(diagrams: Mapping[str, Any]) -> str:
+    lines = [
+        "# Diagram character-policy matrices",
+        "",
+        "Generated from public `Application` discovery. Do not edit directly.",
+        "Shared rule definitions are in [`character-policies.json`](../character-policies.json).",
+        "",
+    ]
+    lines.extend(f"- [`{diagram_id}`]({diagram_id}.json)" for diagram_id in diagrams)
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def discover_character_policies() -> JsonObject:
+    policies: JsonObject = {}
+    patterns: dict[str, str] = {}
+    catalog: list[tuple[str, str, Mapping[str, object]]] = []
+    with Application.create() as application:
+        for info in application.available_diagrams():
+            for operation, schema in application.diagram_description(info.id).commands.items():
+                catalog.append((info.id, operation, schema))
+                pending: list[Mapping[str, object]] = [schema]
+                while pending:
+                    node = pending.pop()
+                    policy = node.get("x-character-policy")
+                    pattern = node.get("pattern")
+                    if isinstance(policy, str) and isinstance(pattern, str):
+                        patterns[pattern] = policy
+                        policies[policy] = {"pattern": pattern, "description": node.get("description", "")}
+                    for value in node.values():
+                        if isinstance(value, Mapping):
+                            pending.append(cast(Mapping[str, object], value))
+                        elif isinstance(value, list):
+                            pending.extend(
+                                cast(Mapping[str, object], item) for item in value if isinstance(item, Mapping)
+                            )
+    diagrams: JsonObject = {}
+    for diagram_id, operation, schema in catalog:
+        definitions = _object(schema.get("$defs", {}), "$defs")
+        rules: dict[str, list[str]] = {}
+        pending = [("$", schema, frozenset())]
+        while pending:
+            path, node, ancestors = pending.pop()
+            reference = node.get("$ref")
+            if isinstance(reference, str):
+                name = reference.removeprefix("#/$defs/")
+                if reference.startswith("#/$defs/") and name not in ancestors:
+                    pending.append((path, _object(definitions[name], reference), ancestors | {name}))
+                continue
+            if node.get("type") == "string":
+                rule = ""
+                pattern = node.get("pattern")
+                enum = node.get("enum")
+                constant = node.get("const")
+                if isinstance(pattern, str):
+                    rule = patterns.get(pattern, "")
+                    if not rule:
+                        description = node.get("description")
+                        rule = description if isinstance(description, str) and description else f"pattern {pattern!r}"
+                        policies[rule] = {"pattern": pattern}
+                elif isinstance(enum, list):
+                    title = node.get("title")
+                    rule = f"{title} values" if isinstance(title, str) else f"values {enum}"
+                    policies[rule] = {"enum": enum}
+                elif isinstance(constant, str):
+                    rule = f"constant {constant!r}"
+                if not rule:
+                    raise ValueError(f"{diagram_id}.{operation}.{path} has no named character rule.")
+                if rule not in rules.setdefault(path, []):
+                    rules[path].append(rule)
+            properties = node.get("properties")
+            if isinstance(properties, Mapping):
+                pending.extend(
+                    (f"{path}.{name}", cast(Mapping[str, object], value), ancestors)
+                    for name, value in properties.items()
+                    if isinstance(name, str) and isinstance(value, Mapping)
+                )
+            items = node.get("items")
+            if isinstance(items, Mapping):
+                pending.append((f"{path}[]", cast(Mapping[str, object], items), ancestors))
+            for keyword in ("allOf", "anyOf", "oneOf"):
+                variants = node.get(keyword)
+                if isinstance(variants, list):
+                    pending.extend(
+                        (path, cast(Mapping[str, object], value), ancestors)
+                        for value in variants
+                        if isinstance(value, Mapping)
+                    )
+        commands = cast(JsonObject, diagrams.setdefault(diagram_id, {}))
+        commands[operation] = {path: sorted(rules[path]) for path in sorted(rules)}
+    return {
+        "generated_from": "Application.diagram_description().commands",
+        "policies": {name: policies[name] for name in sorted(policies)},
+        "diagrams": diagrams,
+    }
 
 
 def render_diagram(
@@ -264,9 +389,15 @@ def main() -> None:
     artifacts = render_artifacts(load_contract())
     if arguments.write:
         for path, rendered in artifacts.items():
+            path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(rendered, encoding="utf-8")
         expected = set(artifacts)
-        for path in (*DIAGRAMS_PATH.glob("*.json"), *DIAGRAMS_PATH.glob("*.md")):
+        for path in (
+            *DIAGRAMS_PATH.glob("*.json"),
+            *DIAGRAMS_PATH.glob("*.md"),
+            *CHARACTER_DIAGRAMS_PATH.glob("*.json"),
+            *CHARACTER_DIAGRAMS_PATH.glob("*.md"),
+        ):
             if path not in expected:
                 path.unlink()
         return
@@ -278,7 +409,14 @@ def main() -> None:
         ]
         expected = set(artifacts)
         drifted.extend(
-            path for path in (*DIAGRAMS_PATH.glob("*.json"), *DIAGRAMS_PATH.glob("*.md")) if path not in expected
+            path
+            for path in (
+                *DIAGRAMS_PATH.glob("*.json"),
+                *DIAGRAMS_PATH.glob("*.md"),
+                *CHARACTER_DIAGRAMS_PATH.glob("*.json"),
+                *CHARACTER_DIAGRAMS_PATH.glob("*.md"),
+            )
+            if path not in expected
         )
         if drifted:
             names = ", ".join(str(path.relative_to(ROOT)) for path in sorted(drifted))

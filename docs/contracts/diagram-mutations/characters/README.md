@@ -1,0 +1,32 @@
+# Diagram character-policy matrices
+
+Generated from public `Application` discovery. Do not edit directly.
+Shared rule definitions are in [`character-policies.json`](../character-policies.json).
+
+- [`C4Context`](C4Context.json)
+- [`architecture-beta`](architecture-beta.json)
+- [`block`](block.json)
+- [`classDiagram`](classDiagram.json)
+- [`cynefin-beta`](cynefin-beta.json)
+- [`erDiagram`](erDiagram.json)
+- [`eventmodeling`](eventmodeling.json)
+- [`flowchart`](flowchart.json)
+- [`gantt`](gantt.json)
+- [`gitGraph`](gitGraph.json)
+- [`ishikawa-beta`](ishikawa-beta.json)
+- [`journey`](journey.json)
+- [`kanban`](kanban.json)
+- [`mindmap`](mindmap.json)
+- [`packet`](packet.json)
+- [`pie`](pie.json)
+- [`radar-beta`](radar-beta.json)
+- [`railroad-ebnf-beta`](railroad-ebnf-beta.json)
+- [`requirementDiagram`](requirementDiagram.json)
+- [`sankey`](sankey.json)
+- [`sequenceDiagram`](sequenceDiagram.json)
+- [`stateDiagram-v2`](stateDiagram-v2.json)
+- [`swimlane-beta`](swimlane-beta.json)
+- [`timeline`](timeline.json)
+- [`treeView-beta`](treeView-beta.json)
+- [`venn-beta`](venn-beta.json)
+- [`wardley-beta`](wardley-beta.json)

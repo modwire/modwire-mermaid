@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -36,11 +37,11 @@ class Packet(DiagramModel):
         relations=(),
         annotations=(),
         commands=(
-            DiagramCommandFeature("set_title", {"title": str}),
+            DiagramCommandFeature("set_title", {"title": Text}),
             DiagramCommandFeature(
-                "add_field", {"id": str, "label": str, "start": int, "end": CommandDefault(int | None, None)}
+                "add_field", {"id": Identifier, "label": Text, "start": int, "end": CommandDefault(int | None, None)}
             ),
-            DiagramCommandFeature("add_bits", {"id": str, "label": str, "bits": int}),
+            DiagramCommandFeature("add_bits", {"id": Identifier, "label": Text, "bits": int}),
         ),
     )
 

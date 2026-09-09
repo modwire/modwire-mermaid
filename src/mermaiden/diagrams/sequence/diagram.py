@@ -5,6 +5,7 @@ from typing import Annotated, ClassVar
 from pydantic import Field
 from wireup import injectable
 
+from ...core.characters import Identifier, OneOrTwoIdentifiers, OptionalIdentifier, OptionalText, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -25,6 +26,7 @@ from .relations import (
     DirectiveKind,
     Message,
     MessageKind,
+    ParticipantAction,
     ParticipantEvent,
 )
 
@@ -47,41 +49,47 @@ class SequenceDiagram(DiagramModel):
         relations=(Message, ParticipantEvent, Control, Directive),
         annotations=(SequenceNote,),
         commands=(
-            DiagramCommandFeature("add_box", {"id": str, "label": str, "color": CommandDefault(str, "")}),
+            DiagramCommandFeature(
+                "add_box",
+                {"id": Identifier, "label": Text, "color": CommandDefault(OptionalText, "")},
+            ),
             DiagramCommandFeature(
                 "add_participant",
                 {
-                    "id": str,
-                    "label": str,
+                    "id": Identifier,
+                    "label": Text,
                     "kind": CommandDefault(ParticipantKind, ParticipantKind.PARTICIPANT),
-                    "box_id": CommandDefault(str, ""),
+                    "box_id": CommandDefault(OptionalIdentifier, ""),
                     "created": CommandDefault(bool, False),
                 },
             ),
             DiagramCommandFeature(
                 "add_message",
                 {
-                    "id": str,
-                    "source_id": str,
-                    "target_id": str,
-                    "label": str,
+                    "id": Identifier,
+                    "source_id": Identifier,
+                    "target_id": Identifier,
+                    "label": Text,
                     "kind": CommandDefault(MessageKind, MessageKind.SOLID),
                     "activate": CommandDefault(bool, False),
                     "deactivate": CommandDefault(bool, False),
                 },
             ),
-            DiagramCommandFeature("activate", {"id": str, "participant_id": str}),
-            DiagramCommandFeature("deactivate", {"id": str, "participant_id": str}),
-            DiagramCommandFeature("create", {"id": str, "participant_id": str}),
-            DiagramCommandFeature("destroy", {"id": str, "participant_id": str}),
-            DiagramCommandFeature("control", {"id": str, "kind": ControlKind, "label": CommandDefault(str, "")}),
-            DiagramCommandFeature("autonumber", {"id": str}),
+            DiagramCommandFeature("activate", {"id": Identifier, "participant_id": Identifier}),
+            DiagramCommandFeature("deactivate", {"id": Identifier, "participant_id": Identifier}),
+            DiagramCommandFeature("create", {"id": Identifier, "participant_id": Identifier}),
+            DiagramCommandFeature("destroy", {"id": Identifier, "participant_id": Identifier}),
+            DiagramCommandFeature(
+                "control",
+                {"id": Identifier, "kind": ControlKind, "label": CommandDefault(OptionalText, "")},
+            ),
+            DiagramCommandFeature("autonumber", {"id": Identifier}),
             DiagramCommandFeature(
                 "add_note",
                 {
-                    "id": str,
-                    "text": str,
-                    "participant_ids": CommandVariadic(Annotated[tuple[str, ...], Field(min_length=1, max_length=2)]),
+                    "id": Identifier,
+                    "text": Text,
+                    "participant_ids": CommandVariadic(OneOrTwoIdentifiers),
                     "position": CommandDefault(NotePosition, NotePosition.OVER),
                 },
             ),
@@ -133,16 +141,16 @@ class SequenceDiagram(DiagramModel):
         )
 
     def activate(self, id: str, participant_id: str) -> ChangeReport:
-        return self._event(id, participant_id, "activate")
+        return self._event(id, participant_id, ParticipantAction.ACTIVATE)
 
     def deactivate(self, id: str, participant_id: str) -> ChangeReport:
-        return self._event(id, participant_id, "deactivate")
+        return self._event(id, participant_id, ParticipantAction.DEACTIVATE)
 
     def create(self, id: str, participant_id: str) -> ChangeReport:
-        return self._event(id, participant_id, "create")
+        return self._event(id, participant_id, ParticipantAction.CREATE)
 
     def destroy(self, id: str, participant_id: str) -> ChangeReport:
-        return self._event(id, participant_id, "destroy")
+        return self._event(id, participant_id, ParticipantAction.DESTROY)
 
     def control(self, id: str, kind: ControlKind, label: str = "") -> ChangeReport:
         return self._add_relation(
@@ -176,7 +184,7 @@ class SequenceDiagram(DiagramModel):
             participant_ids,
         )
 
-    def _event(self, id: str, participant_id: str, action: str) -> ChangeReport:
+    def _event(self, id: str, participant_id: str, action: ParticipantAction) -> ChangeReport:
         return self._add_relation(
             f"{action} '{participant_id}'",
             ParticipantEvent(id=id, element_ids=(participant_id, participant_id), label="", action=action),

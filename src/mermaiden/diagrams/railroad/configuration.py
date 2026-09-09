@@ -1,3 +1,6 @@
+from pydantic import Field
+
+from ...core.characters import Text
 from ..domain import MermaidDiagramConfiguration
 
 
@@ -8,4 +11,4 @@ class RailroadDiagramConfiguration(MermaidDiagramConfiguration):
     horizontal_separation: float = 10
     arc_radius: float = 10
     font_size: float = 14
-    font_family: str = "monospace"
+    font_family: str = Field(default="monospace", pattern=Text.pattern, description=Text.description)

@@ -5,6 +5,7 @@ from pydantic import TypeAdapter
 from pydantic_core import CoreSchema, core_schema
 from wireup import injectable
 
+from ...core.characters import OptionalIdentifier
 from ...core.domain import Annotation, ClassifiedValueModel, Element, Relation
 from ...diagrams.catalog.domain import MutationPayloadFactory
 from ...domain import CommandPayload, CommandPayloadSchema
@@ -73,14 +74,17 @@ class PydanticMutationPayloadFactory(MutationPayloadFactory):
         kind: str,
         object_type: type[ClassifiedValueModel],
     ) -> CoreSchema:
-        change_fields = {
-            name: core_schema.typed_dict_field(
-                TypeAdapter[object](field.rebuild_annotation()).core_schema,
-                required=False,
-            )
-            for name, field in object_type.model_fields.items()
-            if name != "id" and name != "elements"
-        }
+        change_fields: dict[str, core_schema.TypedDictField] = {}
+        for name, field in object_type.model_fields.items():
+            if name == "id" or name == "elements":
+                continue
+            field_schema = TypeAdapter[object](field.rebuild_annotation()).core_schema
+            json_schema_extra: object = field.json_schema_extra
+            if isinstance(json_schema_extra, dict):
+                metadata = dict(field_schema.get("metadata", {}))
+                metadata["pydantic_js_extra"] = cast(dict[str, object], json_schema_extra)
+                field_schema = cast(CoreSchema, {**field_schema, "metadata": metadata})
+            change_fields[name] = core_schema.typed_dict_field(field_schema, required=False)
         changes = core_schema.no_info_after_validator_function(
             self._require_changes,
             core_schema.typed_dict_schema(change_fields, extra_behavior="forbid"),
@@ -113,7 +117,10 @@ class PydanticMutationPayloadFactory(MutationPayloadFactory):
                 required=True,
             ),
             "kind": core_schema.typed_dict_field(core_schema.literal_schema([kind]), required=True),
-            "parent_id": core_schema.typed_dict_field(core_schema.str_schema(), required=True),
+            "parent_id": core_schema.typed_dict_field(
+                TypeAdapter[object](OptionalIdentifier).core_schema,
+                required=True,
+            ),
             "position": core_schema.typed_dict_field(
                 core_schema.with_default_schema(core_schema.int_schema(ge=0, strict=True), default=None),
                 required=False,

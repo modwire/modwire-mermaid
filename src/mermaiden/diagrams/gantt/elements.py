@@ -3,7 +3,16 @@ from typing import Annotated, Literal
 
 from pydantic import Field
 
+from ...core.characters import Identifier, OptionalText, Text
 from ...core.domain import Container, Entity, ValueModel
+
+
+class GanttDate(Text):
+    pass
+
+
+class GanttDateFormat(Text):
+    pass
 
 
 class TaskStatus(StrEnum):
@@ -29,12 +38,15 @@ class AutomaticStart(ValueModel):
 
 class DateStart(ValueModel):
     kind: Literal["date"] = "date"
-    date: Annotated[str, Field(min_length=1)]
+    date: str = Field(pattern=GanttDate.pattern, description=GanttDate.description)
 
 
 class DependencyStart(ValueModel):
     kind: Literal["dependencies"] = "dependencies"
-    task_ids: Annotated[tuple[Annotated[str, Field(min_length=1)], ...], Field(min_length=1)]
+    task_ids: Annotated[
+        tuple[Annotated[str, Field(pattern=Identifier.pattern, description=Identifier.description)], ...],
+        Field(min_length=1),
+    ]
 
 
 GanttStart = Annotated[AutomaticStart | DateStart | DependencyStart, Field(discriminator="kind")]
@@ -48,12 +60,12 @@ class DurationFinish(ValueModel):
 
 class EndDateFinish(ValueModel):
     kind: Literal["end_date"] = "end_date"
-    date: Annotated[str, Field(min_length=1)]
+    date: str = Field(pattern=GanttDate.pattern, description=GanttDate.description)
 
 
 class UntilFinish(ValueModel):
     kind: Literal["until"] = "until"
-    date: Annotated[str, Field(min_length=1)]
+    date: str = Field(pattern=GanttDate.pattern, description=GanttDate.description)
 
 
 GanttFinish = Annotated[DurationFinish | EndDateFinish | UntilFinish, Field(discriminator="kind")]
@@ -74,7 +86,7 @@ class Milestone(Entity):
 
 
 class Marker(Entity):
-    date: str = ""
+    date: str = Field(default="", pattern=OptionalText.pattern, description=OptionalText.description)
 
 
 class Section(Container):

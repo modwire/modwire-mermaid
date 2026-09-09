@@ -4,6 +4,7 @@ from typing import ClassVar
 
 from wireup import injectable
 
+from ...core.characters import Identifier, Identifiers, OptionalIdentifier, OptionalText, Text
 from ...core.domain import ChangeReport, Container, Element
 from ..domain import (
     CommandDefault,
@@ -66,32 +67,69 @@ class Flowchart(DiagramModel):
             DiagramCommandFeature(
                 "add_group",
                 {
-                    "id": str,
-                    "label": str,
-                    "parent_id": CommandDefault(str, ""),
+                    "id": Identifier,
+                    "label": Text,
+                    "parent_id": CommandDefault(OptionalIdentifier, ""),
                     "direction": CommandDefault(Direction | None, None),
                 },
             ),
-            DiagramCommandFeature("add_node", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
-            DiagramCommandFeature("add_start", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
-            DiagramCommandFeature("add_end", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
-            DiagramCommandFeature("add_action", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
-            DiagramCommandFeature("add_decision", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
-            DiagramCommandFeature("add_input_output", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
-            DiagramCommandFeature("add_data_store", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
-            DiagramCommandFeature("add_document", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
-            DiagramCommandFeature("add_subprocess", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
-            DiagramCommandFeature("add_junction", {"id": str, "label": str, "parent_id": CommandDefault(str, "")}),
             DiagramCommandFeature(
-                "add_flow", {"id": str, "source_id": str, "target_id": str, "label": CommandDefault(str, "")}
+                "add_node",
+                {"id": Identifier, "label": Text, "parent_id": CommandDefault(OptionalIdentifier, "")},
             ),
             DiagramCommandFeature(
-                "add_conditional_flow", {"id": str, "source_id": str, "target_id": str, "condition": str}
+                "add_start",
+                {"id": Identifier, "label": Text, "parent_id": CommandDefault(OptionalIdentifier, "")},
             ),
             DiagramCommandFeature(
-                "add_note", {"id": str, "text": str, "element_ids": CommandDefault(Sequence[str], ())}
+                "add_end",
+                {"id": Identifier, "label": Text, "parent_id": CommandDefault(OptionalIdentifier, "")},
             ),
-            DiagramCommandFeature("remove_flow", {"id": str}),
+            DiagramCommandFeature(
+                "add_action",
+                {"id": Identifier, "label": Text, "parent_id": CommandDefault(OptionalIdentifier, "")},
+            ),
+            DiagramCommandFeature(
+                "add_decision",
+                {"id": Identifier, "label": Text, "parent_id": CommandDefault(OptionalIdentifier, "")},
+            ),
+            DiagramCommandFeature(
+                "add_input_output",
+                {"id": Identifier, "label": Text, "parent_id": CommandDefault(OptionalIdentifier, "")},
+            ),
+            DiagramCommandFeature(
+                "add_data_store",
+                {"id": Identifier, "label": Text, "parent_id": CommandDefault(OptionalIdentifier, "")},
+            ),
+            DiagramCommandFeature(
+                "add_document",
+                {"id": Identifier, "label": Text, "parent_id": CommandDefault(OptionalIdentifier, "")},
+            ),
+            DiagramCommandFeature(
+                "add_subprocess",
+                {"id": Identifier, "label": Text, "parent_id": CommandDefault(OptionalIdentifier, "")},
+            ),
+            DiagramCommandFeature(
+                "add_junction",
+                {"id": Identifier, "label": Text, "parent_id": CommandDefault(OptionalIdentifier, "")},
+            ),
+            DiagramCommandFeature(
+                "add_flow",
+                {
+                    "id": Identifier,
+                    "source_id": Identifier,
+                    "target_id": Identifier,
+                    "label": CommandDefault(OptionalText, ""),
+                },
+            ),
+            DiagramCommandFeature(
+                "add_conditional_flow",
+                {"id": Identifier, "source_id": Identifier, "target_id": Identifier, "condition": Text},
+            ),
+            DiagramCommandFeature(
+                "add_note", {"id": Identifier, "text": Text, "element_ids": CommandDefault(Identifiers, ())}
+            ),
+            DiagramCommandFeature("remove_flow", {"id": Identifier}),
         ),
     )
 

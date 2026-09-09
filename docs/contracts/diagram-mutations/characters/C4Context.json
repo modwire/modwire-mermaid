@@ -1,0 +1,157 @@
+{
+  "diagram_id": "C4Context",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_database": {
+      "$.description": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.technology": [
+        "OptionalIdentifier"
+      ]
+    },
+    "add_person": {
+      "$.description": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "add_queue": {
+      "$.description": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.technology": [
+        "OptionalIdentifier"
+      ]
+    },
+    "add_relationship": {
+      "$.direction": [
+        "RelationshipDirection values"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.source_id": [
+        "Identifier"
+      ],
+      "$.target_id": [
+        "Identifier"
+      ]
+    },
+    "add_system": {
+      "$.description": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.technology": [
+        "OptionalIdentifier"
+      ]
+    },
+    "configure": {
+      "$.messageFontSize": [
+        "Identifier"
+      ]
+    },
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'c4_element'",
+        "constant 'person'",
+        "constant 'system'",
+        "constant 'system_db'",
+        "constant 'system_queue'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "remove_relation": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "set_relationship_label_offset": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "update_element": {
+      "$.changes.description": [
+        "OptionalIdentifier"
+      ],
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.changes.technology": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'c4_element'",
+        "constant 'person'",
+        "constant 'system'",
+        "constant 'system_db'",
+        "constant 'system_queue'"
+      ]
+    },
+    "update_relation": {
+      "$.changes.direction": [
+        "RelationshipDirection values"
+      ],
+      "$.changes.element_ids[]": [
+        "Identifier"
+      ],
+      "$.changes.label": [
+        "OptionalIdentifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'relationship'"
+      ]
+    }
+  }
+}

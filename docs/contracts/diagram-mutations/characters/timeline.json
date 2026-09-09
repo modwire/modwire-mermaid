@@ -1,0 +1,81 @@
+{
+  "diagram_id": "timeline",
+  "generated_from": "Application.diagram_description().commands",
+  "commands": {
+    "add_event": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.period_id": [
+        "Identifier"
+      ]
+    },
+    "add_period": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ],
+      "$.section_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "add_section": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.label": [
+        "Identifier"
+      ]
+    },
+    "configure": {},
+    "move_element": {
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'timeline_event'",
+        "constant 'timeline_period'",
+        "constant 'timeline_section'"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "remove_element": {
+      "$.id": [
+        "Identifier"
+      ]
+    },
+    "reorder_elements": {
+      "$.element_ids[]": [
+        "Identifier"
+      ],
+      "$.parent_id": [
+        "OptionalIdentifier"
+      ]
+    },
+    "set_title": {
+      "$.title": [
+        "Identifier"
+      ]
+    },
+    "update_element": {
+      "$.changes.label": [
+        "Identifier"
+      ],
+      "$.id": [
+        "Identifier"
+      ],
+      "$.kind": [
+        "constant 'timeline_event'",
+        "constant 'timeline_period'",
+        "constant 'timeline_section'"
+      ]
+    }
+  }
+}
