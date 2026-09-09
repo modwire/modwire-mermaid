@@ -6,6 +6,7 @@ from wireup import injectable
 
 from ...core.characters import Identifier, OptionalText, Text
 from ...core.domain import ChangeReport, Container, Element
+from ...core.naming import ClassName
 from ..domain import (
     CommandDefault,
     DiagramCommandFeature,
@@ -121,6 +122,6 @@ class C4ContextDiagram(DiagramModel):
         return self.mutations.update_relation(
             self,
             id,
-            Relationship.kind_for(),
+            ClassName(Relationship).snake_case,
             {"offset_x": offset_x, "offset_y": offset_y},
         )

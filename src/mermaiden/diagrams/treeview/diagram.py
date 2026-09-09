@@ -6,6 +6,7 @@ from wireup import injectable
 
 from ...core.characters import Identifier, OptionalText, Text
 from ...core.domain import ChangeReport, Container, Element
+from ...core.naming import ClassName
 from ..domain import (
     CommandDefault,
     DiagramCommandFeature,
@@ -91,7 +92,7 @@ class TreeView(DiagramModel):
         return self._add_typed_item(id, label, TreeItemType.FILE)
 
     def classify_item(self, id: str, item_type: TreeItemType) -> ChangeReport:
-        return self.update_element(id, TreeItem.kind_for(), {"item_type": item_type})
+        return self.update_element(id, ClassName(TreeItem).snake_case, {"item_type": item_type})
 
     def add_branch(self, id: str, parent_id: str, child_id: str) -> ChangeReport:
         return self._add_relation(f"add tree branch '{id}'", TreeBranch(id=id, element_ids=(parent_id, child_id)))

@@ -14,7 +14,7 @@ from ..domain import (
     DiagramModel,
     PersistedDiagramProperty,
 )
-from ..flowchart.elements import Direction
+from ..shared.direction import Direction
 from .configuration import SwimlaneConfiguration
 from .constraints.domain import SwimlaneConstraint
 from .elements import Activity, Connector, Decision, End, Start, Swimlane, SwimlaneNode

@@ -1,13 +1,6 @@
-from enum import StrEnum
+import mermaiden.diagrams.shared.direction
 
 from ...core.domain import Container, Entity
-
-
-class Direction(StrEnum):
-    TOP_DOWN = "TD"
-    LEFT_RIGHT = "LR"
-    RIGHT_LEFT = "RL"
-    BOTTOM_UP = "BT"
 
 
 class FlowNode(Entity):
@@ -51,4 +44,4 @@ class Junction(FlowNode):
 
 
 class FlowGroup(Container):
-    direction: Direction | None = None
+    direction: mermaiden.diagrams.shared.direction.Direction | None = None

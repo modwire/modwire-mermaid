@@ -1,4 +1,3 @@
-import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Never
@@ -13,6 +12,7 @@ from ..core.domain import (
     ValidationReport,
     Violation,
 )
+from ..core.naming import ClassName
 from .diagrams.annotations import Annotations
 from .diagrams.elements import Elements
 from .diagrams.relations import Relations
@@ -27,8 +27,7 @@ class ConstraintInspection(ABC):
 class StructureConstraint(BlockingConstraint):
     @property
     def code(self) -> str:
-        name = re.sub(r"(?<!^)(?=[A-Z])", "_", type(self).__name__).lower()
-        return f"structure.{name}"
+        return f"structure.{ClassName(type(self)).snake_case}"
 
 
 @dataclass(frozen=True, slots=True)

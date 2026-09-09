@@ -1,4 +1,3 @@
-import re
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
@@ -8,6 +7,7 @@ from typing import Annotated, Protocol, TypeVar
 from pydantic import BaseModel, ConfigDict, Field
 
 from .characters import Identifier, OptionalText, Text
+from .naming import ClassName
 
 
 class OperationError(Exception):
@@ -21,12 +21,7 @@ class ValueModel(BaseModel):
 class ClassifiedValueModel(ValueModel):
     @property
     def kind(self) -> str:
-        return type(self).kind_for()
-
-    @classmethod
-    def kind_for(cls) -> str:
-        boundary = re.sub("([A-Z]+)([A-Z][a-z])", r"\1_\2", cls.__name__)
-        return re.sub("([a-z0-9])([A-Z])", r"\1_\2", boundary).lower()
+        return ClassName(type(self)).snake_case
 
 
 class TargetKind(StrEnum):

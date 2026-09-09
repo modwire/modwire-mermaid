@@ -1,6 +1,5 @@
 import hashlib
 import json
-import re
 from dataclasses import dataclass
 from enum import Enum
 from functools import cached_property
@@ -11,7 +10,7 @@ from typing import Annotated, Any, get_args, get_origin
 from pydantic import BaseModel, TypeAdapter
 from wireup import injectable
 
-from ...core.domain import ClassifiedValueModel
+from ...core.naming import ClassName
 from ...runtime.snapshot.domain import SnapshotContract, SnapshotError, SnapshotType, SnapshotTypeRegistry
 from ..application import DiagramsApplication
 
@@ -120,10 +119,7 @@ class DiagramSnapshotRegistry:
         return hashlib.sha256(encoded.encode()).hexdigest()
 
     def _type(self, owner: str, category: str, value_type: type[Any]) -> SnapshotType:
-        name = (
-            value_type.kind_for() if issubclass(value_type, ClassifiedValueModel) else self._name(value_type.__name__)
-        )
-        return SnapshotType(f"mermaiden/{category}/{owner}/{name}", value_type)
+        return SnapshotType(f"mermaiden/{category}/{owner}/{ClassName(value_type).snake_case}", value_type)
 
     def _schema(self, value_type: type[Any]) -> object:
         if issubclass(value_type, BaseModel):
@@ -131,7 +127,3 @@ class DiagramSnapshotRegistry:
         if issubclass(value_type, Enum):
             return TypeAdapter(value_type).json_schema()
         raise TypeError(f"Snapshot type '{value_type.__name__}' has no schema.")
-
-    def _name(self, value: str) -> str:
-        boundary = re.sub("([A-Z]+)([A-Z][a-z])", r"\1_\2", value)
-        return re.sub("([a-z0-9])([A-Z])", r"\1_\2", boundary).lower()

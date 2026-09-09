@@ -1,0 +1,34 @@
+[importlinter]
+root_package = mermaiden
+
+[importlinter:contract:diagram_features_are_independent]
+name = Concrete diagram features do not import siblings
+type = independence
+modules =
+    mermaiden.diagrams.architecture
+    mermaiden.diagrams.block
+    mermaiden.diagrams.c4
+    mermaiden.diagrams.classdiagram
+    mermaiden.diagrams.cynefin
+    mermaiden.diagrams.er
+    mermaiden.diagrams.eventmodeling
+    mermaiden.diagrams.flowchart
+    mermaiden.diagrams.gantt
+    mermaiden.diagrams.gitgraph
+    mermaiden.diagrams.ishikawa
+    mermaiden.diagrams.journey
+    mermaiden.diagrams.kanban
+    mermaiden.diagrams.mindmap
+    mermaiden.diagrams.packet
+    mermaiden.diagrams.pie
+    mermaiden.diagrams.radar
+    mermaiden.diagrams.railroad
+    mermaiden.diagrams.requirement
+    mermaiden.diagrams.sankey
+    mermaiden.diagrams.sequence
+    mermaiden.diagrams.state
+    mermaiden.diagrams.swimlane
+    mermaiden.diagrams.timeline
+    mermaiden.diagrams.treeview
+    mermaiden.diagrams.venn
+    mermaiden.diagrams.wardley
