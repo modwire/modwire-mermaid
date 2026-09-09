@@ -71,8 +71,11 @@ class ChangeTransaction:
             introduced_structure_violation = any(
                 item.code.startswith("structure.") and item not in before.blocking for item in after.blocking
             )
-            if not after.can_commit and (
-                require_valid_candidate or before.can_commit or introduced_structure_violation
+            empty_draft = not candidate.elements and not candidate.relations and not candidate.annotations
+            if (
+                not after.can_commit
+                and (require_valid_candidate or before.can_commit or introduced_structure_violation)
+                and not (empty_draft and not require_valid_candidate)
             ):
                 raise ChangeRejected(operation, after)
             self.state.commit()

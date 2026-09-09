@@ -68,6 +68,9 @@ class DiagramAggregate(Diagram):
     def root_elements(self) -> tuple[Element, ...]:
         return self.state.current.elements
 
+    def element_descendants(self, id: str) -> Sequence[str]:
+        return ()
+
     def _add_element(self, operation: str, element: Element, parent_id: str = "") -> ChangeReport:
         try:
             candidate = self.elements.add(element, parent_id, self)
@@ -101,7 +104,7 @@ class DiagramAggregate(Diagram):
         if type(cascade) is not bool:
             self._reject(operation, "cascade must be a boolean.")
         try:
-            candidate, removed_ids = self.elements.remove(id)
+            candidate, removed_ids = self.elements.remove(id, self.element_descendants(id))
             dependent_relations = tuple(
                 item.id for item in self.state.current.relations if set(item.element_ids).intersection(removed_ids)
             )

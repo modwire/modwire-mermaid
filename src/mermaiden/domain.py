@@ -56,11 +56,12 @@ class CommandPayload(Protocol):
 
 
 class CommandPayloadSchema:
-    def __init__(self, schema: CoreSchema, invocation_defaults: Sequence[str]) -> None:
+    def __init__(self, schema: CoreSchema, invocation_defaults: Sequence[str], description: str = "") -> None:
         definitions: dict[str, CoreSchema] = {}
         normalized = cast(CoreSchema, self._definitions(schema, definitions))
         self._schema = core_schema.definitions_schema(normalized, list(definitions.values()))
         self._invocation_defaults = frozenset(invocation_defaults)
+        self._description = description
         self._validator = SchemaValidator(self._schema)
         self._serializer = SchemaSerializer(self._schema)
 
@@ -98,7 +99,10 @@ class CommandPayloadSchema:
         return CommandArguments(values, fields_set, self._serializer)
 
     def model_json_schema(self) -> JsonSchema:
-        return cast(JsonSchema, GenerateJsonSchema().generate(self._schema))
+        schema = GenerateJsonSchema().generate(self._schema)
+        if self._description:
+            schema["description"] = self._description
+        return cast(JsonSchema, schema)
 
 
 class CommandArguments:
