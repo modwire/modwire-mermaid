@@ -14,6 +14,7 @@ from ..domain import (
     DiagramModel,
     PersistedDiagramProperty,
 )
+from ..shared.direction import Direction
 from .annotations import Note, Notes
 from .configuration import FlowchartDiagramConfiguration
 from .constraints.domain import FlowchartConstraint
@@ -21,7 +22,6 @@ from .elements import (
     Action,
     DataStore,
     Decision,
-    Direction,
     Document,
     End,
     FlowGroup,

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from wireup import injectable
 
 from ...core.domain import Annotation, ClassifiedValueModel, Container, Diagram, Element, Relation
+from ...core.naming import ClassName
 from ..application import DiagramsApplication
 from ..domain import DiagramInfo
 from .models import ElementPlacement
@@ -16,15 +17,15 @@ class DiagramObjectCatalog:
 
     def elements(self, info: DiagramInfo) -> dict[str, type[Element]]:
         types = sorted(self.registry.get_diagram(info.id).feature.elements, key=lambda item: item.__name__)
-        return {item.kind_for(): item for item in types}
+        return {ClassName(item).snake_case: item for item in types}
 
     def relations(self, info: DiagramInfo) -> dict[str, type[Relation]]:
         types = sorted(self.registry.get_diagram(info.id).feature.relations, key=lambda item: item.__name__)
-        return {item.kind_for(): item for item in types}
+        return {ClassName(item).snake_case: item for item in types}
 
     def annotations(self, info: DiagramInfo) -> dict[str, type[Annotation]]:
         types = sorted(self.registry.get_diagram(info.id).feature.annotations, key=lambda item: item.__name__)
-        return {item.kind_for(): item for item in types}
+        return {ClassName(item).snake_case: item for item in types}
 
     def placements(
         self,

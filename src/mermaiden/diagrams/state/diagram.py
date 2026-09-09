@@ -14,7 +14,7 @@ from ..domain import (
     DiagramModel,
     PersistedDiagramProperty,
 )
-from ..flowchart.elements import Direction
+from ..shared.direction import Direction
 from .annotations import NotePosition, StateNote, StateNotes
 from .configuration import StateDiagramConfiguration
 from .constraints.domain import StateDiagramConstraint

@@ -1,10 +1,13 @@
-.PHONY: ci compat diagrams-validate fast-check format integration mermaid-sync mutation-contract package-check
+.PHONY: architecture ci compat diagrams-validate fast-check format integration mermaid-sync mutation-contract package-check
 
 VENV := .venv
 PYTHON := $(VENV)/bin/python
 
 $(PYTHON):
 	python3 -m venv $(VENV)
+
+architecture: $(PYTHON)
+	@$(VENV)/bin/lint-imports
 
 compat: $(PYTHON)
 	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli compat
@@ -39,6 +42,7 @@ fast-check: $(PYTHON)
 	@$(PYTHON) -m ruff format --check .
 	@$(PYTHON) -m ruff check .
 	@$(PYTHON) -m pyright
+	@$(MAKE) architecture
 	@$(PYTHON) -m pytest
 	@$(MAKE) compat
 

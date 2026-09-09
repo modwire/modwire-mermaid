@@ -1,4 +1,3 @@
-import re
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
@@ -20,6 +19,7 @@ from ..core.domain import (
     ValidationReport,
     Violation,
 )
+from ..core.naming import ClassName
 from ..runtime.diagrams.aggregate import DiagramAggregate
 from ..runtime.domain import ConstraintInspection
 
@@ -72,15 +72,14 @@ class MutationKernel(ABC):
 
 
 class MermaidConfigurationNaming:
-    @classmethod
-    def to_camel_case(cls, value: str) -> str:
+    def __call__(self, value: str) -> str:
         first, *remaining = value.split("_")
         return first + "".join(word.capitalize() for word in remaining)
 
 
 class MermaidConfigurationModel(BaseModel):
     model_config = ConfigDict(
-        alias_generator=MermaidConfigurationNaming.to_camel_case,
+        alias_generator=MermaidConfigurationNaming(),
         extra="forbid",
         frozen=True,
         populate_by_name=True,
@@ -120,14 +119,11 @@ class DiagramObserver[ConstraintT: Constraint](ConstraintInspection):
 
 @dataclass(frozen=True, slots=True)
 class DiagramConstraint(BlockingConstraint):
-    def _snake_case(self, value: str) -> str:
-        return re.sub(r"(?<!^)(?=[A-Z])", "_", value).lower()
-
     @property
     def code(self) -> str:
         package = getattr(self, "package", type(self).__module__)
         boundary = "constraints" if ".constraints." in package else package.rsplit(".", maxsplit=1)[-1]
-        return f"{boundary}.{self._snake_case(type(self).__name__)}"
+        return f"{boundary}.{ClassName(type(self)).snake_case}"
 
 
 @dataclass(frozen=True, slots=True)
