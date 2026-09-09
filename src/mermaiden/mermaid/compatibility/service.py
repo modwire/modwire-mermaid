@@ -1,6 +1,7 @@
 from collections.abc import Mapping
 from dataclasses import dataclass
 
+from pydantic import TypeAdapter
 from wireup import injectable
 
 from ...diagrams.application import DiagramsApplication
@@ -75,7 +76,7 @@ class MermaidCompatibilityService:
         self.catalog.validate()
         self.templates.validate()
         lock = self.schemas.lock()
-        configuration = MermaidConfiguration(self.schemas.load())
+        configuration = MermaidConfiguration(self.schemas.load(), self.schemas.configuration_overrides())
         diagrams: list[DiagramCompatibility] = []
         upstream_configs = self.schemas.diagram_configs()
         upstream_by_key = {item.config_key: item for item in upstream_configs}
@@ -91,14 +92,22 @@ class MermaidCompatibilityService:
             upstream = upstream_by_key.get(info.config_key)
             if upstream is None:
                 continue
-            source = self.renderer.render(self.registry.get_diagram(info.id))
+            diagram = self.registry.get_diagram(info.id)
+            source = self.renderer.render(diagram)
             local = configuration.local_contract(info.config_key, info.schema_definition, source)
             validation_sources[info.id] = sources.get(info.id, source)
             diagrams.append(
                 DiagramCompatibility(
                     info.id,
                     local,
-                    configuration.validate(local),
+                    (
+                        *configuration.validate(local),
+                        *configuration.compare(
+                            info.config_key,
+                            TypeAdapter(type(diagram.configuration)).json_schema(by_alias=True),
+                            upstream,
+                        ),
+                    ),
                     configuration.supports(local, upstream),
                 )
             )

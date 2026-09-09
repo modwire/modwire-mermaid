@@ -21,6 +21,12 @@ class MermaidDiagramConfig:
     schema: dict[str, Any]
 
 
+@dataclass(frozen=True, slots=True)
+class MermaidConfigurationOverride:
+    facets: frozenset[str]
+    reason: str
+
+
 @injectable
 @dataclass(frozen=True, slots=True)
 class MermaidSchemaStore:
@@ -45,6 +51,24 @@ class MermaidSchemaStore:
                 f"expected checksum '{lock.sha256}', consumer '{path.name}' observed '{checksum}'."
             )
         return cast(dict[str, Any], json.loads(content))
+
+    def configuration_overrides(self) -> dict[str, MermaidConfigurationOverride]:
+        path = self.root / "configuration_overrides.json"
+        payload = cast(dict[str, dict[str, object]], json.loads(path.read_text(encoding="utf-8")))
+        config_keys = {item.config_key for item in self.diagram_configs()}
+        overrides: dict[str, MermaidConfigurationOverride] = {}
+        for key, value in payload.items():
+            facets = cast(list[str], value["facets"])
+            reason = cast(str, value["reason"])
+            if (
+                key.partition(".")[0] not in config_keys
+                or not facets
+                or len(facets) != len(set(facets))
+                or not reason.strip()
+            ):
+                raise ValueError(f"Mermaid configuration override '{key}' requires unique facets and a reason.")
+            overrides[key] = MermaidConfigurationOverride(frozenset(facets), reason)
+        return overrides
 
     def diagram_configs(self) -> tuple[MermaidDiagramConfig, ...]:
         schema = self.load()

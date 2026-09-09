@@ -105,6 +105,17 @@
         "RL"
       ]
     },
+    "GanttWeekday values": {
+      "enum": [
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday"
+      ]
+    },
     "Identifier": {
       "pattern": "^[^\\s\\x00-\\x1f\\x7f-\\x9f](?:[^\\x00-\\x1f\\x7f-\\x9f]*[^\\s\\x00-\\x1f\\x7f-\\x9f])?$",
       "description": "Non-empty identifier without surrounding whitespace or control characters."

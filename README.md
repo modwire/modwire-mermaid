@@ -57,9 +57,9 @@ if not report.success:
 svg = report.svg
 ```
 
-Snapshots have a versioned envelope and may be stored as JSON. Version 5 uses registry-owned discriminators such as
+Snapshots have a versioned envelope and may be stored as JSON. Version 6 uses registry-owned discriminators such as
 `mermaiden/element/classDiagram/class`; snapshots never contain importable Python module paths. Its closed envelope
-schema is published at `src/mermaiden/runtime/snapshot/schema.v5.json`. Earlier and unknown versions are rejected;
+schema is published at `src/mermaiden/runtime/snapshot/schema.v6.json`. Earlier and unknown versions are rejected;
 there is no implicit migration or compatibility reader. Newly created and incomplete diagrams are marked as drafts:
 callers may snapshot and restore them between accepted commands, but `Application.render()` rejects them until their
 blocking constraints are resolved. Snapshot parsing and typed hydration reject malformed persisted data, and

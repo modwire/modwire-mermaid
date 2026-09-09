@@ -115,11 +115,11 @@ class TestApplication:
 
         application.apply(diagram, DiagramCommand("configure", {"padding": 12}))
         application.apply(diagram, DiagramCommand("add_block", {"id": "example", "label": "Example"}))
-        assert 'block: {"padding": 12}' in application.render(diagram)
+        assert 'block: {"padding": 12.0}' in application.render(diagram)
 
         application.apply(diagram, DiagramCommand("configure", {}))
 
-        assert 'block: {"padding": 8}' in application.render(diagram)
+        assert 'block: {"padding": 8.0}' in application.render(diagram)
 
     def test_rejects_unknown_configuration_fields(self) -> None:
         application = Application.create()
@@ -169,7 +169,7 @@ class TestApplication:
         payload = application.snapshot(diagram).to_dict()
         restored = application.restore(json.loads(json.dumps(payload)))
 
-        assert payload["version"] == 5
+        assert payload["version"] == 6
         assert "configuration" not in cast(Mapping[str, object], payload["properties"])
         assert not self._contains_none(payload["configuration"])
         assert application.snapshot(restored).to_dict() == payload
@@ -202,7 +202,7 @@ class TestApplication:
         assert (
             'architecture: {"useMaxWidth": false, "padding": 48.0, "iconSize": 96.0, '
             '"fontSize": 18.0, "randomize": true, "nodeSeparation": 120.0, '
-            '"idealEdgeLengthMultiplier": 2.0, "edgeElasticity": 0.7, "numIter": 3000, "seed": 7.0}'
+            '"idealEdgeLengthMultiplier": 2.0, "edgeElasticity": 0.7, "numIter": 3000.0, "seed": 7.0}'
             in application.render(diagram)
         )
 

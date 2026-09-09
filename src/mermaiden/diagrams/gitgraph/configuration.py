@@ -12,7 +12,7 @@ class GitGraphNodeLabel(MermaidConfigurationModel):
 
 
 class GitGraphDiagramConfiguration(MermaidDiagramConfiguration):
-    title_top_margin: int = 25
+    title_top_margin: int = Field(default=25, ge=0)
     diagram_padding: float = 8
     node_label: GitGraphNodeLabel = GitGraphNodeLabel()
     main_branch_name: str = Field(default="main", pattern=Text.pattern, description=Text.description)
