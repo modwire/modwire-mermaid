@@ -77,6 +77,23 @@ class InstalledWheelSmoke:
         if "Updated First" not in source or "Second" in source:
             raise RuntimeError("The installed package did not render the applied CRUD operations.")
 
+        classes = application.create_diagram("classDiagram")
+        application.execute(classes, "add_class", {"id": "caller", "label": "Caller"})
+        application.execute(classes, "add_class", {"id": "dependency", "label": "Dependency"})
+        application.execute(
+            classes,
+            "add_relation",
+            {
+                "id": "uses",
+                "source_id": "caller",
+                "target_id": "dependency",
+                "relation_kind": "dependency",
+            },
+        )
+        restored_classes = application.restore(application.snapshot(classes).to_dict())
+        if "c_v_caller ..> c_v_dependency" not in application.render(restored_classes):
+            raise RuntimeError("The installed package reversed class relation source and target endpoints.")
+
     def verify_durable_draft_workflow(self) -> None:
         with Application.create() as application:
             diagram = application.create_diagram("flowchart")

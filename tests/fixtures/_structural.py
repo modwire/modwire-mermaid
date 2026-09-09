@@ -71,7 +71,7 @@ def build_structural_fixtures(application: Application) -> tuple[DiagramFixture,
     )
     classes.add_class("Duck", "Duck", parent_id="domain")
     classes.add_class("Pond", "Pond", parent_id="domain")
-    classes.add_relation("inherits", "Animal", "Duck", ClassRelationKind.INHERITANCE, "extends")
+    classes.add_relation("inherits", "Duck", "Animal", ClassRelationKind.INHERITANCE, "extends")
     classes.add_relation("hosts", "Pond", "Duck", ClassRelationKind.AGGREGATION, "hosts", "1", "*")
     classes.add_relation("depends", "Duck", "Pond", ClassRelationKind.DEPENDENCY, "visits")
     classes.add_note("animal_note", "Animal", "Base type")
