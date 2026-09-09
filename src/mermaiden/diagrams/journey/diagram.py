@@ -11,6 +11,7 @@ from ..domain import (
     DiagramDefinition,
     DiagramFeature,
     DiagramModel,
+    PersistedDiagramProperty,
 )
 from .configuration import JourneyDiagramConfiguration
 from .constraints import JourneyConstraint
@@ -32,6 +33,7 @@ class Journey(DiagramModel):
 
     feature: ClassVar[DiagramFeature] = DiagramFeature(
         configuration=JourneyDiagramConfiguration,
+        snapshot_properties=(PersistedDiagramProperty("title", str),),
         elements=(JourneySection, JourneyTask),
         relations=(),
         annotations=(),

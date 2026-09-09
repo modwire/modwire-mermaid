@@ -1,34 +1,31 @@
 from collections.abc import Mapping
-from dataclasses import fields, is_dataclass
+from dataclasses import dataclass
 from enum import Enum
 from typing import Any, cast
 
 from pydantic import BaseModel
 from wireup import injectable
 
+from .domain import SnapshotTypeRegistry
 
-@injectable
+
+@injectable(lifetime="scoped")
+@dataclass(frozen=True, slots=True)
 class SnapshotValueEncoder:
-    def encode(self, value: object) -> Any:
+    types: SnapshotTypeRegistry
+
+    def encode(self, value: object, owner: str) -> Any:
         if isinstance(value, Enum):
-            return {"$enum": self.reference(type(value)), "value": value.value}
+            return {"$enum": self.types.reference(owner, type(value)), "value": value.value}
         if isinstance(value, BaseModel):
             return {
-                "$type": self.reference(type(value)),
-                "fields": {name: self.encode(getattr(value, name)) for name in type(value).model_fields},
-            }
-        if is_dataclass(value) and not isinstance(value, type):
-            return {
-                "$type": self.reference(type(value)),
-                "fields": {field.name: self.encode(getattr(value, field.name)) for field in fields(value)},
+                "$type": self.types.reference(owner, type(value)),
+                "fields": {name: self.encode(getattr(value, name), owner) for name in type(value).model_fields},
             }
         if isinstance(value, Mapping):
             mapping = cast(Mapping[Any, Any], value)
-            return {str(key): self.encode(item) for key, item in mapping.items()}
+            return {str(key): self.encode(item, owner) for key, item in mapping.items()}
         if isinstance(value, tuple | list):
             items = cast(list[Any] | tuple[Any, ...], value)
-            return [self.encode(item) for item in items]
+            return [self.encode(item, owner) for item in items]
         return value
-
-    def reference(self, item_type: type[object]) -> str:
-        return f"{item_type.__module__}:{item_type.__qualname__}"

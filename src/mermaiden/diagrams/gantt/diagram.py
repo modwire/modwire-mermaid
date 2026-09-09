@@ -12,6 +12,7 @@ from ..domain import (
     DiagramDefinition,
     DiagramFeature,
     DiagramModel,
+    PersistedDiagramProperty,
 )
 from .configuration import GanttConfiguration
 from .constraints import GanttConstraint
@@ -34,6 +35,10 @@ class Gantt(DiagramModel):
 
     feature: ClassVar[DiagramFeature] = DiagramFeature(
         configuration=GanttConfiguration,
+        snapshot_properties=(
+            PersistedDiagramProperty("title", str),
+            PersistedDiagramProperty("date_format", str),
+        ),
         elements=(Task, Milestone, Marker, Section),
         relations=(),
         annotations=(),

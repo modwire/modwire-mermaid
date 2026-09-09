@@ -13,6 +13,7 @@ from ..domain import (
     DiagramFeature,
     DiagramModel,
     MermaidDiagramConfiguration,
+    PersistedDiagramProperty,
 )
 from .configuration import EntityRelationshipDiagramConfiguration, EntityRelationshipDirection
 from .constraints import EntityRelationshipDiagramConstraint
@@ -38,6 +39,7 @@ class EntityRelationshipDiagram(DiagramModel):
 
     feature: ClassVar[DiagramFeature] = DiagramFeature(
         configuration=EntityRelationshipDiagramConfiguration,
+        snapshot_properties=(PersistedDiagramProperty("direction", str),),
         elements=(EntityAttribute, Entity),
         relations=(EntityRelationship,),
         annotations=(),

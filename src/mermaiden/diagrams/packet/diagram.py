@@ -12,6 +12,7 @@ from ..domain import (
     DiagramDefinition,
     DiagramFeature,
     DiagramModel,
+    PersistedDiagramProperty,
 )
 from .configuration import PacketConfiguration
 from .constraints import PacketConstraint
@@ -33,6 +34,7 @@ class Packet(DiagramModel):
 
     feature: ClassVar[DiagramFeature] = DiagramFeature(
         configuration=PacketConfiguration,
+        snapshot_properties=(PersistedDiagramProperty("title", str),),
         elements=(PacketField,),
         relations=(),
         annotations=(),

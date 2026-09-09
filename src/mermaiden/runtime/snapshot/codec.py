@@ -11,7 +11,7 @@ from .hydrator import DiagramSnapshotHydrator
 from .parser import DiagramSnapshotParser
 
 
-@injectable
+@injectable(lifetime="scoped")
 @dataclass(frozen=True, slots=True)
 class DiagramSnapshotCodec:
     builder: DiagramSnapshotBuilder

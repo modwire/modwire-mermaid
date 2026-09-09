@@ -12,6 +12,7 @@ from ..domain import (
     DiagramDefinition,
     DiagramFeature,
     DiagramModel,
+    PersistedDiagramProperty,
 )
 from ..flowchart.elements import Direction
 from .annotations import NotePosition, StateNote, StateNotes
@@ -36,6 +37,7 @@ class StateDiagram(DiagramModel):
 
     feature: ClassVar[DiagramFeature] = DiagramFeature(
         configuration=StateDiagramConfiguration,
+        snapshot_properties=(PersistedDiagramProperty("direction", Direction),),
         elements=(StateNode, State, Initial, Final, Choice, Fork, Join, CompositeState),
         relations=(StateTransition,),
         annotations=(StateNote,),
