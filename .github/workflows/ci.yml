@@ -15,11 +15,19 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-          cache: pip
+      - uses: astral-sh/setup-uv@v10.0.1
+        with:
+          version: "0.12.11"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
       - uses: actions/setup-node@v6
         with:
           node-version-file: .node-version
           cache: npm
-      - run: make ci
+      - run: uv lock --check
+      - run: uv sync --locked --group dev
+      - run: make fast-check
+      - run: make diagrams-validate
         env:
           PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome
+      - run: make package-check

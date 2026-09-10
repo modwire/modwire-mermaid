@@ -152,6 +152,12 @@ with Application.create() as application:
 
 ## Development
 
+Create the development environment from the committed lock before running repository commands:
+
+```sh
+uv sync --locked --group dev
+```
+
 The fast tier performs no npm, browser, network, or external Mermaid work:
 
 ```sh
@@ -173,7 +179,9 @@ make ci
 
 ## Release
 
-Releases are versioned by annotated `vX.Y.Z` tags. After `make ci` passes, create and push the tag, then publish the GitHub release:
+Releases are versioned by annotated `vX.Y.Z` tags. `make ci` first runs `uv lock --check` and
+`uv sync --locked --group dev`, so release verification uses the same committed development lock. After it passes,
+create and push the tag, then publish the GitHub release:
 
 ```sh
 git tag -a v2.0.0 -m "v2.0.0"
