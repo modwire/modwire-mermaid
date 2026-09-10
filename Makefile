@@ -1,4 +1,4 @@
-.PHONY: architecture ci compat diagrams-validate fast-check format integration mermaid-sync mutation-contract package-check
+.PHONY: architecture ci compat compatibility diagrams-validate fast-check format integration mermaid-sync mutation-contract package-check pytest quality
 
 UV := uv
 RUN := $(UV) run --no-sync
@@ -32,13 +32,17 @@ package-check:
 	cd "$$temporary"; \
 	$(UV) run --isolated --with "$$artifacts"/*.whl python -I "$(CURDIR)/scripts/smoke_installed_wheel.py"
 
-fast-check:
+quality:
 	@$(RUN) ruff format --check .
 	@$(RUN) ruff check .
 	@$(RUN) pyright
 	@$(MAKE) architecture
+
+pytest:
 	@$(RUN) pytest
-	@$(MAKE) compat
+
+fast-check:
+	@$(MAKE) --jobs=3 quality pytest compat
 
 integration:
 	@PUPPETEER_SKIP_DOWNLOAD=true npm ci
@@ -46,9 +50,11 @@ integration:
 
 diagrams-validate: integration
 
+compatibility:
+	@$(MAKE) compat
+	@$(MAKE) diagrams-validate
+
 ci:
 	@$(UV) lock --check
 	@$(UV) sync --locked --group dev
-	@$(MAKE) fast-check
-	@$(MAKE) diagrams-validate
-	@$(MAKE) package-check
+	@$(MAKE) --jobs=4 quality pytest compatibility package-check
