@@ -19,22 +19,35 @@ compatible browser. Development installs the exact Mermaid CLI version from `pac
 
 ## Quick start
 
+<!-- executable-example:discovery:start -->
 ```python
 from mermaiden import Application
 
 with Application.create() as application:
     diagrams = application.available_diagrams()
-    print(diagrams)
+    sequence = application.diagram_info("sequenceDiagram")
+    description = application.diagram_description(sequence.id)
+    payload_type = application.command_payload(sequence.id, "add_participant")
+    payload = payload_type.model_validate({"id": "api", "label": "API", "kind": "control"})
+
+    assert sequence in diagrams
+    assert "add_participant" in description.commands
+    assert payload.model_dump(mode="json")["kind"] == "control"
 ```
+<!-- executable-example:discovery:end -->
 
 `Application.available_diagrams()` returns the supported diagram catalog. `Application.diagram_info(diagram_id)` returns the typed diagram API for an individual syntax. CLI workflows are available through `python -m mermaiden.cli`.
 
+The [architecture and ownership map](docs/architecture.md) identifies the layers, entry points, lifetimes, and
+authoritative files behind that catalog.
+
 ## Application API
 
-`Application` is the boundary for API and persistence adapters. It owns its dependency-injection container and scope,
-so use it as a context manager or call `close()` explicitly. Create a diagram by Mermaid syntax id, apply a named
-domain command, and persist the JSON-safe snapshot returned by the application.
+`Application` is the boundary for API and persistence adapters. Each handle uses the process-owned scope created once by
+the bootstrap module; use it as a context manager or call `close()` to invalidate that handle. Create a diagram by
+Mermaid syntax id, apply a named domain command, and persist the JSON-safe snapshot returned by the application.
 
+<!-- executable-example:application:start -->
 ```python
 from mermaiden import Application
 from mermaiden.application import DiagramCommand
@@ -46,16 +59,15 @@ with Application.create() as application:
     payload = application.snapshot(diagram).to_dict()
     restored = application.restore(payload)
     source = application.render(restored)
+    report = application.validate_render(restored)
+    if not report.success:
+        raise RuntimeError(report.diagnostics)
+    svg = report.svg
 ```
+<!-- executable-example:application:end -->
 
-Before committing a revision, callers can require Mermaid's complete rendering and layout phase to produce an SVG. The report is non-mutating and identifies the compatible Mermaid version together with structured diagnostics on failure.
-
-```python
-report = application.validate_render(restored)
-if not report.success:
-    raise RuntimeError(report.diagnostics)
-svg = report.svg
-```
+`validate_render()` is non-mutating and runs Mermaid's complete rendering and layout phase through `mmdc`; its report
+contains the compatible Mermaid version, SVG output, and structured diagnostics.
 
 Snapshots have a versioned envelope and may be stored as JSON. Version 6 uses registry-owned discriminators such as
 `mermaiden/element/classDiagram/class`; snapshots never contain importable Python module paths. Its closed envelope
@@ -66,13 +78,10 @@ blocking constraints are resolved. Snapshot parsing and typed hydration reject m
 restoration verifies snapshots that were recorded as valid. Command argument values use the diagram operation names;
 JSON string values are accepted for enum arguments.
 
-The caller can discover the REST contract without maintaining a manifest. `diagram_description()` returns JSON Schema for the diagram's elements, relations, annotations, and commands. `command_payload()` returns the generated Pydantic request model for one command.
-
-```python
-description = application.diagram_description("sequenceDiagram")
-payload_type = application.command_payload("sequenceDiagram", "add_participant")
-payload = payload_type.model_validate({"id": "api", "kind": "control"})
-```
+The caller can discover the REST contract without maintaining a manifest. `diagram_description()` returns JSON Schema
+for the diagram's elements, relations, annotations, and commands. `command_payload()` returns the generated Pydantic
+request model for one command. The generated [mutation contract](docs/contracts/diagram-mutations/README.md) records
+the supported update, move, reorder, and retarget behavior for every registered diagram.
 
 Element removal is conservative by default: `remove_element` rejects an element that still has descendants,
 relations, or annotations. Passing `cascade: true` removes the complete diagram-defined subtree and every dependent
@@ -83,7 +92,7 @@ returns the diagram to an empty, persistable draft; drafts have no Mermaid sourc
 
 Mutation arguments are JSON-shaped and validated before the diagram changes. Updates preserve identity, moves preserve the complete subtree, and reorders require the exact current members of one collection. Rejected mutations leave the complete snapshot unchanged.
 
-<!-- mutation-conformance-example:start -->
+<!-- executable-example:mutations:start -->
 ```python
 from mermaiden import Application
 
@@ -148,7 +157,7 @@ with Application.create() as application:
     report = application.validate_render(restored)
     assert report.success and report.svg
 ```
-<!-- mutation-conformance-example:end -->
+<!-- executable-example:mutations:end -->
 
 ## Development
 
@@ -171,6 +180,18 @@ compatible browser:
 make integration
 ```
 
+Generate the complete fixture preview without opening a browser; CI runs this non-interactive prerequisite:
+
+```sh
+make diagrams-preview
+```
+
+The interactive command is local-only and opens the generated preview with the platform `open` command:
+
+```sh
+make diagrams-test
+```
+
 The complete host-mode CI target runs quality, pytest, Mermaid compatibility, and package verification concurrently:
 
 ```sh
@@ -179,6 +200,11 @@ make ci
 
 GitHub Actions runs quality, pytest, Mermaid compatibility, and package verification concurrently; the `ci` job is their
 stable aggregate result for branch protection.
+
+## License
+
+Mermaiden is proprietary software. No permission to use, copy, modify, or distribute it is granted without prior express
+written permission. See [LICENSE](LICENSE) for the complete terms.
 
 ## Release
 

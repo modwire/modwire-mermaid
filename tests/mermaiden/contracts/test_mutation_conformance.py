@@ -10,9 +10,6 @@ from mermaiden.application import Application, DiagramCommand
 ROOT = Path(__file__).resolve().parents[3]
 CONTRACT_ROOT = ROOT / "docs" / "contracts" / "diagram-mutations"
 MATRIX_ROOT = CONTRACT_ROOT / "diagrams"
-README_PATH = ROOT / "README.md"
-EXAMPLE_START = "<!-- mutation-conformance-example:start -->"
-EXAMPLE_END = "<!-- mutation-conformance-example:end -->"
 
 
 class TestMutationConformance:
@@ -195,18 +192,6 @@ class TestMutationConformance:
                 diagram = application.create_diagram(diagram_id)
                 with pytest.raises(RuntimeError, match="invalid arguments"):
                     application.apply(diagram, DiagramCommand(operation, {}))
-
-    def test_readme_mutation_example_executes_without_drift(
-        self,
-        successful_mermaid_render: None,
-    ) -> None:
-        readme = README_PATH.read_text(encoding="utf-8")
-        before, separator, remainder = readme.partition(EXAMPLE_START)
-        example, end_separator, after = remainder.partition(EXAMPLE_END)
-
-        assert before and separator and end_separator and after
-        source = example.strip().removeprefix("```python").removesuffix("```").strip()
-        exec(compile(source, str(README_PATH), "exec"), {"Application": Application})
 
     def _matrices(self) -> dict[str, Mapping[str, object]]:
         matrices: dict[str, Mapping[str, object]] = {}

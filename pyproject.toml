@@ -8,12 +8,12 @@ dynamic = ["version"]
 description = "Typed deterministic Mermaid source generation for Python."
 readme = "README.md"
 requires-python = ">=3.12"
-license = "MIT"
+license = "LicenseRef-Proprietary"
+license-files = ["LICENSE"]
 authors = [{ name = "9orky" }]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
     "Typing :: Typed",
@@ -46,7 +46,7 @@ version-file = "src/mermaiden/_version.py"
 packages = ["src/mermaiden"]
 
 [tool.hatch.build.targets.sdist]
-include = ["compatibility", "docs", "examples", "scripts", "src", "tests", ".node-version", "README.md", "pyproject.toml"]
+include = ["docs", "scripts", "src", "tests", ".node-version", "README.md", "pyproject.toml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
