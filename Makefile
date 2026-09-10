@@ -1,60 +1,54 @@
 .PHONY: architecture ci compat diagrams-validate fast-check format integration mermaid-sync mutation-contract package-check
 
-VENV := .venv
-PYTHON := $(VENV)/bin/python
+UV := uv
+RUN := $(UV) run --no-sync
+PYTHON := $(RUN) python
 
-$(PYTHON):
-	python3 -m venv $(VENV)
+architecture:
+	@$(RUN) lint-imports
 
-architecture: $(PYTHON)
-	@$(VENV)/bin/lint-imports
-
-compat: $(PYTHON)
+compat:
 	@PYTHONPATH=src $(PYTHON) -m mermaiden.cli compat
 
-mermaid-sync: $(PYTHON)
+mermaid-sync:
 	@mermaid_version="$$(PYTHONPATH=src $(PYTHON) -c 'from mermaiden import Application; print(Application.create().mermaid_version)')"; \
 	PUPPETEER_SKIP_DOWNLOAD=true npm install --save-dev --save-exact "@mermaid-js/mermaid-cli@$$mermaid_version"
 
-format: $(PYTHON)
-	@$(PYTHON) -m ruff format .
-	@$(PYTHON) -m ruff check --fix .
+format:
+	@$(RUN) ruff format .
+	@$(RUN) ruff check --fix .
 
-mutation-contract: $(PYTHON)
+mutation-contract:
 	@PYTHONPATH=src $(PYTHON) scripts/render_mutation_contract.py --write
 
-package-check: $(PYTHON)
+package-check:
 	@set -eu; \
 	temporary=$$(mktemp -d); \
 	trap 'rm -rf "$$temporary"' EXIT; \
 	artifacts="$$temporary/artifacts"; \
-	environment="$$temporary/environment"; \
 	mkdir -p "$$artifacts"; \
-	$(PYTHON) -m build --outdir "$$artifacts"; \
+	$(UV) build --out-dir "$$artifacts"; \
 	$(PYTHON) -m twine check "$$artifacts"/*; \
-	$(PYTHON) -m venv "$$environment"; \
-	"$$environment/bin/python" -m pip install --no-cache-dir "$$artifacts"/*.whl; \
-	"$$environment/bin/python" -m pip check; \
 	cd "$$temporary"; \
-	"$$environment/bin/python" -I "$(CURDIR)/scripts/smoke_installed_wheel.py"
+	$(UV) run --isolated --with "$$artifacts"/*.whl python -I "$(CURDIR)/scripts/smoke_installed_wheel.py"
 
-fast-check: $(PYTHON)
-	@$(PYTHON) -m ruff format --check .
-	@$(PYTHON) -m ruff check .
-	@$(PYTHON) -m pyright
+fast-check:
+	@$(RUN) ruff format --check .
+	@$(RUN) ruff check .
+	@$(RUN) pyright
 	@$(MAKE) architecture
-	@$(PYTHON) -m pytest
+	@$(RUN) pytest
 	@$(MAKE) compat
 
-integration: $(PYTHON)
+integration:
 	@PUPPETEER_SKIP_DOWNLOAD=true npm ci
 	@PATH="$(CURDIR)/node_modules/.bin:$$PATH" $(PYTHON) -m pytest -m integration
 
 diagrams-validate: integration
 
-ci: $(PYTHON)
-	@$(PYTHON) -m ensurepip --upgrade
-	@$(PYTHON) -m pip install -e ".[dev]"
+ci:
+	@$(UV) lock --check
+	@$(UV) sync --locked --group dev
 	@$(MAKE) fast-check
 	@$(MAKE) diagrams-validate
 	@$(MAKE) package-check

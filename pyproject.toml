@@ -27,11 +27,8 @@ dependencies = [
     "wireup>=2.12.0",
 ]
 
-[project.optional-dependencies]
-dev = ["build>=1.3", "import-linter>=2.11", "packaging>=25", "pyright>=1.1.403", "pytest>=9", "ruff>=0.14", "twine>=7"]
-
 [dependency-groups]
-dev = ["build>=1.3", "import-linter>=2.11", "packaging>=25", "pyright>=1.1.403", "pytest>=9", "ruff>=0.14", "twine>=7"]
+dev = ["import-linter>=2.11", "packaging>=25", "pyright>=1.1.403", "pytest>=9", "ruff>=0.14", "twine>=7"]
 
 [project.urls]
 Repository = "https://github.com/szpak-dev/mermaiden"
