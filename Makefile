@@ -1,4 +1,4 @@
-.PHONY: architecture ci compat compatibility diagrams-validate fast-check format integration mermaid-sync mutation-contract package-check pytest quality
+.PHONY: architecture ci compat compatibility diagrams-preview diagrams-test diagrams-validate fast-check format integration mermaid-sync mutation-contract package-check pytest quality
 
 UV := uv
 RUN := $(UV) run --no-sync
@@ -30,7 +30,7 @@ package-check:
 	$(UV) build --out-dir "$$artifacts"; \
 	$(PYTHON) -m twine check "$$artifacts"/*; \
 	cd "$$temporary"; \
-	$(UV) run --isolated --with "$$artifacts"/*.whl python -I "$(CURDIR)/scripts/smoke_installed_wheel.py"
+	$(UV) run --isolated --with "$$artifacts"/*.whl python -I "$(CURDIR)/scripts/smoke_installed_wheel.py" "$$artifacts"/*.tar.gz
 
 quality:
 	@$(RUN) ruff format --check .
@@ -50,8 +50,15 @@ integration:
 
 diagrams-validate: integration
 
+diagrams-preview:
+	@PYTHONPATH=. $(PYTHON) scripts/render_preview.py
+
+diagrams-test: diagrams-preview
+	@open .dev/preview/index.html
+
 compatibility:
 	@$(MAKE) compat
+	@$(MAKE) diagrams-preview
 	@$(MAKE) diagrams-validate
 
 ci:

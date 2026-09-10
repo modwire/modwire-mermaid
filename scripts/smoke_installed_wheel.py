@@ -1,7 +1,10 @@
+import importlib.metadata
 import json
 import subprocess
 import sys
+import tarfile
 import tempfile
+import tomllib
 from pathlib import Path
 from typing import Any, cast
 
@@ -17,11 +20,38 @@ class InstalledWheelConsumerService:
 
 class InstalledWheelSmoke:
     def run(self) -> None:
+        self.verify_sdist(Path(sys.argv[1]))
+        self.verify_distribution_license()
         with self.verify_consumer_wireup_scan() as application:
             self.verify_application(application)
         self.verify_durable_draft_workflow()
         with tempfile.TemporaryDirectory(prefix="mermaiden-installed-") as temporary:
             self.verify_cli(Path(temporary))
+
+    def verify_sdist(self, archive_path: Path) -> None:
+        with tarfile.open(archive_path) as archive:
+            names = archive.getnames()
+            pyproject_name = next(name for name in names if name.endswith("/pyproject.toml"))
+            pyproject = tomllib.loads(archive.extractfile(pyproject_name).read().decode())
+            includes = pyproject["tool"]["hatch"]["build"]["targets"]["sdist"]["include"]
+            contents = {Path(*Path(name).parts[1:]) for name in names if len(Path(name).parts) > 1}
+
+        missing = [
+            include
+            for include in includes
+            if not any(path == Path(include) or path.is_relative_to(include) for path in contents)
+        ]
+        if missing:
+            raise RuntimeError(f"Source distribution is missing configured content: {', '.join(missing)}.")
+        if Path("LICENSE") not in contents:
+            raise RuntimeError("Source distribution is missing the proprietary license terms.")
+
+    def verify_distribution_license(self) -> None:
+        distribution = importlib.metadata.distribution("mermaiden")
+        if distribution.metadata["License-Expression"] != "LicenseRef-Proprietary":
+            raise RuntimeError("Installed distribution does not declare the proprietary license.")
+        if not any(path.parts[-2:] == ("licenses", "LICENSE") for path in distribution.files or ()):
+            raise RuntimeError("Installed distribution is missing the proprietary license terms.")
 
     def verify_consumer_wireup_scan(self) -> Application:
         container = create_sync_container(injectables=[sys.modules[__name__]], config={})

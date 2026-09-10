@@ -1,12 +1,14 @@
 # Contributing
 
-Keep contracts frozen, strict, discriminated, and immutable. Required semantics stay explicit;
-optional values use `None` and collections use tuples. Consumer-owned extension ports use small
-Protocols. Package code performs no file or process I/O, and feature packages expose intentional
-`__all__` APIs without importing sibling features.
+Keep contracts frozen, strict, discriminated, and immutable. Required semantics stay explicit; optional values use
+`None` and collections use tuples. Public callers use `Application`; concrete diagram features do not import sibling
+features, and diagram-level sharing belongs only in `diagrams.shared`. See the
+[architecture and ownership map](docs/architecture.md).
 
-Generated README regions project root `__all__`, public docstrings, and the executable example. Edit
-those sources and run `make docs`; never hand-edit generated regions.
+Package I/O stays behind explicit application operations: packaged schema and template reads, caller-requested preview
+writes, and Mermaid CLI validation. The mutation matrices under `docs/contracts/diagram-mutations` are generated from
+the public catalog. Change their source contract or public API, run `make mutation-contract`, and review every generated
+JSON and Markdown change.
 
 Set up the locked development environment with the only maintained development dependency group:
 
