@@ -171,11 +171,14 @@ compatible browser:
 make integration
 ```
 
-The complete host-mode CI target runs both tiers and package verification:
+The complete host-mode CI target runs quality, pytest, Mermaid compatibility, and package verification concurrently:
 
 ```sh
 make ci
 ```
+
+GitHub Actions runs quality, pytest, Mermaid compatibility, and package verification concurrently; the `ci` job is their
+stable aggregate result for branch protection.
 
 ## Release
 
